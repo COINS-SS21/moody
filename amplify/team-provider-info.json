@@ -19,5 +19,47 @@
                 }
             }
         }
+    },
+    "test": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-moody-test-142824-authRole",
+            "UnauthRoleArn": "arn:aws:iam::442191587860:role/amplify-moody-test-142824-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::442191587860:role/amplify-moody-test-142824-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "amplify-moody-test-142824-deployment",
+            "UnauthRoleName": "amplify-moody-test-142824-unauthRole",
+            "StackName": "amplify-moody-test-142824",
+            "StackId": "arn:aws:cloudformation:eu-central-1:442191587860:stack/amplify-moody-test-142824/b7feb9a0-af2f-11eb-80cc-0af9cbca5fc6",
+            "AmplifyAppId": "d16p06gdlpygq6"
+        },
+        "categories": {
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d16p06gdlpygq6",
+                    "type": "cicd"
+                }
+            }
+        }
+    },
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-moody-prod-142957-authRole",
+            "UnauthRoleArn": "arn:aws:iam::442191587860:role/amplify-moody-prod-142957-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::442191587860:role/amplify-moody-prod-142957-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "amplify-moody-prod-142957-deployment",
+            "UnauthRoleName": "amplify-moody-prod-142957-unauthRole",
+            "StackName": "amplify-moody-prod-142957",
+            "StackId": "arn:aws:cloudformation:eu-central-1:442191587860:stack/amplify-moody-prod-142957/efa9d2e0-af2f-11eb-bc24-0a70aaa96428",
+            "AmplifyAppId": "d16p06gdlpygq6"
+        },
+        "categories": {
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d16p06gdlpygq6",
+                    "type": "cicd"
+                }
+            }
+        }
     }
 }
