@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import ICounterModel from "./CounterModel";
 import { Box, Button, Typography } from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
+import Loader from "../ui/Loader";
 
 function Counter(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -33,45 +34,47 @@ function Counter(): JSX.Element {
       >
         Add
       </Button>
-      {loading
-        ? "Loading ..."
-        : counters.map((counter) => (
-            <Box mt={1} key={counter.id}>
-              <Button
-                aria-label="Increment value"
-                onClick={() => {
-                  dispatch(
-                    updateCounterById({
-                      id: counter.id!,
-                      value: counter.value + 1,
-                    })
-                  );
-                }}
-              >
-                Increment
-              </Button>
-              <Typography component="span">{counter.value}</Typography>
-              <Button
-                aria-label="Decrement value"
-                onClick={() => {
-                  dispatch(
-                    updateCounterById({
-                      id: counter.id!,
-                      value: counter.value - 1,
-                    })
-                  );
-                }}
-              >
-                Decrement
-              </Button>
-              <Button
-                style={{ color: red[400] }}
-                onClick={() => dispatch(deleteCounter(counter.id!))}
-              >
-                Remove
-              </Button>
-            </Box>
-          ))}
+      {loading ? (
+        <Loader />
+      ) : (
+        counters.map((counter) => (
+          <Box mt={1} key={counter.id}>
+            <Button
+              aria-label="Increment value"
+              onClick={() => {
+                dispatch(
+                  updateCounterById({
+                    id: counter.id!,
+                    value: counter.value + 1,
+                  })
+                );
+              }}
+            >
+              Increment
+            </Button>
+            <Typography component="span">{counter.value}</Typography>
+            <Button
+              aria-label="Decrement value"
+              onClick={() => {
+                dispatch(
+                  updateCounterById({
+                    id: counter.id!,
+                    value: counter.value - 1,
+                  })
+                );
+              }}
+            >
+              Decrement
+            </Button>
+            <Button
+              style={{ color: red[400] }}
+              onClick={() => dispatch(deleteCounter(counter.id!))}
+            >
+              Remove
+            </Button>
+          </Box>
+        ))
+      )}
     </>
   );
 }

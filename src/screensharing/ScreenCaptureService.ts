@@ -1,5 +1,6 @@
 export default class ScreenCaptureService {
   private _mediaStream: MediaStream | null = null;
+  private _videoEl: HTMLVideoElement | null = null;
 
   public async startCapturing(audio: boolean = false): Promise<void> {
     this._mediaStream = await (navigator.mediaDevices as any).getDisplayMedia({
@@ -17,15 +18,20 @@ export default class ScreenCaptureService {
     this._mediaStream.getTracks().forEach((track) => {
       track.stop();
     });
+
     this._mediaStream = null;
+    if (this._videoEl) {
+      this._videoEl.srcObject = null;
+    }
   }
 
   public drawIntoVideoElement(videoEl: HTMLVideoElement | null): void {
     if (!videoEl || !(videoEl instanceof HTMLVideoElement)) {
       throw new Error("Cannot draw into invalid HTMLVideoElement.");
     }
+    this._videoEl = videoEl;
 
-    videoEl.srcObject = this._mediaStream;
+    this._videoEl.srcObject = this._mediaStream;
   }
 
   public get mediaStream(): MediaStream {
