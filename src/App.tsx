@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Debug from "./pages/Debug";
-import { Container, Typography } from "@material-ui/core";
+import { Container } from "@material-ui/core";
 import { Home } from "./pages/Home";
 import Error from "./error/Error";
+import NotFound from "./pages/NotFound";
 
 export function App(): JSX.Element {
   return (
@@ -18,7 +19,7 @@ export function App(): JSX.Element {
           <Debug />
         </Route>
         <Route>
-          <Typography variant="h1">404 not found</Typography>
+          <NotFound />
         </Route>
       </Switch>
     </Router>
