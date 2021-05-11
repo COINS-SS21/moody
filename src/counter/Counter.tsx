@@ -8,6 +8,7 @@ import {
 } from "./counterSlice";
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import ICounterModel from "./CounterModel";
+import { Box, Button, Typography } from "@material-ui/core";
 
 function Counter(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -22,15 +23,20 @@ function Counter(): JSX.Element {
   const counters: ICounterModel[] = useAppSelector(selectAllCounters);
   const loading: boolean = useAppSelector((state) => state.counter.loading);
 
-  console.log("Render");
   return (
-    <div>
-      <button onClick={() => dispatch(addCounter())}>Add</button>
+    <>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => dispatch(addCounter())}
+      >
+        Add
+      </Button>
       {loading
         ? "Loading ..."
         : counters.map((counter) => (
-            <div style={{ marginTop: "12px" }} key={counter.id}>
-              <button
+            <Box mt={1} key={counter.id}>
+              <Button
                 aria-label="Increment value"
                 onClick={() => {
                   dispatch(
@@ -42,9 +48,9 @@ function Counter(): JSX.Element {
                 }}
               >
                 Increment
-              </button>
-              <span>{counter.value}</span>
-              <button
+              </Button>
+              <Typography component="span">{counter.value}</Typography>
+              <Button
                 aria-label="Decrement value"
                 onClick={() => {
                   dispatch(
@@ -56,13 +62,16 @@ function Counter(): JSX.Element {
                 }}
               >
                 Decrement
-              </button>
-              <button onClick={() => dispatch(deleteCounter(counter.id!))}>
+              </Button>
+              <Button
+                color="secondary"
+                onClick={() => dispatch(deleteCounter(counter.id!))}
+              >
                 Remove
-              </button>
-            </div>
+              </Button>
+            </Box>
           ))}
-    </div>
+    </>
   );
 }
 

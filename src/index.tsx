@@ -6,14 +6,49 @@ import Amplify from "aws-amplify";
 import awsExports from "./aws-exports";
 import { Provider } from "react-redux";
 import { store } from "./reduxStore";
+import {
+  createMuiTheme,
+  CssBaseline,
+  MuiThemeProvider,
+  responsiveFontSizes,
+  Theme,
+} from "@material-ui/core";
+import { blueGrey, teal } from "@material-ui/core/colors";
 
 Amplify.configure(awsExports);
 
+let theme: Theme = createMuiTheme({
+  palette: {
+    type: "dark",
+    primary: {
+      main: teal[400],
+    },
+    secondary: {
+      main: blueGrey[400],
+    },
+    background: {
+      default: "#242424",
+    },
+  },
+  overrides: {
+    MuiTypography: {
+      h1: {
+        fontWeight: "bold",
+        color: teal[400],
+      },
+    },
+  },
+});
+theme = responsiveFontSizes(theme);
+
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </MuiThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

@@ -15,7 +15,6 @@ export default class FrequencyBarVisualizerService {
     this.canvas = canvas;
     this.WIDTH = this.canvas.width;
     this.HEIGHT = this.canvas.height;
-    console.log(this.WIDTH, this.HEIGHT);
 
     const canvasCtx = this.canvas.getContext("2d");
     if (!canvasCtx) {

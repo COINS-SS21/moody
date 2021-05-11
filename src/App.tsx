@@ -1,7 +1,8 @@
 import { useCallback, useState } from "react";
 import FrequencyBar from "./audio/FrequencyBar";
 import Counter from "./counter/Counter";
-import Error from "./Error";
+import Error from "./error/Error";
+import { Button, Container, Typography } from "@material-ui/core";
 
 function App(): JSX.Element {
   const [started, setStarted] = useState<boolean>(false);
@@ -11,21 +12,23 @@ function App(): JSX.Element {
   }, [started]);
 
   return (
-    <>
+    <Container>
       <Error />
-      <h1>Moody</h1>
+      <Typography variant="h1">Moody</Typography>
       <div>
-        <h2>Persistent Multi-Counter with IndexedDB</h2>
+        <Typography variant="h2">
+          Persistent Multi-Counter with IndexedDB
+        </Typography>
         <Counter />
       </div>
       <div>
-        <h2>Audio Frequency Bar Visualization</h2>
-        <button onClick={toggleRecording}>
+        <Typography variant="h2">Audio Frequency Bar Visualization</Typography>
+        <Button variant="contained" color="primary" onClick={toggleRecording}>
           {started ? "Stop audio visualization" : "Start audio visualization"}
-        </button>
+        </Button>
       </div>
-      {started && <FrequencyBar />}
-    </>
+      {started && <FrequencyBar height={200} width={600} />}
+    </Container>
   );
 }
 

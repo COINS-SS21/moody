@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 import FrequencyBarVisualizerService from "./FrequencyBarVisualizerService";
+import { useAppDispatch } from "../reduxHooks";
+import { addError } from "../error/errorSlice";
+import { Card } from "@material-ui/core";
 
 type FrequencyBarProps = {
   width?: number;
@@ -11,6 +14,7 @@ export default function FrequencyBar({
   height,
 }: FrequencyBarProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     let cancelAnimation: Function;
@@ -23,7 +27,9 @@ export default function FrequencyBar({
           video: false,
         });
       } catch (e) {
-        return console.error("Cannot access audio device:", e.message);
+        const msg = "Cannot access audio device: " + e.message;
+        dispatch(addError(msg));
+        return console.error(msg);
       }
 
       const visualizer = new FrequencyBarVisualizerService(
@@ -39,7 +45,11 @@ export default function FrequencyBar({
       audioStream?.getAudioTracks().forEach((track) => track.stop());
       !!cancelAnimation && cancelAnimation();
     };
-  }, []);
+  }, [dispatch]);
 
-  return <canvas width={width} height={height} ref={canvasRef} />;
+  return (
+    <Card style={{ display: "inline-block", padding: 0 }}>
+      <canvas width={width} height={height} ref={canvasRef} />
+    </Card>
+  );
 }
