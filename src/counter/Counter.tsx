@@ -9,6 +9,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import ICounterModel from "./CounterModel";
 import { Box, Button, Typography } from "@material-ui/core";
+import { red } from "@material-ui/core/colors";
 
 function Counter(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -64,7 +65,7 @@ function Counter(): JSX.Element {
                 Decrement
               </Button>
               <Button
-                color="secondary"
+                style={{ color: red[400] }}
                 onClick={() => dispatch(deleteCounter(counter.id!))}
               >
                 Remove

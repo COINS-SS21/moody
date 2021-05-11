@@ -40,17 +40,17 @@ export default class FrequencyBarVisualizerService {
 
       analyzer.getByteFrequencyData(dataArray);
 
-      const barWidth = (this.WIDTH / bufferLength) * 2.5;
+      const barWidth = (this.WIDTH / bufferLength) * 2;
       let barHeight;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
         barHeight = dataArray[i];
 
-        this.canvasCtx.fillStyle = `rgb(50,${barHeight + 100},50)`;
+        this.canvasCtx.fillStyle = `rgb(38,${barHeight + 100},154)`;
         this.canvasCtx.fillRect(
           x,
-          this.HEIGHT - barHeight / 2,
+          this.HEIGHT - barHeight,
           barWidth,
           barHeight
         );
