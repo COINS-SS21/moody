@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import Amplify from "aws-amplify";
 import awsExports from "./aws-exports";
@@ -14,6 +13,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import { blueGrey, teal } from "@material-ui/core/colors";
+import { App } from "./App";
 
 Amplify.configure(awsExports);
 
@@ -34,6 +34,14 @@ let theme: Theme = createMuiTheme({
     MuiTypography: {
       h1: {
         fontWeight: "bold",
+        color: teal[400],
+      },
+      h2: {
+        fontWeight: "normal",
+        color: teal[400],
+      },
+      h3: {
+        fontWeight: "lighter",
         color: teal[400],
       },
     },
