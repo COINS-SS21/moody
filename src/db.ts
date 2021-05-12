@@ -7,7 +7,7 @@ class MoodyDb extends Dexie {
   constructor() {
     super("moody_db");
 
-	    	this.version(1).stores({
+    this.version(1).stores({
       counters: "++id,value",
     });
 
