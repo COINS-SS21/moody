@@ -25,12 +25,8 @@ export default class ScreenCaptureService {
     }
   }
 
-  public drawIntoVideoElement(videoEl: HTMLVideoElement | null): void {
-    if (!videoEl || !(videoEl instanceof HTMLVideoElement)) {
-      throw new Error("Cannot draw into invalid HTMLVideoElement.");
-    }
+  public drawIntoVideoElement(videoEl: HTMLVideoElement): void {
     this._videoEl = videoEl;
-
     this._videoEl.srcObject = this._mediaStream;
   }
 

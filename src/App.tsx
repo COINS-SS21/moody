@@ -4,6 +4,7 @@ import { Container } from "@material-ui/core";
 import { Home } from "./pages/Home";
 import Error from "./error/Error";
 import NotFound from "./pages/NotFound";
+import Meeting from "./pages/Meeting";
 
 export function App(): JSX.Element {
   return (
@@ -14,6 +15,9 @@ export function App(): JSX.Element {
       <Switch>
         <Route exact path="/">
           <Home />
+        </Route>
+        <Route exact path="/meeting">
+          <Meeting />
         </Route>
         <Route exact path="/debug">
           <Debug />

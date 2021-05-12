@@ -1,5 +1,6 @@
 import { Box, Container, Typography } from "@material-ui/core";
 import CTAButton from "../ui/CTAButton";
+import { Link as RouterLink } from "react-router-dom";
 
 export function Home(): JSX.Element {
   return (
@@ -28,7 +29,9 @@ export function Home(): JSX.Element {
           </Typography>
         </Box>
         <Box mt={4} width={1}>
-          <CTAButton>Start</CTAButton>
+          <CTAButton component={RouterLink} to="/meeting">
+            Start
+          </CTAButton>
         </Box>
       </Box>
     </Container>

@@ -10,15 +10,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type CTAButtonProps = {
-  children: React.ReactNode;
-};
-
-export default function CTAButton({ children }: CTAButtonProps): JSX.Element {
+export default function CTAButton({ children, ...props }: any): JSX.Element {
   const classes = useStyles();
 
   return (
-    <Button className={classes.root} variant="contained">
+    <Button className={classes.root} variant="contained" {...props}>
       {children}
     </Button>
   );
