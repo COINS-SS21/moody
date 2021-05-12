@@ -12,8 +12,8 @@ export default class FaceRecognitionService {
   ) {}
 
   public async loadModel() {
-    await faceapi.loadSsdMobilenetv1Model("/models");
-    await faceapi.loadFaceExpressionModel("/models");
+    await faceapi.loadSsdMobilenetv1Model("/");
+    await faceapi.loadFaceExpressionModel("/");
   }
 
   public async detectAllFaces(): Promise<void> {
