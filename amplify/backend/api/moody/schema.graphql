@@ -1,0 +1,12 @@
+type Meeting @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  name: String!
+  audienceFaceExpressions: [AudienceFaceExpression]
+    @connection(name: "AudienceFaceExpressions")
+}
+
+type AudienceFaceExpression @model @auth(rules: [{ allow: owner }]) {
+  timestamp: AWSTimestamp!
+  score: Float!
+  meeting: Meeting @connection(name: "AudienceFaceExpressions")
+}
