@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
-import Amplify from "aws-amplify";
+import Amplify, { Hub } from "aws-amplify";
 import awsExports from "./aws-exports";
 import { Provider } from "react-redux";
 import { store } from "./reduxStore";
@@ -13,9 +13,17 @@ import {
   Theme,
 } from "@material-ui/core";
 import { blueGrey, teal } from "@material-ui/core/colors";
-import { App } from "./App";
+import App from "./App";
+import { signOut } from "./auth/authSlice";
 
 Amplify.configure(awsExports);
+Hub.listen("auth", async (data) => {
+  switch (data.payload.event) {
+    case "signOut":
+      store.dispatch(signOut());
+      break;
+  }
+});
 
 let theme: Theme = createMuiTheme({
   palette: {

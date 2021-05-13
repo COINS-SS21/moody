@@ -1,10 +1,12 @@
-import { Box, Container, Typography } from "@material-ui/core";
+import { Box, Button, Container, Typography } from "@material-ui/core";
 import CTAButton from "../ui/CTAButton";
 import { Link as RouterLink } from "react-router-dom";
+import { Auth } from "aws-amplify";
 
 export function Home(): JSX.Element {
   return (
     <Container>
+      <Button onClick={async () => await Auth.signOut()}>Logout</Button>
       <Box
         height="100vh"
         display="flex"

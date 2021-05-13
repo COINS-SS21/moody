@@ -1,0 +1,11 @@
+:root {
+  --amplify-background-color: #424242;
+  --amplify-primary-color: #26a69a;
+  --amplify-primary-tint: #00897b;
+  --amplify-primary-shade: #00796b;
+  --amplify-secondary-tint: #546e7a;
+  --amplify-secondary-shade: #455a64;
+  --amplify-secondary-color: #f5f5f5;
+  --amplify-secondary-contrast: #424242;
+  --amplify-grey: #f5f5f5;
+}

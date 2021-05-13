@@ -6,7 +6,7 @@
     }
   },
   "auth": {
-    "moodyd669eb9d": {
+    "moody7b861bc77b861bc7": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],

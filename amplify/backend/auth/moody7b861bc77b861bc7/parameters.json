@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "moodyd669eb9d_identitypool_d669eb9d",
+    "identityPoolName": "moody7b861bc7_identitypool_7b861bc7",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "moodyd669eb9d",
-    "userPoolName": "moodyd669eb9d_userpool_d669eb9d",
+    "resourceNameTruncated": "moody7b861bc7",
+    "userPoolName": "moody7b861bc7_userpool_7b861bc7",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -18,7 +18,8 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-        "email"
+        "email",
+        "name"
     ],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
@@ -28,10 +29,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "moodydd669eb9d_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "moody77b861bc7_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "d669eb9d",
-    "resourceName": "moodyd669eb9d",
+    "sharedId": "7b861bc7",
+    "resourceName": "moody7b861bc77b861bc7",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -45,12 +46,21 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
+    "useDefault": "manual",
+    "thirdPartyAuth": false,
     "usernameAttributes": [
         "email"
     ],
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": "{}",
+    "hostedUI": false,
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": [],
     "dependsOn": []
 }

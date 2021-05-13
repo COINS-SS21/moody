@@ -113,10 +113,30 @@ Parameters:
     Type: String
   
             
+  
+  thirdPartyAuth:
+    Type: String
+            
         
   usernameAttributes:
     Type: CommaDelimitedList
       
+  
+  userPoolGroups:
+    Type: String
+            
+  
+  adminQueries:
+    Type: String
+            
+  triggers:
+    Type: String
+  
+            
+  
+  hostedUI:
+    Type: String
+            
         
   userPoolGroupList:
     Type: CommaDelimitedList
@@ -130,6 +150,14 @@ Parameters:
   usernameCaseSensitive:
     Type: String
             
+      
+  parentStack:
+    Type: String
+        
+        
+  permissions:
+    Type: CommaDelimitedList
+      
         
   dependsOn:
     Type: CommaDelimitedList
@@ -148,7 +176,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'moodyd669eb9d_sns-role', !Join ['',[ 'sns', 'd669eb9d', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'moody7b861bc7_sns-role', !Join ['',[ 'sns', '7b861bc7', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -160,10 +188,10 @@ Resources:
               - "sts:AssumeRole"
             Condition:
               StringEquals:
-                sts:ExternalId: moodyd669eb9d_role_external_id
+                sts:ExternalId: moody7b861bc7_role_external_id
       Policies:
         -
-          PolicyName: moodyd669eb9d-sns-policy
+          PolicyName: moody7b861bc7-sns-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -192,6 +220,11 @@ Resources:
           Required: true
           Mutable: true
         
+        -
+          Name: name
+          Required: true
+          Mutable: true
+        
       
       
       
@@ -216,15 +249,27 @@ Resources:
       SmsAuthenticationMessage: !Ref smsAuthenticationMessage
       SmsConfiguration:
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: moodyd669eb9d_role_external_id
+        ExternalId: moody7b861bc7_role_external_id
     
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  # Updating lambda role with permissions to Cognito
+  
   
   UserPoolClientWeb:
   # Created provide application access to user pool
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: moodyd669eb9d_app_clientWeb
+      ClientName: moody7b861bc7_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -234,7 +279,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: moodyd669eb9d_app_client
+      ClientName: moody7b861bc7_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -245,7 +290,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'd669eb9d', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '7b861bc7', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -299,7 +344,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: moodyd669eb9d_userpoolclient_lambda_iam_policy
+      PolicyName: moody7b861bc7_userpoolclient_lambda_iam_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -316,7 +361,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: moodyd669eb9d_userpoolclient_lambda_log_policy
+      PolicyName: moody7b861bc7_userpoolclient_lambda_log_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -356,7 +401,7 @@ Resources:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties:
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'moodyd669eb9d_identitypool_d669eb9d', !Join ['',['moodyd669eb9d_identitypool_d669eb9d', '__', !Ref env]]]
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'moody7b861bc7_identitypool_7b861bc7', !Join ['',['moody7b861bc7_identitypool_7b861bc7', '__', !Ref env]]]
       
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient
