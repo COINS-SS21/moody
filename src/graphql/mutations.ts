@@ -62,6 +62,7 @@ export const createAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      meetingId
       meeting {
         id
         name
@@ -84,6 +85,7 @@ export const updateAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      meetingId
       meeting {
         id
         name
@@ -106,6 +108,7 @@ export const deleteAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      meetingId
       meeting {
         id
         name

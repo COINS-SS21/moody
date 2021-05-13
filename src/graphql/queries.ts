@@ -40,6 +40,7 @@ export const getAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      meetingId
       meeting {
         id
         name
@@ -68,6 +69,7 @@ export const listAudienceFaceExpressions = /* GraphQL */ `
         id
         timestamp
         score
+        meetingId
         createdAt
         updatedAt
         owner

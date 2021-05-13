@@ -2,11 +2,16 @@ type Meeting @model @auth(rules: [{ allow: owner }]) {
   id: ID!
   name: String!
   audienceFaceExpressions: [AudienceFaceExpression]
-    @connection(name: "AudienceFaceExpressions")
+    @connection(keyName: "byMeeting", fields: ["id"])
 }
 
-type AudienceFaceExpression @model @auth(rules: [{ allow: owner }]) {
+type AudienceFaceExpression
+  @key(name: "byMeeting", fields: ["meetingId"])
+  @model
+  @auth(rules: [{ allow: owner }]) {
+  id: ID!
   timestamp: AWSTimestamp!
   score: Float!
-  meeting: Meeting @connection(name: "AudienceFaceExpressions")
+  meetingId: ID!
+  meeting: Meeting! @connection(fields: ["meetingId"])
 }

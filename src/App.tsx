@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { signIn } from "./auth/authSlice";
 import { useAppDispatch, useAppSelector } from "./reduxHooks";
 import "./App.css";
+import Meetings from "./pages/Meetings";
 
 function PrivateApp(): JSX.Element {
   return (
@@ -21,6 +22,9 @@ function PrivateApp(): JSX.Element {
       <Switch>
         <Route exact path="/">
           <Home />
+        </Route>
+        <Route exact path="/meetings">
+          <Meetings />
         </Route>
         <Route exact path="/meeting">
           <Meeting />

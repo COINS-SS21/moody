@@ -74,6 +74,7 @@ export type AudienceFaceExpression = {
   id?: string;
   timestamp?: number;
   score?: number;
+  meetingId?: string;
   meeting?: Meeting;
   createdAt?: string;
   updatedAt?: string;
@@ -93,12 +94,13 @@ export type CreateAudienceFaceExpressionInput = {
   id?: string | null;
   timestamp: number;
   score: number;
-  audienceFaceExpressionMeetingId?: string | null;
+  meetingId: string;
 };
 
 export type ModelAudienceFaceExpressionConditionInput = {
   timestamp?: ModelIntInput | null;
   score?: ModelFloatInput | null;
+  meetingId?: ModelIDInput | null;
   and?: Array<ModelAudienceFaceExpressionConditionInput | null> | null;
   or?: Array<ModelAudienceFaceExpressionConditionInput | null> | null;
   not?: ModelAudienceFaceExpressionConditionInput | null;
@@ -128,24 +130,6 @@ export type ModelFloatInput = {
   attributeType?: ModelAttributeTypes | null;
 };
 
-export type UpdateAudienceFaceExpressionInput = {
-  timestamp?: number | null;
-  score?: number | null;
-  audienceFaceExpressionMeetingId?: string | null;
-};
-
-export type DeleteAudienceFaceExpressionInput = {
-  id?: string | null;
-};
-
-export type ModelMeetingFilterInput = {
-  id?: ModelIDInput | null;
-  name?: ModelStringInput | null;
-  and?: Array<ModelMeetingFilterInput | null> | null;
-  or?: Array<ModelMeetingFilterInput | null> | null;
-  not?: ModelMeetingFilterInput | null;
-};
-
 export type ModelIDInput = {
   ne?: string | null;
   eq?: string | null;
@@ -162,6 +146,25 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null;
 };
 
+export type UpdateAudienceFaceExpressionInput = {
+  id: string;
+  timestamp?: number | null;
+  score?: number | null;
+  meetingId?: string | null;
+};
+
+export type DeleteAudienceFaceExpressionInput = {
+  id?: string | null;
+};
+
+export type ModelMeetingFilterInput = {
+  id?: ModelIDInput | null;
+  name?: ModelStringInput | null;
+  and?: Array<ModelMeetingFilterInput | null> | null;
+  or?: Array<ModelMeetingFilterInput | null> | null;
+  not?: ModelMeetingFilterInput | null;
+};
+
 export type ModelMeetingConnection = {
   __typename: "ModelMeetingConnection";
   items?: Array<Meeting | null> | null;
@@ -169,8 +172,10 @@ export type ModelMeetingConnection = {
 };
 
 export type ModelAudienceFaceExpressionFilterInput = {
+  id?: ModelIDInput | null;
   timestamp?: ModelIntInput | null;
   score?: ModelFloatInput | null;
+  meetingId?: ModelIDInput | null;
   and?: Array<ModelAudienceFaceExpressionFilterInput | null> | null;
   or?: Array<ModelAudienceFaceExpressionFilterInput | null> | null;
   not?: ModelAudienceFaceExpressionFilterInput | null;
@@ -247,14 +252,15 @@ export type CreateAudienceFaceExpressionMutation = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
@@ -272,14 +278,15 @@ export type UpdateAudienceFaceExpressionMutation = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
@@ -297,14 +304,15 @@ export type DeleteAudienceFaceExpressionMutation = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
@@ -361,14 +369,15 @@ export type GetAudienceFaceExpressionQuery = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
@@ -389,6 +398,7 @@ export type ListAudienceFaceExpressionsQuery = {
       id: string;
       timestamp: number;
       score: number;
+      meetingId: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -464,14 +474,15 @@ export type OnCreateAudienceFaceExpressionSubscription = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
@@ -488,14 +499,15 @@ export type OnUpdateAudienceFaceExpressionSubscription = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
@@ -512,14 +524,15 @@ export type OnDeleteAudienceFaceExpressionSubscription = {
     id: string;
     timestamp: number;
     score: number;
-    meeting?: {
+    meetingId: string;
+    meeting: {
       __typename: "Meeting";
       id: string;
       name: string;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
-    } | null;
+    };
     createdAt: string;
     updatedAt: string;
     owner?: string | null;
