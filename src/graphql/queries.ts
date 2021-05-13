@@ -8,6 +8,15 @@ export const getMeeting = /* GraphQL */ `
       id
       name
       audienceFaceExpressions {
+        items {
+          id
+          timestamp
+          score
+          meetingId
+          createdAt
+          updatedAt
+          owner
+        }
         nextToken
       }
       createdAt
@@ -26,6 +35,9 @@ export const listMeetings = /* GraphQL */ `
       items {
         id
         name
+        audienceFaceExpressions {
+          nextToken
+        }
         createdAt
         updatedAt
         owner
@@ -44,6 +56,9 @@ export const getAudienceFaceExpression = /* GraphQL */ `
       meeting {
         id
         name
+        audienceFaceExpressions {
+          nextToken
+        }
         createdAt
         updatedAt
         owner
@@ -70,6 +85,13 @@ export const listAudienceFaceExpressions = /* GraphQL */ `
         timestamp
         score
         meetingId
+        meeting {
+          id
+          name
+          createdAt
+          updatedAt
+          owner
+        }
         createdAt
         updatedAt
         owner

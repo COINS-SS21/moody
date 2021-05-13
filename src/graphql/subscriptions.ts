@@ -8,6 +8,15 @@ export const onCreateMeeting = /* GraphQL */ `
       id
       name
       audienceFaceExpressions {
+        items {
+          id
+          timestamp
+          score
+          meetingId
+          createdAt
+          updatedAt
+          owner
+        }
         nextToken
       }
       createdAt
@@ -22,6 +31,15 @@ export const onUpdateMeeting = /* GraphQL */ `
       id
       name
       audienceFaceExpressions {
+        items {
+          id
+          timestamp
+          score
+          meetingId
+          createdAt
+          updatedAt
+          owner
+        }
         nextToken
       }
       createdAt
@@ -36,6 +54,15 @@ export const onDeleteMeeting = /* GraphQL */ `
       id
       name
       audienceFaceExpressions {
+        items {
+          id
+          timestamp
+          score
+          meetingId
+          createdAt
+          updatedAt
+          owner
+        }
         nextToken
       }
       createdAt
@@ -54,6 +81,9 @@ export const onCreateAudienceFaceExpression = /* GraphQL */ `
       meeting {
         id
         name
+        audienceFaceExpressions {
+          nextToken
+        }
         createdAt
         updatedAt
         owner
@@ -74,6 +104,9 @@ export const onUpdateAudienceFaceExpression = /* GraphQL */ `
       meeting {
         id
         name
+        audienceFaceExpressions {
+          nextToken
+        }
         createdAt
         updatedAt
         owner
@@ -94,6 +127,9 @@ export const onDeleteAudienceFaceExpression = /* GraphQL */ `
       meeting {
         id
         name
+        audienceFaceExpressions {
+          nextToken
+        }
         createdAt
         updatedAt
         owner

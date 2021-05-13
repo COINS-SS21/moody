@@ -193,6 +193,16 @@ export type CreateMeetingMutation = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -213,6 +223,16 @@ export type UpdateMeetingMutation = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -233,6 +253,16 @@ export type DeleteMeetingMutation = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -257,6 +287,10 @@ export type CreateAudienceFaceExpressionMutation = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -283,6 +317,10 @@ export type UpdateAudienceFaceExpressionMutation = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -309,6 +347,10 @@ export type DeleteAudienceFaceExpressionMutation = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -330,6 +372,16 @@ export type GetMeetingQuery = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -351,6 +403,10 @@ export type ListMeetingsQuery = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -374,6 +430,10 @@ export type GetAudienceFaceExpressionQuery = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -399,6 +459,14 @@ export type ListAudienceFaceExpressionsQuery = {
       timestamp: number;
       score: number;
       meetingId: string;
+      meeting: {
+        __typename: "Meeting";
+        id: string;
+        name: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      };
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -418,6 +486,16 @@ export type OnCreateMeetingSubscription = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -437,6 +515,16 @@ export type OnUpdateMeetingSubscription = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -456,6 +544,16 @@ export type OnDeleteMeetingSubscription = {
     name: string;
     audienceFaceExpressions?: {
       __typename: "ModelAudienceFaceExpressionConnection";
+      items?: Array<{
+        __typename: "AudienceFaceExpression";
+        id: string;
+        timestamp: number;
+        score: number;
+        meetingId: string;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
       nextToken?: string | null;
     } | null;
     createdAt: string;
@@ -479,6 +577,10 @@ export type OnCreateAudienceFaceExpressionSubscription = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -504,6 +606,10 @@ export type OnUpdateAudienceFaceExpressionSubscription = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
@@ -529,6 +635,10 @@ export type OnDeleteAudienceFaceExpressionSubscription = {
       __typename: "Meeting";
       id: string;
       name: string;
+      audienceFaceExpressions?: {
+        __typename: "ModelAudienceFaceExpressionConnection";
+        nextToken?: string | null;
+      } | null;
       createdAt: string;
       updatedAt: string;
       owner?: string | null;
