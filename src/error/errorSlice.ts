@@ -1,6 +1,10 @@
 import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchAllCounters } from "../counter/counterSlice";
-import { fetchAllMeetings } from "../meetings/meetingsSlice";
+import {
+  addMeeting,
+  fetchAllMeetings,
+  removeMeeting,
+} from "../meetings/meetingsSlice";
 
 type ErrorState = {
   errors: string[];
@@ -34,6 +38,8 @@ const errorSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchAllCounters.rejected, addErrorReducer);
     builder.addCase(fetchAllMeetings.rejected, addErrorReducer);
+    builder.addCase(addMeeting.rejected, addErrorReducer);
+    builder.addCase(removeMeeting.rejected, addErrorReducer);
   },
 });
 

@@ -3,21 +3,35 @@ import {
   createEntityAdapter,
   createSlice,
 } from "@reduxjs/toolkit";
-import { API, graphqlOperation } from "aws-amplify";
-import { listMeetings } from "../graphql/queries";
+import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
-import { Meeting } from "../API";
+import { Meeting } from "../models";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",
   async () => {
-    const {
-      data: {
-        listMeetings: { items },
-      },
-    } = (await API.graphql(graphqlOperation(listMeetings))) as any;
+    return await DataStore.query(Meeting);
+  }
+);
 
-    return items as Meeting[];
+export const addMeeting = createAsyncThunk(
+  "meetings/create",
+  async (name: string) => {
+    return await DataStore.save(new Meeting({ name }));
+  }
+);
+
+export const removeMeeting = createAsyncThunk(
+  "meetings/delete",
+  async (id: string) => {
+    const meetingToDelete: Meeting | undefined = await DataStore.query(
+      Meeting,
+      id
+    );
+
+    if (meetingToDelete) {
+      return await DataStore.delete(meetingToDelete);
+    }
   }
 );
 
@@ -38,6 +52,28 @@ export const meetingsSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchAllMeetings.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(addMeeting.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addMeeting.fulfilled, (state, { payload }) => {
+        meetingsAdapter.addOne(state, payload);
+        state.loading = false;
+      })
+      .addCase(addMeeting.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(removeMeeting.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(removeMeeting.fulfilled, (state, { payload }) => {
+        if (payload?.id) {
+          meetingsAdapter.removeOne(state, payload.id);
+        }
+        state.loading = false;
+      })
+      .addCase(removeMeeting.rejected, (state) => {
         state.loading = false;
       });
   },

@@ -7,7 +7,7 @@ import {
 import Debug from "./pages/Debug";
 import { Welcome } from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
-import Meeting from "./pages/Meeting";
+import Meeting from "./pages/meeting/Meeting";
 import { useAppSelector } from "./reduxHooks";
 import "./App.css";
 import Meetings from "./pages/meetings/Meetings";

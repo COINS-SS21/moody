@@ -4,6 +4,7 @@ import { fetchAllMeetings } from "../../meetings/meetingsSlice";
 import { Box, Container, Paper, Typography } from "@material-ui/core";
 import Page from "../../components/Page";
 import MeetingTable from "./MeetingTable";
+import AddMeetingButton from "./AddMeetingButton";
 
 export default function Meetings(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -30,6 +31,9 @@ export default function Meetings(): JSX.Element {
           Create a new meeting or choose one from below.
         </Typography>
         <Box>
+          <Box mb={2}>
+            <AddMeetingButton />
+          </Box>
           <Paper>
             <MeetingTable />
           </Paper>

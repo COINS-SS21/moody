@@ -1,17 +1,18 @@
-type Meeting @model @auth(rules: [{ allow: owner }]) {
+type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
   id: ID!
   name: String!
-  audienceFaceExpressions: [AudienceFaceExpression]
-    @connection(keyName: "byMeeting", fields: ["id"])
+  AudienceFaceExpressions: [AudienceFaceExpression] @connection(keyName: "byMeeting", fields: ["id"])
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
-type AudienceFaceExpression
-  @key(name: "byMeeting", fields: ["meetingId"])
-  @model
-  @auth(rules: [{ allow: owner }]) {
+type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
   id: ID!
   timestamp: AWSTimestamp!
   score: Float!
-  meetingId: ID!
-  meeting: Meeting! @connection(fields: ["meetingId"])
+  meetingID: ID
+  Meeting: Meeting @connection
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
+ 

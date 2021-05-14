@@ -1,19 +1,68 @@
 import { DataGrid, GridCellParams } from "@material-ui/data-grid";
-import { Box, Button, IconButton } from "@material-ui/core";
-import { ArrowForward, MoreVert } from "@material-ui/icons";
+import {
+  Box,
+  Button,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@material-ui/core";
+import { ArrowForwardIos, Delete, MoreVert } from "@material-ui/icons";
 import { Link as RouterLink } from "react-router-dom";
-import { Meeting } from "../../API";
-import { useAppSelector } from "../../reduxHooks";
-import { selectAllMeetings } from "../../meetings/meetingsSlice";
+import { useAppDispatch, useAppSelector } from "../../reduxHooks";
+import { removeMeeting, selectAllMeetings } from "../../meetings/meetingsSlice";
+import { useCallback, useState } from "react";
+import { red } from "@material-ui/core/colors";
+import { Meeting } from "../../models";
 
 export default function MeetingTable(): JSX.Element {
+  const dispatch = useAppDispatch();
   const meetings: Meeting[] = useAppSelector(selectAllMeetings);
   const meetingsLoading: boolean = useAppSelector(
     (state) => state.meetings.loading
   );
 
+  const [meetingToDelete, setMeetingToDelete] = useState<string | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    meetingId: string
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setMeetingToDelete(meetingId);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setMeetingToDelete(null);
+  };
+
+  const handleDeleteMeeting = useCallback(() => {
+    handleMenuClose();
+    if (meetingToDelete) {
+      dispatch(removeMeeting(meetingToDelete));
+    }
+  }, [dispatch, meetingToDelete]);
+
   return (
-    <Box height="400px" width={1}>
+    <Box height="500px" width={1}>
+      <Menu
+        keepMounted
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <Box color={red[500]}>
+          <MenuItem onClick={handleDeleteMeeting}>
+            <ListItemIcon style={{ color: "inherit" }}>
+              <Delete />
+            </ListItemIcon>
+            <Typography variant="inherit" color="inherit">
+              Delete
+            </Typography>
+          </MenuItem>
+        </Box>
+      </Menu>
       <DataGrid
         loading={meetingsLoading}
         rows={meetings.map((meeting) => ({
@@ -27,7 +76,7 @@ export default function MeetingTable(): JSX.Element {
             field: "createdAt",
             headerName: "Creation date",
             type: "dateTime",
-            flex: 0.5,
+            width: 200,
           },
           {
             field: "id",
@@ -37,13 +86,17 @@ export default function MeetingTable(): JSX.Element {
               <>
                 <Button
                   color="primary"
-                  endIcon={<ArrowForward />}
+                  endIcon={<ArrowForwardIos />}
                   component={RouterLink}
                   to={`/meetings/${params.value}`}
                 >
                   View
                 </Button>
-                <IconButton>
+                <IconButton
+                  onClick={(event) =>
+                    handleMenuOpen(event, params.value as string)
+                  }
+                >
                   <MoreVert />
                 </IconButton>
               </>

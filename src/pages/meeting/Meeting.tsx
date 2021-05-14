@@ -1,9 +1,10 @@
 import { Box, Button, Container, Typography } from "@material-ui/core";
-import { PlayArrow, Stop } from "@material-ui/icons";
+import { ArrowBackIos, PlayArrow, Stop } from "@material-ui/icons";
 import { useCallback, useRef, useState } from "react";
-import FaceRecognitionService from "../faceRecognition/FaceRecognitionService";
-import ScreenCaptureService from "../screensharing/ScreenCaptureService";
-import Page from "../components/Page";
+import FaceRecognitionService from "../../faceRecognition/FaceRecognitionService";
+import ScreenCaptureService from "../../screensharing/ScreenCaptureService";
+import Page from "../../components/Page";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function Meeting(): JSX.Element {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,6 +47,14 @@ export default function Meeting(): JSX.Element {
   return (
     <Page>
       <Container>
+        <Button
+          color="primary"
+          startIcon={<ArrowBackIos />}
+          component={RouterLink}
+          to="/meetings"
+        >
+          Back
+        </Button>
         <Typography variant="h1">Meeting</Typography>
         <Button
           color={meetingStarted ? "secondary" : "primary"}
