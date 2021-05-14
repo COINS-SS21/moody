@@ -3,6 +3,7 @@ import { PlayArrow, Stop } from "@material-ui/icons";
 import { useCallback, useRef, useState } from "react";
 import FaceRecognitionService from "../faceRecognition/FaceRecognitionService";
 import ScreenCaptureService from "../screensharing/ScreenCaptureService";
+import Page from "../components/Page";
 
 export default function Meeting(): JSX.Element {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -43,24 +44,26 @@ export default function Meeting(): JSX.Element {
   }, [stopMeeting]);
 
   return (
-    <Container>
-      <Typography variant="h1">Meeting</Typography>
-      <Button
-        color={meetingStarted ? "secondary" : "primary"}
-        variant="contained"
-        size="large"
-        startIcon={meetingStarted ? <Stop /> : <PlayArrow />}
-        onClick={meetingStarted ? stopMeeting : startMeeting}
-      >
-        {meetingStarted ? "Stop" : "Start"} the meeting
-      </Button>
-      <Box position="relative" mt={2}>
-        <video playsInline ref={videoRef} width={1024} autoPlay muted />
-        <canvas
-          ref={canvasRef}
-          style={{ position: "absolute", top: 0, left: 0 }}
-        />
-      </Box>
-    </Container>
+    <Page>
+      <Container>
+        <Typography variant="h1">Meeting</Typography>
+        <Button
+          color={meetingStarted ? "secondary" : "primary"}
+          variant="contained"
+          size="large"
+          startIcon={meetingStarted ? <Stop /> : <PlayArrow />}
+          onClick={meetingStarted ? stopMeeting : startMeeting}
+        >
+          {meetingStarted ? "Stop" : "Start"} the meeting
+        </Button>
+        <Box position="relative" mt={2}>
+          <video playsInline ref={videoRef} width={1024} autoPlay muted />
+          <canvas
+            ref={canvasRef}
+            style={{ position: "absolute", top: 0, left: 0 }}
+          />
+        </Box>
+      </Container>
+    </Page>
   );
 }

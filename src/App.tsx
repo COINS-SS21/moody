@@ -1,32 +1,30 @@
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
 import Debug from "./pages/Debug";
-import { Container } from "@material-ui/core";
-import { Home } from "./pages/Home";
-import Error from "./error/Error";
+import { Welcome } from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 import Meeting from "./pages/Meeting";
-import { AmplifyAuthenticator, AmplifySignUp } from "@aws-amplify/ui-react";
-import { AuthState, onAuthUIStateChange } from "@aws-amplify/ui-components";
-import { useEffect } from "react";
-import { signIn } from "./auth/authSlice";
-import { useAppDispatch, useAppSelector } from "./reduxHooks";
+import { useAppSelector } from "./reduxHooks";
 import "./App.css";
-import Meetings from "./pages/Meetings";
+import Meetings from "./pages/meetings/Meetings";
+import Login from "./pages/Login";
+import { useEffect } from "react";
+import { syncUserWithRedux } from "./auth/utils";
 
 function PrivateApp(): JSX.Element {
   return (
     <Router>
-      <Container>
-        <Error />
-      </Container>
       <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
+        <Redirect exact from="/" to="/meetings" />
+        <Redirect exact from="/login" to="/meetings" />
         <Route exact path="/meetings">
           <Meetings />
         </Route>
-        <Route exact path="/meeting">
+        <Route exact path="/meetings/:id">
           <Meeting />
         </Route>
         <Route exact path="/debug">
@@ -42,46 +40,29 @@ function PrivateApp(): JSX.Element {
 
 function PublicApp(): JSX.Element {
   return (
-    <AmplifyAuthenticator usernameAlias="email">
-      <AmplifySignUp
-        slot="sign-up"
-        usernameAlias="email"
-        formFields={[
-          {
-            label: "Name *",
-            placeholder: "Enter your name",
-            inputProps: {
-              type: "text",
-            },
-            type: "name",
-            required: true,
-          },
-          { type: "email" },
-          { type: "password" },
-        ]}
-      />
-    </AmplifyAuthenticator>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <Welcome />
+        </Route>
+        <Route exact path="/login">
+          <Login />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   );
 }
 
-export default function App(): JSX.Element {
-  const dispatch = useAppDispatch();
+export default function App(): JSX.Element | null {
   const signedIn: boolean = useAppSelector(
     (state) => state.auth.signedIn && !!state.auth.user
   );
+  const loading: boolean = useAppSelector((state) => state.auth.loading);
 
   useEffect(() => {
-    onAuthUIStateChange((nextAuthState: AuthState, authData: any) => {
-      if (nextAuthState === AuthState.SignedIn) {
-        dispatch(
-          signIn({
-            name: authData?.attributes.name,
-            email: authData?.attributes.email,
-          })
-        );
-      }
-    });
-  }, [dispatch]);
+    syncUserWithRedux();
+  }, []);
 
-  return signedIn ? <PrivateApp /> : <PublicApp />;
+  return !loading ? signedIn ? <PrivateApp /> : <PublicApp /> : null;
 }

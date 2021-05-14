@@ -14,16 +14,10 @@ import {
 } from "@material-ui/core";
 import { blueGrey, teal } from "@material-ui/core/colors";
 import App from "./App";
-import { signOut } from "./auth/authSlice";
+import { syncUserWithRedux } from "./auth/utils";
 
 Amplify.configure(awsExports);
-Hub.listen("auth", async (data) => {
-  switch (data.payload.event) {
-    case "signOut":
-      store.dispatch(signOut());
-      break;
-  }
-});
+Hub.listen("auth", syncUserWithRedux);
 
 let theme: Theme = createMuiTheme({
   palette: {
@@ -58,14 +52,12 @@ let theme: Theme = createMuiTheme({
 theme = responsiveFontSizes(theme);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <MuiThemeProvider theme={theme}>
-      <CssBaseline />
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </MuiThemeProvider>
-  </React.StrictMode>,
+  <MuiThemeProvider theme={theme}>
+    <CssBaseline />
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </MuiThemeProvider>,
   document.getElementById("root")
 );
 

@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "../reduxHooks";
 import ICounterModel from "./CounterModel";
 import { Box, Button, Typography } from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
-import Loader from "../ui/Loader";
+import Loader from "../components/Loader";
 
 function Counter(): JSX.Element {
   const dispatch = useAppDispatch();

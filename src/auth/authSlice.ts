@@ -7,11 +7,13 @@ export type LoggedInUserInfo = {
 
 type ReduxAuthState = {
   signedIn: boolean;
+  loading: boolean;
   user?: LoggedInUserInfo;
 };
 
 const initialState: ReduxAuthState = {
   signedIn: false,
+  loading: true,
 };
 
 const authSlice = createSlice({
@@ -21,10 +23,12 @@ const authSlice = createSlice({
     signIn(state, action: PayloadAction<LoggedInUserInfo>) {
       state.user = action.payload;
       state.signedIn = true;
+      state.loading = false;
     },
     signOut(state) {
       delete state.user;
       state.signedIn = false;
+      state.loading = false;
     },
   },
 });

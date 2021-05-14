@@ -36,6 +36,9 @@ export const meetingsSlice = createSlice({
       .addCase(fetchAllMeetings.fulfilled, (state, { payload }) => {
         meetingsAdapter.upsertMany(state, payload);
         state.loading = false;
+      })
+      .addCase(fetchAllMeetings.rejected, (state) => {
+        state.loading = false;
       });
   },
 });
