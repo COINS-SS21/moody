@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField } from "@material-ui/core";
+import { Box, Button, TextField } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { useAppDispatch } from "../../reduxHooks";
@@ -40,8 +40,8 @@ export default function AddMeetingButton(): JSX.Element {
     <Box minHeight="3rem" display="flex" alignItems="flex-end">
       {editing ? (
         <form onSubmit={handleSubmit}>
-          <Grid container alignItems="flex-end" spacing={1}>
-            <Grid item>
+          <Box display="flex" alignItems="flex-end">
+            <Box mr={1}>
               <TextField
                 required
                 autoFocus
@@ -49,13 +49,13 @@ export default function AddMeetingButton(): JSX.Element {
                 label="Meeting name"
                 placeholder="Enter a meeting name"
               />
-            </Grid>
-            <Grid item>
+            </Box>
+            <Box mr={1}>
               <Button type="submit" variant="contained" color="primary">
                 Create
               </Button>
-            </Grid>
-            <Grid item>
+            </Box>
+            <Box>
               <Button
                 type="reset"
                 variant="outlined"
@@ -64,11 +64,11 @@ export default function AddMeetingButton(): JSX.Element {
               >
                 Cancel
               </Button>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </form>
       ) : (
-        <Grid container justify="flex-start" spacing={1}>
+        <Box display="flex">
           <Button
             variant="contained"
             color="primary"
@@ -77,7 +77,7 @@ export default function AddMeetingButton(): JSX.Element {
           >
             New meeting
           </Button>
-        </Grid>
+        </Box>
       )}
     </Box>
   );
