@@ -1,11 +1,13 @@
 import {
   createAsyncThunk,
   createEntityAdapter,
+  createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
 import { Meeting } from "../models";
+import { createModelFromPlain } from "../models/utils";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",
@@ -42,12 +44,59 @@ export const removeMeeting = createAsyncThunk(
   }
 );
 
+export const startMeeting = createAsyncThunk(
+  "meetings/start",
+  async (_, { getState }) => {
+    const state: RootState = getState() as RootState;
+    const activeMeetingId: string | null = state.meetings.activeMeeting;
+
+    if (activeMeetingId) {
+      const activeMeeting: Meeting = selectMeetingById(state, activeMeetingId)!;
+
+      if (!activeMeeting.startedAt) {
+        return (await DataStore.save(
+          Meeting.copyOf(
+            createModelFromPlain(Meeting, activeMeeting),
+            (meeting) => {
+              meeting.startedAt = new Date().toISOString();
+            }
+          )
+        )) as Meeting;
+      }
+    }
+  }
+);
+
+export const stopMeeting = createAsyncThunk(
+  "meetings/stop",
+  async (_, { getState }) => {
+    const state: RootState = getState() as RootState;
+    const activeMeetingId: string | null = state.meetings.activeMeeting;
+
+    if (activeMeetingId) {
+      const activeMeeting: Meeting = selectMeetingById(state, activeMeetingId)!;
+
+      if (!activeMeeting.stoppedAt) {
+        return (await DataStore.save(
+          Meeting.copyOf(
+            createModelFromPlain(Meeting, activeMeeting),
+            (meeting) => {
+              meeting.stoppedAt = new Date().toISOString();
+            }
+          )
+        )) as Meeting;
+      }
+    }
+  }
+);
+
 const meetingsAdapter = createEntityAdapter<Meeting>({
   sortComparer: (a: Meeting, b: Meeting) =>
     new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
 });
 const initialState = meetingsAdapter.getInitialState({
-  loading: false,
+  loading: false as boolean,
+  activeMeeting: null as string | null,
 });
 
 export const meetingsSlice = createSlice({
@@ -89,18 +138,61 @@ export const meetingsSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchMeeting.pending, (state) => {
+        state.activeMeeting = null;
         state.loading = true;
+      })
+      .addCase(fetchMeeting.rejected, (state) => {
+        state.activeMeeting = null;
+        state.loading = false;
       })
       .addCase(fetchMeeting.fulfilled, (state, { payload }) => {
         if (payload) {
+          state.activeMeeting = payload.id;
           meetingsAdapter.upsertOne(state, payload);
         }
         state.loading = false;
+      })
+      .addCase(startMeeting.fulfilled, (state, { payload }) => {
+        if (payload) {
+          meetingsAdapter.updateOne(state, {
+            id: payload.id,
+            changes: {
+              startedAt: payload.startedAt,
+            },
+          });
+        }
+      })
+      .addCase(stopMeeting.fulfilled, (state, { payload }) => {
+        if (payload) {
+          meetingsAdapter.updateOne(state, {
+            id: payload.id,
+            changes: {
+              stoppedAt: payload.stoppedAt,
+            },
+          });
+        }
       });
   },
 });
 
 export const { selectAll: selectAllMeetings, selectById: selectMeetingById } =
   meetingsAdapter.getSelectors((state: RootState) => state.meetings);
+
+export const activeMeetingRunning = createSelector(
+  (state: RootState) => state.meetings,
+  (meetings) => {
+    const activeMeetingId: string | null = meetings.activeMeeting;
+    if (activeMeetingId) {
+      const activeMeeting: Meeting | undefined =
+        meetings.entities[activeMeetingId];
+      return !!(
+        activeMeeting &&
+        !!activeMeeting.startedAt &&
+        !activeMeeting.stoppedAt
+      );
+    }
+    return false;
+  }
+);
 
 export default meetingsSlice.reducer;
