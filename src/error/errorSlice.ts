@@ -3,6 +3,7 @@ import { fetchAllCounters } from "../counter/counterSlice";
 import {
   addMeeting,
   fetchAllMeetings,
+  fetchMeeting,
   removeMeeting,
 } from "../meetings/meetingsSlice";
 
@@ -40,6 +41,7 @@ const errorSlice = createSlice({
     builder.addCase(fetchAllMeetings.rejected, addErrorReducer);
     builder.addCase(addMeeting.rejected, addErrorReducer);
     builder.addCase(removeMeeting.rejected, addErrorReducer);
+    builder.addCase(fetchMeeting.rejected, addErrorReducer);
   },
 });
 

@@ -2,6 +2,8 @@ type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}
   id: ID!
   name: String!
   AudienceFaceExpressions: [AudienceFaceExpression] @connection(keyName: "byMeeting", fields: ["id"])
+  startedAt: AWSDateTime
+  stoppedAt: AWSDateTime
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }

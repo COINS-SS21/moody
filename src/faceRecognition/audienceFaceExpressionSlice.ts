@@ -2,7 +2,10 @@ import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { AudienceFaceExpression } from "../models";
 
 const audienceFaceExpressionAdapter =
-  createEntityAdapter<AudienceFaceExpression>();
+  createEntityAdapter<AudienceFaceExpression>({
+    sortComparer: (a: AudienceFaceExpression, b: AudienceFaceExpression) =>
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+  });
 const initialState = audienceFaceExpressionAdapter.getInitialState();
 
 export const audienceFaceExpressionSlice = createSlice({

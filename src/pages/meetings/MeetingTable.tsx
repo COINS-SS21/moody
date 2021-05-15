@@ -71,7 +71,7 @@ export default function MeetingTable(): JSX.Element {
           createdAt: new Date(meeting.createdAt!),
         }))}
         columns={[
-          { field: "name", headerName: "Meeting name", flex: 1 },
+          { field: "name", headerName: "Meeting name", width: 300 },
           {
             field: "createdAt",
             headerName: "Creation date",

@@ -8,6 +8,8 @@ export declare class Meeting {
   readonly id: string;
   readonly name: string;
   readonly AudienceFaceExpressions?: (AudienceFaceExpression | null)[];
+  readonly startedAt?: string;
+  readonly stoppedAt?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
   constructor(init: ModelInit<Meeting>);

@@ -31,6 +31,20 @@ export const schema = {
             associatedWith: "meetingID",
           },
         },
+        startedAt: {
+          name: "startedAt",
+          isArray: false,
+          type: "AWSDateTime",
+          isRequired: false,
+          attributes: [],
+        },
+        stoppedAt: {
+          name: "stoppedAt",
+          isArray: false,
+          type: "AWSDateTime",
+          isRequired: false,
+          attributes: [],
+        },
         createdAt: {
           name: "createdAt",
           isArray: false,
@@ -171,5 +185,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "d835e8fd8a81b25b9d9b39953f35f6b9",
+  version: "301f2a2655ed0b2888e4ae17bd9a939d",
 };

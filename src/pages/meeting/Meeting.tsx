@@ -1,17 +1,44 @@
 import { Box, Button, Container, Typography } from "@material-ui/core";
 import { ArrowBackIos, PlayArrow, Stop } from "@material-ui/icons";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import FaceRecognitionService from "../../faceRecognition/FaceRecognitionService";
 import ScreenCaptureService from "../../screensharing/ScreenCaptureService";
 import Page from "../../components/Page";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../reduxHooks";
+import { fetchMeeting, selectMeetingById } from "../../meetings/meetingsSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Meeting as MeetingModel } from "../../models";
+import Loader from "../../components/Loader";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 export default function Meeting(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const { id } = useParams() as any;
+  const [notFound, setNotFound] = useState<boolean>(false);
+  const meetingLoading = useAppSelector((state) => state.meetings.loading);
+  const meetingName = useAppSelector(
+    (state) => selectMeetingById(state, id)?.name
+  );
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const intervalRef = useRef<number>();
   const screenCaptureServiceRef = useRef<ScreenCaptureService>();
   const [meetingStarted, setMeetingStarted] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const result = await dispatch(fetchMeeting(id));
+      const meeting: MeetingModel | undefined = unwrapResult(result);
+      if (!meeting) {
+        setNotFound(true);
+      } else {
+        setNotFound(false);
+      }
+    };
+    fetch();
+  }, [dispatch, id]);
 
   const stopMeeting = useCallback(() => {
     screenCaptureServiceRef.current?.stopCapturing();
@@ -55,23 +82,40 @@ export default function Meeting(): JSX.Element {
         >
           Back
         </Button>
-        <Typography variant="h1">Meeting</Typography>
-        <Button
-          color={meetingStarted ? "secondary" : "primary"}
-          variant="contained"
-          size="large"
-          startIcon={meetingStarted ? <Stop /> : <PlayArrow />}
-          onClick={meetingStarted ? stopMeeting : startMeeting}
-        >
-          {meetingStarted ? "Stop" : "Start"} the meeting
-        </Button>
-        <Box position="relative" mt={2}>
-          <video playsInline ref={videoRef} width={1024} autoPlay muted />
-          <canvas
-            ref={canvasRef}
-            style={{ position: "absolute", top: 0, left: 0 }}
-          />
-        </Box>
+        {meetingLoading ? (
+          <Box>
+            <Loader />
+          </Box>
+        ) : notFound ? (
+          <Box mt={2}>
+            <Alert severity="warning">
+              <AlertTitle>Oh no! Meeting not found 😩</AlertTitle>
+              <Typography variant="body1">
+                This meeting does not exist or has been deleted.
+              </Typography>
+            </Alert>
+          </Box>
+        ) : (
+          <>
+            <Typography variant="h1">{meetingName}</Typography>
+            <Button
+              color={meetingStarted ? "secondary" : "primary"}
+              variant="contained"
+              size="large"
+              startIcon={meetingStarted ? <Stop /> : <PlayArrow />}
+              onClick={meetingStarted ? stopMeeting : startMeeting}
+            >
+              {meetingStarted ? "Stop" : "Start"} the meeting
+            </Button>
+            <Box position="relative" mt={2}>
+              <video playsInline ref={videoRef} width={1024} autoPlay muted />
+              <canvas
+                ref={canvasRef}
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
+            </Box>
+          </>
+        )}
       </Container>
     </Page>
   );

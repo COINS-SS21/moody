@@ -5,6 +5,7 @@ import { Box, Container, Paper, Typography } from "@material-ui/core";
 import Page from "../../components/Page";
 import MeetingTable from "./MeetingTable";
 import AddMeetingButton from "./AddMeetingButton";
+import { PersonalVideo } from "@material-ui/icons";
 
 export default function Meetings(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -26,7 +27,12 @@ export default function Meetings(): JSX.Element {
         <Box fontSize="h3.fontSize" mb={4}>
           Let's get started! 🚀
         </Box>
-        <Typography variant="h2">Your meetings</Typography>
+        <Typography variant="h2">
+          <Box display="flex" alignItems="center">
+            <PersonalVideo fontSize="inherit" />
+            <Box ml={2}>Your meetings</Box>
+          </Box>
+        </Typography>
         <Typography variant="body1" paragraph>
           Create a new meeting or choose one from below.
         </Typography>
