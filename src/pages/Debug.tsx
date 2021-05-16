@@ -72,7 +72,7 @@ function Debug(): JSX.Element {
             {screenStarted ? "Stop screen recording" : "Start screen recording"}
           </Button>
           <Box mt={2}>
-            {screenStarted && <ScreenCapture width={1366} height={768} />}
+            {screenStarted && <ScreenCapture width={1000} height={564} />}
           </Box>
         </Box>
       </Container>

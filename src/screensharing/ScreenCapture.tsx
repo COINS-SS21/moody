@@ -20,7 +20,7 @@ export default function ScreenCapture({
     const captureAndDraw = async () => {
       try {
         await screenCaptureService.startCapturing();
-        await screenCaptureService.drawIntoVideoElement(videoRef.current!);
+        await screenCaptureService.attachStreamToVideo(videoRef.current!);
       } catch (e) {
         dispatch(addError("Cannot start screen recording: " + e.message));
       }

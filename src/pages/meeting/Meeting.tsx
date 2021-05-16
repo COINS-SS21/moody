@@ -8,21 +8,11 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { ArrowBackIos, PlayArrow, Stop } from "@material-ui/icons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import Page from "../../components/Page";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../reduxHooks";
-import {
-  activeMeetingEnded,
-  activeMeetingRunning,
-  fetchMeeting,
-  selectMeetingById,
-  setActiveMeeting,
-  startMeeting,
-  stopMeeting,
-} from "../../meetings/meetingsSlice";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { Meeting as MeetingModel } from "../../models";
+import { useAppDispatch } from "../../reduxHooks";
+import { startMeeting, stopMeeting } from "../../meetings/meetingsSlice";
 import Loader from "../../components/Loader";
 import {
   Alert,
@@ -34,75 +24,35 @@ import {
 import AudienceEmotionCanvas from "./AudienceEmotionCanvas";
 import AudienceEmotionRollercoaster from "./AudienceEmotionRollercoaster";
 import { AudienceEmotionCurrentScore } from "./AudienceEmotionCurrentScore";
-import ScreenCaptureService from "../../screensharing/ScreenCaptureService";
+import {
+  useFetchMeeting,
+  useMeetingInformation,
+  useScreenCapturingIfMeetingIsRunning,
+} from "./hooks";
 
 export default function Meeting(): JSX.Element {
+  const { id } = useParams() as any;
+  const [notFound] = useFetchMeeting(id);
+  const [meetingLoading, meetingRunning, meetingEnded, meetingName] =
+    useMeetingInformation(id);
+
   const dispatch = useAppDispatch();
-
-  const screenCaptureServiceRef = useRef<ScreenCaptureService>();
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const handleStopMeeting = useCallback(() => {
-    dispatch(stopMeeting());
-  }, [dispatch]);
 
   const handleStartMeeting = useCallback(async () => {
     dispatch(startMeeting());
   }, [dispatch]);
 
-  const meetingRunning = useAppSelector(activeMeetingRunning);
+  const handleStopMeeting = useCallback(() => {
+    dispatch(stopMeeting());
+  }, [dispatch]);
 
-  useEffect(() => {
-    if (meetingRunning) {
-      const startScreenCapturing = async () => {
-        screenCaptureServiceRef.current = new ScreenCaptureService();
-        await screenCaptureServiceRef.current.startCapturing();
-        await screenCaptureServiceRef.current.drawIntoVideoElement(
-          videoRef.current!
-        );
-        screenCaptureServiceRef.current.mediaStream
-          .getTracks()[0]
-          .addEventListener("ended", handleStopMeeting);
-      };
-      startScreenCapturing();
-    }
-    return () => {
-      screenCaptureServiceRef.current?.stopCapturing();
-    };
-  }, [handleStopMeeting, meetingRunning]);
-
-  const [notFound, setNotFound] = useState<boolean>(false);
-  const { id } = useParams() as any;
-
-  useEffect(() => {
-    const fetch = async () => {
-      const result = await dispatch(fetchMeeting(id));
-      const meeting: MeetingModel | undefined = unwrapResult(result);
-      if (!meeting) {
-        setNotFound(true);
-      } else {
-        dispatch(setActiveMeeting(meeting.id));
-        setNotFound(false);
-      }
-    };
-
-    fetch();
-
-    return () => {
-      dispatch(setActiveMeeting(null));
-    };
-  }, [dispatch, id]);
+  const [videoRef] = useScreenCapturingIfMeetingIsRunning(handleStopMeeting);
 
   const [tabValue, setTabValue] = useState<string>("1");
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: string) => {
     setTabValue(newValue);
   };
 
-  const meetingEnded = useAppSelector(activeMeetingEnded);
-  const meetingLoading = useAppSelector((state) => state.meetings.loading);
-  const meetingName = useAppSelector(
-    (state) => selectMeetingById(state, id)?.name
-  );
   const theme = useTheme();
 
   return (
