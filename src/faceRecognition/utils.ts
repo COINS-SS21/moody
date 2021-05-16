@@ -1,5 +1,5 @@
 import { FaceExpressions, WithFaceExpressions } from "face-api.js";
-import flow from "lodash/flow";
+import flow from "lodash-es/flow";
 
 export type AggregatedExpression = {
   positive: number;

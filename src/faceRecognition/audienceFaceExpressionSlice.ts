@@ -7,7 +7,7 @@ import {
 import { AudienceFaceExpression } from "../models";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
-import last from "lodash/last";
+import last from "lodash-es/last";
 
 export const addFaceExpressionScore = createAsyncThunk(
   "audienceFaceExpressions/addScore",
