@@ -33,6 +33,10 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
             family: theme.typography.fontFamily,
             color: theme.palette.text.primary,
           },
+          transition: {
+            duration: 500,
+            easing: "cubic-in-out",
+          },
         }}
         data={[
           {

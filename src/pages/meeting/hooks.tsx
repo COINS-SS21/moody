@@ -10,14 +10,17 @@ import {
 } from "../../meetings/meetingsSlice";
 import { Meeting as MeetingModel } from "../../models";
 import { unwrapResult } from "@reduxjs/toolkit";
+import FaceRecognitionService from "../../faceRecognition/FaceRecognitionService";
+import { addFaceExpressionScore } from "../../faceRecognition/audienceFaceExpressionSlice";
+import { aggregateAndCalculateExpressionScore } from "../../faceRecognition/utils";
 
 export function useScreenCapturingIfMeetingIsRunning(
+  videoRef: React.MutableRefObject<HTMLVideoElement | null>,
   handleStopMeeting: () => void
-): [React.MutableRefObject<HTMLVideoElement | null>] {
+): void {
   const dispatch = useAppDispatch();
   const screenCaptureServiceRef = useRef<ScreenCaptureService>();
   const meetingRunning = useAppSelector(activeMeetingRunning);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (meetingRunning) {
@@ -37,9 +40,52 @@ export function useScreenCapturingIfMeetingIsRunning(
     return () => {
       screenCaptureServiceRef.current?.stopCapturing();
     };
-  }, [dispatch, handleStopMeeting, meetingRunning]);
+  }, [dispatch, handleStopMeeting, meetingRunning, videoRef]);
+}
 
-  return [videoRef];
+export function useEmotionDetection(
+  videoRef: React.MutableRefObject<HTMLVideoElement | null>,
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
+): void {
+  const dispatch = useAppDispatch();
+  const meetingRunning = useAppSelector(activeMeetingRunning);
+  const meetingID: string = useAppSelector(
+    (state) => state.meetings.activeMeeting!
+  );
+  const intervalRef = useRef<number>();
+
+  useEffect(() => {
+    const detectEmotionsIfMeetingIsRunning = async () => {
+      if (meetingRunning) {
+        const faceDetectionService = new FaceRecognitionService(
+          videoRef.current!
+        );
+        await faceDetectionService.loadModel();
+        intervalRef.current = window.setInterval(async () => {
+          const detections = await faceDetectionService.detectAllFaces();
+          dispatch(
+            addFaceExpressionScore({
+              score: aggregateAndCalculateExpressionScore(detections),
+              meetingID,
+            })
+          );
+          if (!!canvasRef.current) {
+            faceDetectionService.drawDetections(detections, canvasRef.current);
+          }
+        }, 1000);
+      }
+    };
+
+    detectEmotionsIfMeetingIsRunning();
+
+    return () => {
+      clearInterval(intervalRef.current);
+      canvasRef.current
+        ?.getContext("2d")
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        ?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    };
+  }, [dispatch, meetingRunning, meetingID, videoRef, canvasRef]);
 }
 
 export function useFetchMeeting(id: string): [boolean] {

@@ -6,10 +6,7 @@ import {
 } from "face-api.js";
 
 export default class FaceRecognitionService {
-  constructor(
-    private readonly video: HTMLVideoElement,
-    private readonly canvas?: HTMLCanvasElement
-  ) {}
+  constructor(private readonly video: HTMLVideoElement) {}
 
   public async loadModel() {
     await faceapi.loadSsdMobilenetv1Model("/");
@@ -31,27 +28,28 @@ export default class FaceRecognitionService {
     detections: WithFaceExpressions<{
       detection: FaceDetection;
       expressions: FaceExpressions;
-    }>[]
+    }>[],
+    canvas?: HTMLCanvasElement | null
   ): void {
-    if (!this.canvas) {
+    if (!canvas) {
       return console.info(
         "No canvas to draw into is registered. Ignoring method call."
       );
     }
 
-    this.canvas.width = this.video.width;
-    this.canvas.height = this.video.height;
+    canvas.width = this.video.width;
+    canvas.height = this.video.height;
 
     const detectionsForSize = faceapi.resizeResults(detections, {
-      width: this.canvas.width,
-      height: this.canvas.height,
+      width: canvas.width,
+      height: canvas.height,
     });
 
-    const ctx = this.canvas.getContext("2d");
-    ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const ctx = canvas.getContext("2d");
+    ctx?.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx?.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
-    faceapi.draw.drawDetections(this.canvas, detectionsForSize);
-    faceapi.draw.drawFaceExpressions(this.canvas, detectionsForSize);
+    ctx?.drawImage(this.video, 0, 0, canvas.width, canvas.height);
+    faceapi.draw.drawDetections(canvas, detectionsForSize);
+    faceapi.draw.drawFaceExpressions(canvas, detectionsForSize);
   }
 }

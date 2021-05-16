@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { ArrowBackIos, PlayArrow, Stop } from "@material-ui/icons";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Page from "../../components/Page";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../reduxHooks";
@@ -21,10 +21,10 @@ import {
   TabList,
   TabPanel,
 } from "@material-ui/lab";
-import AudienceEmotionCanvas from "./AudienceEmotionCanvas";
 import AudienceEmotionRollercoaster from "./AudienceEmotionRollercoaster";
 import { AudienceEmotionCurrentScore } from "./AudienceEmotionCurrentScore";
 import {
+  useEmotionDetection,
   useFetchMeeting,
   useMeetingInformation,
   useScreenCapturingIfMeetingIsRunning,
@@ -46,7 +46,10 @@ export default function Meeting(): JSX.Element {
     dispatch(stopMeeting());
   }, [dispatch]);
 
-  const [videoRef] = useScreenCapturingIfMeetingIsRunning(handleStopMeeting);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useScreenCapturingIfMeetingIsRunning(videoRef, handleStopMeeting);
+  useEmotionDetection(videoRef, canvasRef);
 
   const [tabValue, setTabValue] = useState<string>("1");
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -124,7 +127,7 @@ export default function Meeting(): JSX.Element {
                   </Box>
                 </TabPanel>
                 <TabPanel value="2" style={{ padding: theme.spacing(2, 0) }}>
-                  <AudienceEmotionCanvas videoRef={videoRef} />
+                  <canvas ref={canvasRef} />
                 </TabPanel>
               </TabContext>
             </Box>
