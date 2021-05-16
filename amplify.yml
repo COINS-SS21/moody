@@ -9,12 +9,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm install $VERSION_NODE_14
+        - nvm install
         - npm ci
     build:
       commands:
-        - nvm use $VERSION_NODE_14
-        - node -v
         - npm run-script build
   artifacts:
     baseDirectory: build
