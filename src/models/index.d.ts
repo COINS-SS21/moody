@@ -23,7 +23,7 @@ export declare class AudienceFaceExpression {
   readonly id: string;
   readonly timestamp: number;
   readonly score: number;
-  readonly meetingID?: string;
+  readonly meetingID: string;
   readonly Meeting?: Meeting;
   readonly createdAt?: string;
   readonly updatedAt?: string;

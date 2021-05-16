@@ -12,7 +12,7 @@ type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedA
   id: ID!
   timestamp: AWSTimestamp!
   score: Float!
-  meetingID: ID
+  meetingID: ID!
   Meeting: Meeting @connection
   createdAt: AWSDateTime
   updatedAt: AWSDateTime

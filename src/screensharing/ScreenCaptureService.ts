@@ -25,9 +25,10 @@ export default class ScreenCaptureService {
     }
   }
 
-  public drawIntoVideoElement(videoEl: HTMLVideoElement): void {
+  public drawIntoVideoElement(videoEl: HTMLVideoElement): Promise<void> {
     this._videoEl = videoEl;
     this._videoEl.srcObject = this._mediaStream;
+    return this._videoEl.play();
   }
 
   public get mediaStream(): MediaStream {

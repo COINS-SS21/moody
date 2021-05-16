@@ -116,7 +116,7 @@ export const schema = {
           name: "meetingID",
           isArray: false,
           type: "ID",
-          isRequired: false,
+          isRequired: true,
           attributes: [],
         },
         Meeting: {
@@ -185,5 +185,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "301f2a2655ed0b2888e4ae17bd9a939d",
+  version: "a3d0640b6fb47a6689d1dc12b7a50e4f",
 };

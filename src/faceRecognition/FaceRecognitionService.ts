@@ -1,11 +1,11 @@
 import * as faceapi from "face-api.js";
-import { FaceDetection, WithFaceExpressions } from "face-api.js";
+import {
+  FaceDetection,
+  FaceExpressions,
+  WithFaceExpressions,
+} from "face-api.js";
 
 export default class FaceRecognitionService {
-  private _detections: WithFaceExpressions<{
-    detection: FaceDetection;
-  }>[] = [];
-
   constructor(
     private readonly video: HTMLVideoElement,
     private readonly canvas?: HTMLCanvasElement
@@ -16,31 +16,41 @@ export default class FaceRecognitionService {
     await faceapi.loadFaceExpressionModel("/");
   }
 
-  public async detectAllFaces(): Promise<void> {
-    this._detections = await faceapi
+  public async detectAllFaces(): Promise<
+    WithFaceExpressions<{
+      detection: FaceDetection;
+      expressions: FaceExpressions;
+    }>[]
+  > {
+    return faceapi
       .detectAllFaces(this.video, new faceapi.SsdMobilenetv1Options())
       .withFaceExpressions();
   }
 
-  public drawDetections(): void {
+  public drawDetections(
+    detections: WithFaceExpressions<{
+      detection: FaceDetection;
+      expressions: FaceExpressions;
+    }>[]
+  ): void {
     if (!this.canvas) {
       return console.info(
         "No canvas to draw into is registered. Ignoring method call."
       );
     }
 
-    this.canvas.width = this.video.offsetWidth;
-    this.canvas.height = this.video.offsetHeight;
+    this.canvas.width = this.video.width;
+    this.canvas.height = this.video.height;
 
-    const detectionsForSize = faceapi.resizeResults(this._detections, {
+    const detectionsForSize = faceapi.resizeResults(detections, {
       width: this.canvas.width,
       height: this.canvas.height,
     });
 
-    this.canvas
-      .getContext("2d")
-      ?.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const ctx = this.canvas.getContext("2d");
+    ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    ctx?.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
     faceapi.draw.drawDetections(this.canvas, detectionsForSize);
     faceapi.draw.drawFaceExpressions(this.canvas, detectionsForSize);
   }

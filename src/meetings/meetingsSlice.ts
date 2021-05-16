@@ -3,11 +3,17 @@ import {
   createEntityAdapter,
   createSelector,
   createSlice,
+  EntityId,
+  PayloadAction,
 } from "@reduxjs/toolkit";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
-import { Meeting } from "../models";
+import { AudienceFaceExpression, Meeting } from "../models";
 import { createModelFromPlain } from "../models/utils";
+import {
+  deleteAudienceFaceExpressions,
+  fetchAudienceFaceExpressions,
+} from "../faceRecognition/audienceFaceExpressionSlice";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",
@@ -18,8 +24,18 @@ export const fetchAllMeetings = createAsyncThunk(
 
 export const fetchMeeting = createAsyncThunk(
   "meetings/fetchOne",
-  async (id: string) => {
-    return (await DataStore.query(Meeting, id)) as Meeting | undefined;
+  async (id: string, { dispatch }) => {
+    const meeting = await DataStore.query(Meeting, id);
+    if (meeting) {
+      // Fetch corresponding AudienceFaceExpressions
+      const audienceFaceExpressions = (
+        await DataStore.query(AudienceFaceExpression, (a) =>
+          a.meetingID("eq", meeting.id)
+        )
+      ).filter((faceExpression) => faceExpression.meetingID === meeting.id);
+      await dispatch(fetchAudienceFaceExpressions(audienceFaceExpressions));
+      return meeting;
+    }
   }
 );
 
@@ -32,13 +48,23 @@ export const addMeeting = createAsyncThunk(
 
 export const removeMeeting = createAsyncThunk(
   "meetings/delete",
-  async (id: string) => {
+  async (id: string, { dispatch }) => {
     const meetingToDelete: Meeting | undefined = await DataStore.query(
       Meeting,
       id
     );
 
     if (meetingToDelete) {
+      // Delete corresponding AudienceFaceExpressions first
+      dispatch(
+        deleteAudienceFaceExpressions(
+          (
+            await DataStore.delete(AudienceFaceExpression, (a) =>
+              a.meetingID("eq", meetingToDelete.id)
+            )
+          ).map((a) => a.id)
+        )
+      );
       return (await DataStore.delete(meetingToDelete)) as Meeting;
     }
   }
@@ -102,7 +128,11 @@ const initialState = meetingsAdapter.getInitialState({
 export const meetingsSlice = createSlice({
   name: "meetings",
   initialState,
-  reducers: {},
+  reducers: {
+    setActiveMeeting(state, action: PayloadAction<string | null>) {
+      state.activeMeeting = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAllMeetings.pending, (state) => {
@@ -138,16 +168,13 @@ export const meetingsSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchMeeting.pending, (state) => {
-        state.activeMeeting = null;
         state.loading = true;
       })
       .addCase(fetchMeeting.rejected, (state) => {
-        state.activeMeeting = null;
         state.loading = false;
       })
       .addCase(fetchMeeting.fulfilled, (state, { payload }) => {
         if (payload) {
-          state.activeMeeting = payload.id;
           meetingsAdapter.upsertOne(state, payload);
         }
         state.loading = false;
@@ -175,23 +202,35 @@ export const meetingsSlice = createSlice({
   },
 });
 
+export const { setActiveMeeting } = meetingsSlice.actions;
+
 export const { selectAll: selectAllMeetings, selectById: selectMeetingById } =
   meetingsAdapter.getSelectors((state: RootState) => state.meetings);
 
+const selectActiveMeeting = (state: RootState) =>
+  selectMeetingById(state, state.meetings.activeMeeting as EntityId);
+
+// Returns true if the currently visible meeting is running, else false
 export const activeMeetingRunning = createSelector(
-  (state: RootState) => state.meetings,
-  (meetings) => {
-    const activeMeetingId: string | null = meetings.activeMeeting;
-    if (activeMeetingId) {
-      const activeMeeting: Meeting | undefined =
-        meetings.entities[activeMeetingId];
-      return !!(
-        activeMeeting &&
-        !!activeMeeting.startedAt &&
-        !activeMeeting.stoppedAt
-      );
-    }
-    return false;
+  selectActiveMeeting,
+  (activeMeeting: Meeting | undefined) => {
+    return !!(
+      activeMeeting &&
+      !!activeMeeting.startedAt &&
+      !activeMeeting.stoppedAt
+    );
+  }
+);
+
+// Returns true if the currently active meeting has ended, else false
+export const activeMeetingEnded = createSelector(
+  selectActiveMeeting,
+  (activeMeeting: Meeting | undefined) => {
+    return !!(
+      activeMeeting &&
+      !!activeMeeting.startedAt &&
+      !!activeMeeting.stoppedAt
+    );
   }
 );
 

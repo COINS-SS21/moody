@@ -5,6 +5,8 @@ import {
   fetchAllMeetings,
   fetchMeeting,
   removeMeeting,
+  startMeeting,
+  stopMeeting,
 } from "../meetings/meetingsSlice";
 
 type ErrorState = {
@@ -42,6 +44,8 @@ const errorSlice = createSlice({
     builder.addCase(addMeeting.rejected, addErrorReducer);
     builder.addCase(removeMeeting.rejected, addErrorReducer);
     builder.addCase(fetchMeeting.rejected, addErrorReducer);
+    builder.addCase(startMeeting.rejected, addErrorReducer);
+    builder.addCase(stopMeeting.rejected, addErrorReducer);
   },
 });
 

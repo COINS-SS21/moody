@@ -1,44 +1,45 @@
 import { Box } from "@material-ui/core";
 import { useEffect, useRef } from "react";
-import ScreenCaptureService from "../../screensharing/ScreenCaptureService";
 import FaceRecognitionService from "../../faceRecognition/FaceRecognitionService";
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
-import {
-  activeMeetingRunning,
-  stopMeeting,
-} from "../../meetings/meetingsSlice";
+import { activeMeetingRunning } from "../../meetings/meetingsSlice";
+import { aggregateAndCalculateExpressionScore } from "../../faceRecognition/utils";
+import { addFaceExpressionScore } from "../../faceRecognition/audienceFaceExpressionSlice";
 
-export default function AudienceEmotionCanvas(): JSX.Element | null {
+type AudienceEmotionCanvasProps = {
+  videoRef: React.MutableRefObject<HTMLVideoElement | null>;
+};
+
+export default function AudienceEmotionCanvas({
+  videoRef,
+}: AudienceEmotionCanvasProps): JSX.Element | null {
   const dispatch = useAppDispatch();
   const meetingRunning = useAppSelector(activeMeetingRunning);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const meetingID: string = useAppSelector(
+    (state) => state.meetings.activeMeeting!
+  );
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const intervalRef = useRef<number>();
-  const screenCaptureServiceRef = useRef<ScreenCaptureService>();
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const video = videoRef.current;
 
     const detectEmotionsIfMeetingIsRunning = async () => {
       if (meetingRunning) {
-        screenCaptureServiceRef.current = new ScreenCaptureService();
-        await screenCaptureServiceRef.current.startCapturing();
-        await screenCaptureServiceRef.current.drawIntoVideoElement(video!);
-        screenCaptureServiceRef.current.mediaStream
-          .getTracks()[0]
-          .addEventListener("ended", () => {
-            dispatch(stopMeeting());
-          });
-
         const faceDetectionService = new FaceRecognitionService(
-          video!,
+          videoRef.current!,
           canvas!
         );
         await faceDetectionService.loadModel();
         intervalRef.current = window.setInterval(async () => {
-          await faceDetectionService.detectAllFaces();
-          faceDetectionService.drawDetections();
+          const detections = await faceDetectionService.detectAllFaces();
+          dispatch(
+            addFaceExpressionScore({
+              score: aggregateAndCalculateExpressionScore(detections),
+              meetingID,
+            })
+          );
+          faceDetectionService.drawDetections(detections);
         }, 1000);
       }
     };
@@ -46,15 +47,13 @@ export default function AudienceEmotionCanvas(): JSX.Element | null {
     detectEmotionsIfMeetingIsRunning();
 
     return () => {
-      screenCaptureServiceRef.current?.stopCapturing();
       clearInterval(intervalRef.current);
       canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
     };
-  }, [meetingRunning, dispatch]);
+  }, [dispatch, meetingRunning, meetingID, videoRef]);
 
   return (
-    <Box position="relative" mt={2}>
-      <video playsInline ref={videoRef} width={1024} autoPlay muted />
+    <Box position="relative">
       <canvas
         ref={canvasRef}
         style={{ position: "absolute", top: 0, left: 0 }}
