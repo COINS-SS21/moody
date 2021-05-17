@@ -25,7 +25,7 @@ export const addFaceExpressionScore = createAsyncThunk(
 const audienceFaceExpressionAdapter =
   createEntityAdapter<AudienceFaceExpression>({
     sortComparer: (a: AudienceFaceExpression, b: AudienceFaceExpression) =>
-      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
+      a.timestamp - b.timestamp,
   });
 const initialState = audienceFaceExpressionAdapter.getInitialState();
 
