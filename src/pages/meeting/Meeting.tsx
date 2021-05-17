@@ -22,7 +22,7 @@ import {
   TabPanel,
 } from "@material-ui/lab";
 import AudienceEmotionRollercoaster from "./AudienceEmotionRollercoaster";
-import { AudienceEmotionCurrentScore } from "./AudienceEmotionCurrentScore";
+import AudienceEmotionBarometer from "./AudienceEmotionBarometer";
 import {
   useEmotionDetection,
   useFetchMeeting,
@@ -120,14 +120,22 @@ export default function Meeting(): JSX.Element {
                 </Paper>
                 <TabPanel value="1" style={{ padding: theme.spacing(2, 0) }}>
                   <Box display="inline-block" mr={2}>
-                    <AudienceEmotionCurrentScore />
+                    <AudienceEmotionBarometer />
                   </Box>
                   <Box display="inline-block">
                     <AudienceEmotionRollercoaster />
                   </Box>
                 </TabPanel>
                 <TabPanel value="2" style={{ padding: theme.spacing(2, 0) }}>
-                  <canvas ref={canvasRef} />
+                  {!meetingRunning ? (
+                    <Alert severity="info">
+                      <Typography variant="body1">
+                        Start the meeting to enable this visualization.
+                      </Typography>
+                    </Alert>
+                  ) : (
+                    <canvas ref={canvasRef} />
+                  )}
                 </TabPanel>
               </TabContext>
             </Box>
