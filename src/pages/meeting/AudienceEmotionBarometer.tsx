@@ -1,7 +1,3 @@
-import { useAppSelector } from "../../reduxHooks";
-import { AudienceFaceExpression } from "../../models";
-import { selectActiveMeetingAudienceFaceExpressions } from "../../faceRecognition/audienceFaceExpressionSlice";
-import Plot from "react-plotly.js";
 import {
   Box,
   IconButton,
@@ -10,13 +6,17 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
+import { AudienceFaceExpression } from "../../models";
+import { useAppSelector } from "../../reduxHooks";
+import { selectActiveMeetingAudienceFaceExpressionsCurrentScore } from "../../faceRecognition/audienceFaceExpressionSlice";
+import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-export default function AudienceEmotionRollercoaster(): JSX.Element {
+export default function AudienceEmotionBarometer() {
   const theme = useTheme();
-  const expressions: AudienceFaceExpression[] = useAppSelector(
-    selectActiveMeetingAudienceFaceExpressions
+  const expression: AudienceFaceExpression | undefined = useAppSelector(
+    selectActiveMeetingAudienceFaceExpressionsCurrentScore
   );
 
   // Popover
@@ -54,9 +54,9 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
           >
             <Box p={2}>
               <Typography variant="body2">
-                Shows the emotions by the audience for any given point in time
-                on a range from -1 (negative) to +1 (positive). Emotion data is
-                tracked every second.
+                Shows the currently active emotions by the audience on a range
+                from -1 (negative) to +1 (positive). When the meeting has ended,
+                it shows the last recognized emotion.
               </Typography>
             </Box>
           </Popover>
@@ -67,12 +67,11 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
           displayModeBar: false,
         }}
         layout={{
-          title: "Emotion Rollercoaster",
+          title: "Emotion Barometer",
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
-          hoverlabel: {
-            bgcolor: theme.palette.primary.main,
-          },
+          hovermode: false,
+          width: 300,
           margin: {
             l: 30,
             r: 10,
@@ -93,11 +92,9 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
         }}
         data={[
           {
-            x: expressions.map((e) => new Date(e.timestamp)),
-            y: expressions.map((e) => e.score),
-            type: "scatter",
-            mode: "lines",
-            line: { color: theme.palette.primary.main },
+            x: ["Score"],
+            y: [expression?.score || 0.0],
+            type: "bar",
           },
         ]}
       />
