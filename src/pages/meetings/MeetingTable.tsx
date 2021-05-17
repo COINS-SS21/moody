@@ -15,6 +15,7 @@ import { removeMeeting, selectAllMeetings } from "../../meetings/meetingsSlice";
 import { useCallback, useState } from "react";
 import { red } from "@material-ui/core/colors";
 import { Meeting } from "../../models";
+import { formatDistance } from "date-fns";
 
 export default function MeetingTable(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -68,15 +69,27 @@ export default function MeetingTable(): JSX.Element {
         rows={meetings.map((meeting) => ({
           id: meeting.id,
           name: meeting.name,
+          duration:
+            !!meeting.startedAt && !!meeting.stoppedAt
+              ? formatDistance(
+                  new Date(meeting.stoppedAt).getTime(),
+                  new Date(meeting.startedAt).getTime()
+                )
+              : "Not yet finished",
           createdAt: new Date(meeting.createdAt!),
         }))}
         columns={[
           { field: "name", headerName: "Meeting name", width: 300 },
           {
+            field: "duration",
+            headerName: "Duration",
+            width: 150,
+          },
+          {
             field: "createdAt",
             headerName: "Creation date",
             type: "dateTime",
-            width: 200,
+            width: 175,
           },
           {
             field: "id",
