@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { AudienceFaceExpression } from "../../models";
 import { useAppSelector } from "../../reduxHooks";
-import { selectActiveMeetingAudienceFaceExpressionsCurrentScore } from "../../faceRecognition/audienceFaceExpressionSlice";
+import { selectActiveMeetingAudienceFaceExpressionsCurrentScore } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";

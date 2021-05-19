@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
 import { useEffect, useRef, useState } from "react";
-import ScreenCaptureService from "../../screensharing/ScreenCaptureService";
+import ScreenCaptureService from "../../media/ScreenCaptureService";
 import {
   activeMeetingEnded,
   activeMeetingRunning,
@@ -10,9 +10,9 @@ import {
 } from "../../meetings/meetingsSlice";
 import { Meeting as MeetingModel } from "../../models";
 import { unwrapResult } from "@reduxjs/toolkit";
-import FaceRecognitionService from "../../faceRecognition/FaceRecognitionService";
-import { addFaceExpressionScore } from "../../faceRecognition/audienceFaceExpressionSlice";
-import { aggregateAndCalculateExpressionScore } from "../../faceRecognition/utils";
+import FaceRecognitionService from "../../meetings/FaceRecognitionService";
+import { addFaceExpressionScore } from "../../meetings/audienceFaceExpressionSlice";
+import { aggregateAndCalculateExpressionScore } from "../../meetings/utils";
 
 export function useScreenCapturingIfMeetingIsRunning(
   videoRef: React.MutableRefObject<HTMLVideoElement | null>,

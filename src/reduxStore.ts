@@ -3,7 +3,7 @@ import counterReducer from "./counter/counterSlice";
 import errorReducer from "./error/errorSlice";
 import authReducer from "./auth/authSlice";
 import meetingsReducer from "./meetings/meetingsSlice";
-import audienceFaceExpressionsReducer from "./faceRecognition/audienceFaceExpressionSlice";
+import audienceFaceExpressionsReducer from "./meetings/audienceFaceExpressionSlice";
 import logger from "redux-logger";
 import { immerable } from "immer";
 

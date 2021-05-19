@@ -1,6 +1,6 @@
 import { useAppSelector } from "../../reduxHooks";
 import { AudienceFaceExpression } from "../../models";
-import { selectActiveMeetingAudienceFaceExpressions } from "../../faceRecognition/audienceFaceExpressionSlice";
+import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import {
   Box,

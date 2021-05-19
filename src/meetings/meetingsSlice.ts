@@ -13,7 +13,7 @@ import { createModelFromPlain } from "../models/utils";
 import {
   deleteAudienceFaceExpressions,
   fetchAudienceFaceExpressions,
-} from "../faceRecognition/audienceFaceExpressionSlice";
+} from "./audienceFaceExpressionSlice";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",

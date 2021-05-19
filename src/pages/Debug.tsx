@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import FrequencyBar from "../audio/FrequencyBar";
+import FrequencyBar from "../media/FrequencyBar";
 import Counter from "../counter/Counter";
 import { Box, Button, Container, Typography } from "@material-ui/core";
-import ScreenCapture from "../screensharing/ScreenCapture";
+import ScreenCapture from "../media/ScreenCapture";
 import { GoogleChromeIcon } from "../components/GoogleChromeIcon";
 import Page from "../components/Page";
 
