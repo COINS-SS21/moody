@@ -1,4 +1,10 @@
-type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @auth(rules: [{allow: owner}]) {
+type Rating @model @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read]}, {allow: public, operations: [create], provider: iam}]) {
+  id: ID!
+  overallStars: Int!
+  meetingID: ID
+}
+
+type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
   id: ID!
   name: String!
   AudienceFaceExpressions: [AudienceFaceExpression] @connection(keyName: "byMeeting", fields: ["id"])
@@ -6,14 +12,14 @@ type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}
   stoppedAt: AWSDateTime
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+  Ratings: [Rating] @connection(keyName: "byMeeting", fields: ["id"])
 }
 
-type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner}]) {
+type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
   id: ID!
   timestamp: AWSTimestamp!
   score: Float!
   meetingID: ID!
-  Meeting: Meeting @connection
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }

@@ -2,6 +2,6 @@
 import { initSchema } from "@aws-amplify/datastore";
 import { schema } from "./schema";
 
-const { Meeting, AudienceFaceExpression } = initSchema(schema);
+const { Rating, Meeting, AudienceFaceExpression } = initSchema(schema);
 
-export { Meeting, AudienceFaceExpression };
+export { Rating, Meeting, AudienceFaceExpression };

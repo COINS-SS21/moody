@@ -1,5 +1,65 @@
 export const schema = {
   models: {
+    Rating: {
+      name: "Rating",
+      fields: {
+        id: {
+          name: "id",
+          isArray: false,
+          type: "ID",
+          isRequired: true,
+          attributes: [],
+        },
+        overallStars: {
+          name: "overallStars",
+          isArray: false,
+          type: "Int",
+          isRequired: true,
+          attributes: [],
+        },
+        meetingID: {
+          name: "meetingID",
+          isArray: false,
+          type: "ID",
+          isRequired: false,
+          attributes: [],
+        },
+      },
+      syncable: true,
+      pluralName: "Ratings",
+      attributes: [
+        {
+          type: "model",
+          properties: {},
+        },
+        {
+          type: "key",
+          properties: {
+            name: "byMeeting",
+            fields: ["meetingID"],
+          },
+        },
+        {
+          type: "auth",
+          properties: {
+            rules: [
+              {
+                provider: "userPools",
+                ownerField: "owner",
+                allow: "owner",
+                operations: ["read"],
+                identityClaim: "cognito:username",
+              },
+              {
+                allow: "public",
+                operations: ["create"],
+                provider: "iam",
+              },
+            ],
+          },
+        },
+      ],
+    },
     Meeting: {
       name: "Meeting",
       fields: {
@@ -59,6 +119,20 @@ export const schema = {
           isRequired: false,
           attributes: [],
         },
+        Ratings: {
+          name: "Ratings",
+          isArray: true,
+          type: {
+            model: "Rating",
+          },
+          isRequired: false,
+          attributes: [],
+          isArrayNullable: true,
+          association: {
+            connectionType: "HAS_MANY",
+            associatedWith: "meetingID",
+          },
+        },
       },
       syncable: true,
       pluralName: "Meetings",
@@ -77,9 +151,11 @@ export const schema = {
           properties: {
             rules: [
               {
-                allow: "public",
-                provider: "iam",
-                operations: ["create", "update", "delete", "read"],
+                provider: "userPools",
+                ownerField: "owner",
+                allow: "owner",
+                operations: ["read", "create", "update", "delete"],
+                identityClaim: "cognito:username",
               },
             ],
           },
@@ -116,19 +192,6 @@ export const schema = {
           type: "ID",
           isRequired: true,
           attributes: [],
-        },
-        Meeting: {
-          name: "Meeting",
-          isArray: false,
-          type: {
-            model: "Meeting",
-          },
-          isRequired: false,
-          attributes: [],
-          association: {
-            connectionType: "BELONGS_TO",
-            targetName: "audienceFaceExpressionMeetingId",
-          },
         },
         createdAt: {
           name: "createdAt",
@@ -169,9 +232,11 @@ export const schema = {
           properties: {
             rules: [
               {
-                allow: "public",
-                provider: "iam",
-                operations: ["create", "update", "delete", "read"],
+                provider: "userPools",
+                ownerField: "owner",
+                allow: "owner",
+                operations: ["read", "create", "update", "delete"],
+                identityClaim: "cognito:username",
               },
             ],
           },
@@ -181,5 +246,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "a3d0640b6fb47a6689d1dc12b7a50e4f",
+  version: "cac8cc086171e3869d356e3f623cec2b",
 };
