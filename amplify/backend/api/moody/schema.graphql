@@ -1,4 +1,4 @@
-type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
+type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @auth(rules: [{allow: owner}]) {
   id: ID!
   name: String!
   AudienceFaceExpressions: [AudienceFaceExpression] @connection(keyName: "byMeeting", fields: ["id"])
@@ -8,7 +8,7 @@ type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}
   updatedAt: AWSDateTime
 }
 
-type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
+type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner}]) {
   id: ID!
   timestamp: AWSTimestamp!
   score: Float!
@@ -17,4 +17,3 @@ type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedA
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
- 

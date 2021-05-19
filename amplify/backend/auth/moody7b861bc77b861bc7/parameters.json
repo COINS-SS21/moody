@@ -1,6 +1,6 @@
 {
-    "identityPoolName": "moody7b861bc7_identitypool_7b861bc7",
-    "allowUnauthenticatedIdentities": false,
+    "identityPoolName": "moody73f8c864_identitypool_73f8c864",
+    "allowUnauthenticatedIdentities": true,
     "resourceNameTruncated": "moody7b861bc7",
     "userPoolName": "moody7b861bc7_userpool_7b861bc7",
     "autoVerifiedAttributes": [
@@ -47,7 +47,6 @@
         ]
     },
     "useDefault": "manual",
-    "thirdPartyAuth": false,
     "usernameAttributes": [
         "email"
     ],
@@ -62,5 +61,8 @@
         "Ref": "AWS::StackId"
     },
     "permissions": [],
-    "dependsOn": []
+    "dependsOn": [],
+    "breakCircularDependency": false,
+    "authProviders": [],
+    "thirdPartyAuth": false
 }

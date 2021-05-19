@@ -77,11 +77,9 @@ export const schema = {
           properties: {
             rules: [
               {
-                provider: "userPools",
-                ownerField: "owner",
-                allow: "owner",
-                operations: ["read", "create", "update", "delete"],
-                identityClaim: "cognito:username",
+                allow: "public",
+                provider: "iam",
+                operations: ["create", "update", "delete", "read"],
               },
             ],
           },
@@ -171,11 +169,9 @@ export const schema = {
           properties: {
             rules: [
               {
-                provider: "userPools",
-                ownerField: "owner",
-                allow: "owner",
-                operations: ["read", "create", "update", "delete"],
-                identityClaim: "cognito:username",
+                allow: "public",
+                provider: "iam",
+                operations: ["create", "update", "delete", "read"],
               },
             ],
           },

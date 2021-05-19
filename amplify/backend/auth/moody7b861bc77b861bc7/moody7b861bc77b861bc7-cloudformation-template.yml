@@ -8,169 +8,177 @@ Parameters:
   unauthRoleArn:
     Type: String
 
-  
 
-    
+
+
   identityPoolName:
     Type: String
-  
-            
-  
+
+
+
   allowUnauthenticatedIdentities:
     Type: String
-            
+
   resourceNameTruncated:
     Type: String
-  
-            
+
+
   userPoolName:
     Type: String
-  
-            
-        
+
+
+
   autoVerifiedAttributes:
     Type: CommaDelimitedList
-      
+
   mfaConfiguration:
     Type: String
-  
-            
-        
+
+
+
   mfaTypes:
     Type: CommaDelimitedList
-      
+
   smsAuthenticationMessage:
     Type: String
-  
-            
+
+
   smsVerificationMessage:
     Type: String
-  
-            
+
+
   emailVerificationSubject:
     Type: String
-  
-            
+
+
   emailVerificationMessage:
     Type: String
-  
-            
-  
+
+
+
   defaultPasswordPolicy:
     Type: String
-            
-    
+
+
   passwordPolicyMinLength:
     Type: Number
-          
-        
+
+
   passwordPolicyCharacters:
     Type: CommaDelimitedList
-      
-        
+
+
   requiredAttributes:
     Type: CommaDelimitedList
-      
-  
+
+
   userpoolClientGenerateSecret:
     Type: String
-            
-    
+
+
   userpoolClientRefreshTokenValidity:
     Type: Number
-          
-        
+
+
   userpoolClientWriteAttributes:
     Type: CommaDelimitedList
-      
-        
+
+
   userpoolClientReadAttributes:
     Type: CommaDelimitedList
-      
+
   userpoolClientLambdaRole:
     Type: String
-  
-            
-  
+
+
+
   userpoolClientSetAttributes:
     Type: String
-            
+
   sharedId:
     Type: String
-  
-            
+
+
   resourceName:
     Type: String
-  
-            
+
+
   authSelections:
     Type: String
-  
-            
-            
-            
+
+
+
+
   useDefault:
     Type: String
-  
-            
-  
-  thirdPartyAuth:
-    Type: String
-            
-        
+
+
+
   usernameAttributes:
     Type: CommaDelimitedList
-      
-  
+
+
   userPoolGroups:
     Type: String
-            
-  
+
+
   adminQueries:
     Type: String
-            
+
   triggers:
     Type: String
-  
-            
-  
+
+
+
   hostedUI:
     Type: String
-            
-        
+
+
   userPoolGroupList:
     Type: CommaDelimitedList
-      
-            
+
   serviceName:
     Type: String
-  
-            
-  
+
+
+
   usernameCaseSensitive:
     Type: String
-            
-      
+
+
   parentStack:
     Type: String
-        
-        
+
+
   permissions:
     Type: CommaDelimitedList
-      
-        
+
+
   dependsOn:
     Type: CommaDelimitedList
-      
+
+
+  breakCircularDependency:
+    Type: String
+
+
+  authProviders:
+    Type: CommaDelimitedList
+
+
+  thirdPartyAuth:
+    Type: String
+
+
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
-  
+
   ShouldOutputAppClientSecrets: !Equals [!Ref userpoolClientGenerateSecret, true ]
-  
+
 
 Resources:
-  
-  
+
+
   # BEGIN SNS ROLE RESOURCE
   SNSRole:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
@@ -208,32 +216,42 @@ Resources:
     UpdateReplacePolicy: Retain
     Properties:
       UserPoolName: !If [ShouldNotCreateEnvResources, !Ref userPoolName, !Join ['',[!Ref userPoolName, '-', !Ref env]]]
-      
-      
+
+
       UsernameConfiguration:
         CaseSensitive: false
-      
+
       Schema:
-        
+
         -
           Name: email
           Required: true
           Mutable: true
-        
+
         -
           Name: name
           Required: true
           Mutable: true
-        
-      
-      
-      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
-      
-      
+
+
       EmailVerificationMessage: !Ref emailVerificationMessage
       EmailVerificationSubject: !Ref emailVerificationSubject
-      
+
       Policies:
         PasswordPolicy:
           MinimumLength: !Ref passwordPolicyMinLength
@@ -241,36 +259,36 @@ Resources:
           RequireNumbers: false
           RequireSymbols: false
           RequireUppercase: false
-      
+
       UsernameAttributes: !Ref usernameAttributes
-      
+
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsAuthenticationMessage: !Ref smsAuthenticationMessage
       SmsConfiguration:
         SnsCallerArn: !GetAtt SNSRole.Arn
         ExternalId: moody7b861bc7_role_external_id
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
   # Updating lambda role with permissions to Cognito
-  
-  
+
+
   UserPoolClientWeb:
   # Created provide application access to user pool
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
       ClientName: moody7b861bc7_app_clientWeb
-      
+
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
     DependsOn: UserPool
@@ -280,7 +298,7 @@ Resources:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
       ClientName: moody7b861bc7_app_client
-      
+
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -387,22 +405,22 @@ Resources:
       clientId: !Ref UserPoolClient
       userpoolId: !Ref UserPool
     DependsOn: UserPoolClientLogPolicy
-  
 
-  
-  
 
-  
-    
+
+
+
+
+
   # BEGIN IDENTITY POOL RESOURCES
-  
+
 
   IdentityPool:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties:
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'moody7b861bc7_identitypool_7b861bc7', !Join ['',['moody7b861bc7_identitypool_7b861bc7', '__', !Ref env]]]
-      
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'moody73f8c864_identitypool_73f8c864', !Join ['',['moody73f8c864_identitypool_73f8c864', '__', !Ref env]]]
+
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient
           ProviderName: !Sub
@@ -412,12 +430,12 @@ Resources:
           ProviderName: !Sub
             - cognito-idp.${region}.amazonaws.com/${client}
             - { region: !Ref "AWS::Region",  client: !Ref UserPool}
-            
+
       AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
-      
-    
+
+
     DependsOn: UserPoolClientInputs
-    
+
 
   IdentityPoolRoleMap:
   # Created to map Auth and Unauth roles to the identity pool
@@ -429,22 +447,25 @@ Resources:
           unauthenticated: !Ref unauthRoleArn
           authenticated: !Ref authRoleArn
     DependsOn: IdentityPool
-  
+
 
 Outputs :
-  
+
   IdentityPoolId:
     Value: !Ref 'IdentityPool'
     Description:  Id for the identity pool
   IdentityPoolName:
     Value: !GetAtt IdentityPool.Name
-  
-  
-  
-  
+
+
+
+
   UserPoolId:
     Value: !Ref 'UserPool'
     Description:  Id for the user pool
+  UserPoolArn:
+    Value: !GetAtt UserPool.Arn
+    Description:  Arn for the user pool
   UserPoolName:
     Value: !Ref userPoolName
   AppClientIDWeb:
@@ -456,10 +477,11 @@ Outputs :
   AppClientSecret:
     Value: !GetAtt UserPoolClientInputs.appSecret
     Condition: ShouldOutputAppClientSecrets
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
