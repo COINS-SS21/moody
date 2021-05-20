@@ -1,5 +1,77 @@
 export const schema = {
   models: {
+    PublicMeetingInfo: {
+      name: "PublicMeetingInfo",
+      fields: {
+        id: {
+          name: "id",
+          isArray: false,
+          type: "ID",
+          isRequired: true,
+          attributes: [],
+        },
+        name: {
+          name: "name",
+          isArray: false,
+          type: "String",
+          isRequired: true,
+          attributes: [],
+        },
+        startedAt: {
+          name: "startedAt",
+          isArray: false,
+          type: "AWSDateTime",
+          isRequired: true,
+          attributes: [],
+        },
+        stoppedAt: {
+          name: "stoppedAt",
+          isArray: false,
+          type: "AWSDateTime",
+          isRequired: true,
+          attributes: [],
+        },
+        owner: {
+          name: "owner",
+          isArray: false,
+          type: "ID",
+          isRequired: false,
+          attributes: [],
+        },
+      },
+      syncable: true,
+      pluralName: "PublicMeetingInfos",
+      attributes: [
+        {
+          type: "model",
+          properties: {
+            queries: {
+              list: null,
+              get: "getPublicMeetingInfo",
+            },
+          },
+        },
+        {
+          type: "auth",
+          properties: {
+            rules: [
+              {
+                provider: "userPools",
+                ownerField: "owner",
+                allow: "owner",
+                operations: ["read", "create", "update", "delete"],
+                identityClaim: "cognito:username",
+              },
+              {
+                allow: "public",
+                operations: ["read"],
+                provider: "iam",
+              },
+            ],
+          },
+        },
+      ],
+    },
     Rating: {
       name: "Rating",
       fields: {
@@ -17,11 +89,18 @@ export const schema = {
           isRequired: true,
           attributes: [],
         },
-        meetingID: {
-          name: "meetingID",
+        owner: {
+          name: "owner",
           isArray: false,
           type: "ID",
           isRequired: false,
+          attributes: [],
+        },
+        publicmeetinginfoID: {
+          name: "publicmeetinginfoID",
+          isArray: false,
+          type: "ID",
+          isRequired: true,
           attributes: [],
         },
       },
@@ -31,13 +110,6 @@ export const schema = {
         {
           type: "model",
           properties: {},
-        },
-        {
-          type: "key",
-          properties: {
-            name: "byMeeting",
-            fields: ["meetingID"],
-          },
         },
         {
           type: "auth",
@@ -119,18 +191,17 @@ export const schema = {
           isRequired: false,
           attributes: [],
         },
-        Ratings: {
-          name: "Ratings",
-          isArray: true,
+        PublicMeetingInfo: {
+          name: "PublicMeetingInfo",
+          isArray: false,
           type: {
-            model: "Rating",
+            model: "PublicMeetingInfo",
           },
           isRequired: false,
           attributes: [],
-          isArrayNullable: true,
           association: {
-            connectionType: "HAS_MANY",
-            associatedWith: "meetingID",
+            connectionType: "BELONGS_TO",
+            targetName: "meetingPublicMeetingInfoId",
           },
         },
       },
@@ -246,5 +317,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "cac8cc086171e3869d356e3f623cec2b",
+  version: "bbdd91c1d47cdec2206f40b9ac55fbfe",
 };

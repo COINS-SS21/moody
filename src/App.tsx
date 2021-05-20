@@ -14,6 +14,7 @@ import Meetings from "./pages/meetings/Meetings";
 import Login from "./pages/Login";
 import { useEffect } from "react";
 import { syncUserWithRedux } from "./auth/utils";
+import Feedback from "./pages/feedback/Feedback";
 
 function PrivateApp(): JSX.Element {
   return (
@@ -47,6 +48,9 @@ function PublicApp(): JSX.Element {
         </Route>
         <Route exact path="/login">
           <Login />
+        </Route>
+        <Route exact path="/feedback/:publicMeetingId">
+          <Feedback />
         </Route>
         <Redirect to="/" />
       </Switch>

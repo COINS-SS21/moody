@@ -8,7 +8,7 @@ import {
 } from "@reduxjs/toolkit";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
-import { AudienceFaceExpression, Meeting } from "../models";
+import { AudienceFaceExpression, Meeting, PublicMeetingInfo } from "../models";
 import { createModelFromPlain } from "../models/utils";
 import {
   deleteAudienceFaceExpressions,
@@ -116,6 +116,37 @@ export const stopMeeting = createAsyncThunk(
   }
 );
 
+export const createFeedbackLink = createAsyncThunk(
+  "meetings/createFeedbackLink",
+  async (_, { getState }) => {
+    const state: RootState = getState() as RootState;
+    const activeMeetingId: string | null = state.meetings.activeMeeting;
+
+    if (activeMeetingId) {
+      const activeMeeting: Meeting = selectMeetingById(state, activeMeetingId)!;
+      if (!activeMeeting.startedAt || !activeMeeting.stoppedAt) {
+        throw new Error(
+          "You can only create feedback links once the meeting has finished."
+        );
+      }
+
+      // Create a PublicMeetingInfo model which will serve as read-only model for guest users in order to give feedback
+      return (await DataStore.save(
+        Meeting.copyOf(
+          createModelFromPlain(Meeting, activeMeeting),
+          (meeting) => {
+            meeting.PublicMeetingInfo = new PublicMeetingInfo({
+              name: activeMeeting.name,
+              startedAt: activeMeeting.startedAt!,
+              stoppedAt: activeMeeting.stoppedAt!,
+            });
+          }
+        )
+      )) as Meeting;
+    }
+  }
+);
+
 const meetingsAdapter = createEntityAdapter<Meeting>({
   sortComparer: (a: Meeting, b: Meeting) =>
     new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
@@ -198,6 +229,16 @@ export const meetingsSlice = createSlice({
             },
           });
         }
+      })
+      .addCase(createFeedbackLink.fulfilled, (state, { payload }) => {
+        if (payload) {
+          meetingsAdapter.updateOne(state, {
+            id: payload.id,
+            changes: {
+              PublicMeetingInfo: payload.PublicMeetingInfo,
+            },
+          });
+        }
       });
   },
 });
@@ -231,6 +272,15 @@ export const activeMeetingEnded = createSelector(
       !!activeMeeting.startedAt &&
       !!activeMeeting.stoppedAt
     );
+  }
+);
+
+export const selectActiveMeetingFeedbackLinkId = createSelector(
+  selectActiveMeeting,
+  (activeMeeting: Meeting | undefined) => {
+    if (activeMeeting) {
+      return activeMeeting.PublicMeetingInfo?.id;
+    }
   }
 );
 

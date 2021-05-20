@@ -2,6 +2,7 @@ import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { fetchAllCounters } from "../counter/counterSlice";
 import {
   addMeeting,
+  createFeedbackLink,
   fetchAllMeetings,
   fetchMeeting,
   removeMeeting,
@@ -46,6 +47,7 @@ const errorSlice = createSlice({
     builder.addCase(fetchMeeting.rejected, addErrorReducer);
     builder.addCase(startMeeting.rejected, addErrorReducer);
     builder.addCase(stopMeeting.rejected, addErrorReducer);
+    builder.addCase(createFeedbackLink.rejected, addErrorReducer);
   },
 });
 

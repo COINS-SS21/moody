@@ -4,10 +4,26 @@ import {
   PersistentModelConstructor,
 } from "@aws-amplify/datastore";
 
+export declare class PublicMeetingInfo {
+  readonly id: string;
+  readonly name: string;
+  readonly startedAt: string;
+  readonly stoppedAt: string;
+  readonly owner?: string;
+  constructor(init: ModelInit<PublicMeetingInfo>);
+  static copyOf(
+    source: PublicMeetingInfo,
+    mutator: (
+      draft: MutableModel<PublicMeetingInfo>
+    ) => MutableModel<PublicMeetingInfo> | void
+  ): PublicMeetingInfo;
+}
+
 export declare class Rating {
   readonly id: string;
   readonly overallStars: number;
-  readonly meetingID?: string;
+  readonly owner?: string;
+  readonly publicmeetinginfoID: string;
   constructor(init: ModelInit<Rating>);
   static copyOf(
     source: Rating,
@@ -23,7 +39,7 @@ export declare class Meeting {
   readonly stoppedAt?: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
-  readonly Ratings?: (Rating | null)[];
+  readonly PublicMeetingInfo?: PublicMeetingInfo;
   constructor(init: ModelInit<Meeting>);
   static copyOf(
     source: Meeting,

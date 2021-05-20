@@ -29,6 +29,7 @@ import {
   useMeetingInformation,
   useScreenCapturingIfMeetingIsRunning,
 } from "./hooks";
+import CreateFeedbackLinkButton from "./CreateFeedbackLinkButton";
 
 export default function Meeting(): JSX.Element {
   const { id } = useParams() as any;
@@ -94,9 +95,12 @@ export default function Meeting(): JSX.Element {
           <>
             <Typography variant="h1">{meetingName}</Typography>
             {meetingEnded ? (
-              <Typography variant="h5" paragraph>
-                This meeting has ended and cannot be started again. 👏
-              </Typography>
+              <>
+                <Typography variant="h5">
+                  This meeting has ended and cannot be started again. 👏
+                </Typography>
+                <CreateFeedbackLinkButton />
+              </>
             ) : (
               <Button
                 color={meetingRunning ? "secondary" : "primary"}
