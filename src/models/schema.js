@@ -34,7 +34,7 @@ export const schema = {
         owner: {
           name: "owner",
           isArray: false,
-          type: "ID",
+          type: "String",
           isRequired: false,
           attributes: [],
         },
@@ -44,12 +44,7 @@ export const schema = {
       attributes: [
         {
           type: "model",
-          properties: {
-            queries: {
-              list: null,
-              get: "getPublicMeetingInfo",
-            },
-          },
+          properties: {},
         },
         {
           type: "auth",
@@ -92,7 +87,7 @@ export const schema = {
         owner: {
           name: "owner",
           isArray: false,
-          type: "ID",
+          type: "String",
           isRequired: false,
           attributes: [],
         },
@@ -317,5 +312,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "bbdd91c1d47cdec2206f40b9ac55fbfe",
+  version: "4c7fecedf7a1f2c1fbf8fa96bd7c88fd",
 };

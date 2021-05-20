@@ -26,6 +26,7 @@ export const fetchMeeting = createAsyncThunk(
   "meetings/fetchOne",
   async (id: string, { dispatch }) => {
     const meeting = await DataStore.query(Meeting, id);
+
     if (meeting) {
       // Fetch corresponding AudienceFaceExpressions
       const audienceFaceExpressions = (
@@ -65,6 +66,10 @@ export const removeMeeting = createAsyncThunk(
           ).map((a) => a.id)
         )
       );
+
+      // TODO: Delete Ratings here as well
+      // TODO: Delete public meeting here as well
+
       return (await DataStore.delete(meetingToDelete)) as Meeting;
     }
   }

@@ -1,15 +1,15 @@
-type PublicMeetingInfo @model(queries: {list: null, get: "getPublicMeetingInfo"}) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}, {allow: public, operations: [read], provider: iam}]) {
+type PublicMeetingInfo @model @auth(rules: [{allow: owner, operations: [read, create, update, delete]}, {allow: public, operations: [read], provider: iam}]) {
   id: ID!
   name: String!
   startedAt: AWSDateTime!
   stoppedAt: AWSDateTime!
-  owner: ID
+  owner: String
 }
 
 type Rating @model @auth(rules: [{allow: owner, operations: [read]}, {allow: public, operations: [create], provider: iam}]) {
   id: ID!
   overallStars: Int!
-  owner: ID
+  owner: String
   publicmeetinginfoID: ID!
 }
 

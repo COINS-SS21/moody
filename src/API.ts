@@ -285,7 +285,7 @@ export type ModelPublicMeetingInfoFilterInput = {
   name?: ModelStringInput | null;
   startedAt?: ModelStringInput | null;
   stoppedAt?: ModelStringInput | null;
-  owner?: ModelIDInput | null;
+  owner?: ModelStringInput | null;
   and?: Array<ModelPublicMeetingInfoFilterInput | null> | null;
   or?: Array<ModelPublicMeetingInfoFilterInput | null> | null;
   not?: ModelPublicMeetingInfoFilterInput | null;
@@ -301,7 +301,7 @@ export type ModelPublicMeetingInfoConnection = {
 export type ModelRatingFilterInput = {
   id?: ModelIDInput | null;
   overallStars?: ModelIntInput | null;
-  owner?: ModelIDInput | null;
+  owner?: ModelStringInput | null;
   publicmeetinginfoID?: ModelIDInput | null;
   and?: Array<ModelRatingFilterInput | null> | null;
   or?: Array<ModelRatingFilterInput | null> | null;
@@ -705,6 +705,33 @@ export type GetPublicMeetingInfoQuery = {
     _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
+  } | null;
+};
+
+export type ListPublicMeetingInfosQueryVariables = {
+  filter?: ModelPublicMeetingInfoFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+};
+
+export type ListPublicMeetingInfosQuery = {
+  listPublicMeetingInfos?: {
+    __typename: "ModelPublicMeetingInfoConnection";
+    items?: Array<{
+      __typename: "PublicMeetingInfo";
+      id: string;
+      name: string;
+      startedAt: string;
+      stoppedAt: string;
+      owner?: string | null;
+      _version: number;
+      _deleted?: boolean | null;
+      _lastChangedAt: number;
+      createdAt: string;
+      updatedAt: string;
+    } | null> | null;
+    nextToken?: string | null;
+    startedAt?: number | null;
   } | null;
 };
 

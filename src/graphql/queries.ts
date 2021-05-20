@@ -18,6 +18,34 @@ export const getPublicMeetingInfo = /* GraphQL */ `
     }
   }
 `;
+export const listPublicMeetingInfos = /* GraphQL */ `
+  query ListPublicMeetingInfos(
+    $filter: ModelPublicMeetingInfoFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPublicMeetingInfos(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        name
+        startedAt
+        stoppedAt
+        owner
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const syncPublicMeetingInfos = /* GraphQL */ `
   query SyncPublicMeetingInfos(
     $filter: ModelPublicMeetingInfoFilterInput
