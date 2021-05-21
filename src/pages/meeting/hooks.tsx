@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ScreenCaptureService from "../../media/ScreenCaptureService";
 import {
   activeMeetingEnded,
@@ -15,37 +15,48 @@ import { addFaceExpressionScore } from "../../meetings/audienceFaceExpressionSli
 import { aggregateAndCalculateExpressionScore } from "../../meetings/utils";
 import { addError } from "../../error/errorSlice";
 
+// Returns a callback to start the screen capturing and automatically cleans up the react components.
+// Does nothing if the meeting is stopped.
+// Note: In Safari you must start a screen capturing from a user gesture handler. This means that
+// you cannot ask for permissions immediately after loading the page. The user must explicitly click a button
+// to agree that he will be asked for permission.
 export function useScreenCapturingIfMeetingIsRunning(
   videoRef: React.MutableRefObject<HTMLVideoElement | null>,
   handleStopMeeting: () => void
-): void {
+): () => void {
   const dispatch = useAppDispatch();
   const screenCaptureServiceRef = useRef<ScreenCaptureService>();
   const meetingRunning = useAppSelector(activeMeetingRunning);
 
-  useEffect(() => {
+  const startScreenCapturing = useCallback(async () => {
     if (meetingRunning) {
-      const startScreenCapturing = async () => {
-        try {
-          screenCaptureServiceRef.current = new ScreenCaptureService();
-          await screenCaptureServiceRef.current.startCapturing();
-          await screenCaptureServiceRef.current.attachStreamToVideo(
-            videoRef.current!
-          );
-          screenCaptureServiceRef.current.mediaStream
-            .getTracks()[0]
-            .addEventListener("ended", handleStopMeeting);
-        } catch (e) {
-          dispatch(addError("Cannot start screen capturing: " + e.message));
-        }
-      };
-      startScreenCapturing();
+      try {
+        screenCaptureServiceRef.current = new ScreenCaptureService();
+        await screenCaptureServiceRef.current.startCapturing();
+        await screenCaptureServiceRef.current.attachStreamToVideo(
+          videoRef.current!
+        );
+        screenCaptureServiceRef.current.mediaStream
+          .getTracks()[0]
+          .addEventListener("ended", handleStopMeeting);
+      } catch (e) {
+        dispatch(addError("Cannot start screen capturing: " + e.message));
+      }
     }
+  }, [dispatch, handleStopMeeting, meetingRunning, videoRef]);
 
+  const stopScreenCapturing = useCallback(() => {
+    screenCaptureServiceRef.current?.stopCapturing();
+  }, []);
+
+  // Cleanup function
+  useEffect(() => {
     return () => {
       screenCaptureServiceRef.current?.stopCapturing();
     };
-  }, [dispatch, handleStopMeeting, meetingRunning, videoRef]);
+  }, [stopScreenCapturing, meetingRunning]);
+
+  return startScreenCapturing;
 }
 
 export function useEmotionDetection(

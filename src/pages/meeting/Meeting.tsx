@@ -30,6 +30,7 @@ import {
   useScreenCapturingIfMeetingIsRunning,
 } from "./hooks";
 import FeedbackLinkButton from "./FeedbackLinkButton";
+import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
 
 export default function Meeting(): JSX.Element {
   const { id } = useParams() as any;
@@ -49,7 +50,10 @@ export default function Meeting(): JSX.Element {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  useScreenCapturingIfMeetingIsRunning(videoRef, handleStopMeeting);
+  const handleStartScreenCapturing = useScreenCapturingIfMeetingIsRunning(
+    videoRef,
+    handleStopMeeting
+  );
   useEmotionDetection(videoRef, canvasRef);
 
   const [tabValue, setTabValue] = useState<string>("1");
@@ -102,17 +106,22 @@ export default function Meeting(): JSX.Element {
                 <FeedbackLinkButton />
               </>
             ) : (
-              <Button
-                color={meetingRunning ? "secondary" : "primary"}
-                variant="contained"
-                size="large"
-                startIcon={meetingRunning ? <Stop /> : <PlayArrow />}
-                onClick={
-                  meetingRunning ? handleStopMeeting : handleStartMeeting
-                }
-              >
-                {meetingRunning ? "Stop" : "Start"} the meeting
-              </Button>
+              <>
+                <StartScreenCapturingDialog
+                  handleStartScreenCapturing={handleStartScreenCapturing}
+                />
+                <Button
+                  color={meetingRunning ? "secondary" : "primary"}
+                  variant="contained"
+                  size="large"
+                  startIcon={meetingRunning ? <Stop /> : <PlayArrow />}
+                  onClick={
+                    meetingRunning ? handleStopMeeting : handleStartMeeting
+                  }
+                >
+                  {meetingRunning ? "Stop" : "Start"} the meeting
+                </Button>
+              </>
             )}
             <Box mt={2}>
               <TabContext value={tabValue}>
