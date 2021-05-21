@@ -9,6 +9,7 @@ import {
   Feedback,
   FileCopy,
   HourglassEmpty,
+  Security,
   Visibility,
 } from "@material-ui/icons";
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
@@ -20,10 +21,11 @@ import {
 import SimpleDialog from "../../components/SimpleDialog";
 import { useState } from "react";
 import clipboardCopy from "clipboard-copy";
-import { differenceInMinutes } from "date-fns";
+import { addMinutes, differenceInMinutes, formatDistanceToNow } from "date-fns";
 import { EXPIRATION_MINUTES } from "../feedback/constants";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
-export default function CreateFeedbackLinkButton(): JSX.Element {
+export default function FeedbackLinkButton(): JSX.Element {
   const dispatch = useAppDispatch();
   const feedbackLinkId: string | undefined = useAppSelector(
     selectActiveMeetingFeedbackLinkId
@@ -53,6 +55,16 @@ export default function CreateFeedbackLinkButton(): JSX.Element {
           header="Feedback link"
           body={
             <>
+              <Box mb={1}>
+                <Alert severity="info" icon={<Security />}>
+                  <AlertTitle>Privacy information</AlertTitle>
+                  <Typography variant="body1">
+                    The meeting name and the meeting end date will be visible to
+                    the user. Your personal information and all other
+                    information related to this meeting stay private.
+                  </Typography>
+                </Alert>
+              </Box>
               <Typography variant="body1">
                 <strong>
                   Share this link with your audience to gather feedback:
@@ -62,7 +74,7 @@ export default function CreateFeedbackLinkButton(): JSX.Element {
                 border={1}
                 borderColor="primary.main"
                 p={1}
-                mt={1}
+                my={1}
                 borderRadius={4}
                 display="flex"
                 alignItems="center"
@@ -76,6 +88,18 @@ export default function CreateFeedbackLinkButton(): JSX.Element {
                   </Tooltip>
                 </Box>
               </Box>
+              <Typography variant="body2">
+                The link expires in{" "}
+                <strong>
+                  {formatDistanceToNow(
+                    addMinutes(
+                      new Date(activeMeetingStoppedAt!),
+                      EXPIRATION_MINUTES
+                    )
+                  )}
+                </strong>
+                .
+              </Typography>
             </>
           }
           primaryAction={() => {}}
