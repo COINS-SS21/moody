@@ -9,7 +9,6 @@ import {
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
 import { AudienceFaceExpression, Meeting, PublicMeetingInfo } from "../models";
-import { createModelFromPlain } from "../models/utils";
 import {
   deleteAudienceFaceExpressions,
   fetchAudienceFaceExpressions,
@@ -82,16 +81,16 @@ export const startMeeting = createAsyncThunk(
     const activeMeetingId: string | null = state.meetings.activeMeeting;
 
     if (activeMeetingId) {
-      const activeMeeting: Meeting = selectMeetingById(state, activeMeetingId)!;
+      const activeMeeting: Meeting = (await DataStore.query(
+        Meeting,
+        activeMeetingId
+      ))!;
 
       if (!activeMeeting.startedAt) {
         return (await DataStore.save(
-          Meeting.copyOf(
-            createModelFromPlain(Meeting, activeMeeting),
-            (meeting) => {
-              meeting.startedAt = new Date().toISOString();
-            }
-          )
+          Meeting.copyOf(activeMeeting, (meeting) => {
+            meeting.startedAt = new Date().toISOString();
+          })
         )) as Meeting;
       }
     }
@@ -105,16 +104,16 @@ export const stopMeeting = createAsyncThunk(
     const activeMeetingId: string | null = state.meetings.activeMeeting;
 
     if (activeMeetingId) {
-      const activeMeeting: Meeting = selectMeetingById(state, activeMeetingId)!;
+      const activeMeeting: Meeting = (await DataStore.query(
+        Meeting,
+        activeMeetingId
+      ))!;
 
       if (!activeMeeting.stoppedAt) {
         return (await DataStore.save(
-          Meeting.copyOf(
-            createModelFromPlain(Meeting, activeMeeting),
-            (meeting) => {
-              meeting.stoppedAt = new Date().toISOString();
-            }
-          )
+          Meeting.copyOf(activeMeeting, (meeting) => {
+            meeting.stoppedAt = new Date().toISOString();
+          })
         )) as Meeting;
       }
     }
@@ -128,7 +127,11 @@ export const createFeedbackLink = createAsyncThunk(
     const activeMeetingId: string | null = state.meetings.activeMeeting;
 
     if (activeMeetingId) {
-      const activeMeeting: Meeting = selectMeetingById(state, activeMeetingId)!;
+      const activeMeeting: Meeting = (await DataStore.query(
+        Meeting,
+        activeMeetingId
+      ))!;
+
       if (!activeMeeting.startedAt || !activeMeeting.stoppedAt) {
         throw new Error(
           "You can only create feedback links once the meeting has finished."
@@ -137,16 +140,13 @@ export const createFeedbackLink = createAsyncThunk(
 
       // Create a PublicMeetingInfo model which will serve as read-only model for guest users in order to give feedback
       return (await DataStore.save(
-        Meeting.copyOf(
-          createModelFromPlain(Meeting, activeMeeting),
-          (meeting) => {
-            meeting.PublicMeetingInfo = new PublicMeetingInfo({
-              name: activeMeeting.name,
-              startedAt: activeMeeting.startedAt!,
-              stoppedAt: activeMeeting.stoppedAt!,
-            });
-          }
-        )
+        Meeting.copyOf(activeMeeting, (meeting) => {
+          meeting.PublicMeetingInfo = new PublicMeetingInfo({
+            name: activeMeeting.name,
+            startedAt: activeMeeting.startedAt!,
+            stoppedAt: activeMeeting.stoppedAt!,
+          });
+        })
       )) as Meeting;
     }
   }
