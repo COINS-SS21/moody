@@ -13,6 +13,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import FaceRecognitionService from "../../meetings/FaceRecognitionService";
 import { addFaceExpressionScore } from "../../meetings/audienceFaceExpressionSlice";
 import { aggregateAndCalculateExpressionScore } from "../../meetings/utils";
+import { addError } from "../../error/errorSlice";
 
 export function useScreenCapturingIfMeetingIsRunning(
   videoRef: React.MutableRefObject<HTMLVideoElement | null>,
@@ -25,14 +26,18 @@ export function useScreenCapturingIfMeetingIsRunning(
   useEffect(() => {
     if (meetingRunning) {
       const startScreenCapturing = async () => {
-        screenCaptureServiceRef.current = new ScreenCaptureService();
-        await screenCaptureServiceRef.current.startCapturing();
-        await screenCaptureServiceRef.current.attachStreamToVideo(
-          videoRef.current!
-        );
-        screenCaptureServiceRef.current.mediaStream
-          .getTracks()[0]
-          .addEventListener("ended", handleStopMeeting);
+        try {
+          screenCaptureServiceRef.current = new ScreenCaptureService();
+          await screenCaptureServiceRef.current.startCapturing();
+          await screenCaptureServiceRef.current.attachStreamToVideo(
+            videoRef.current!
+          );
+          screenCaptureServiceRef.current.mediaStream
+            .getTracks()[0]
+            .addEventListener("ended", handleStopMeeting);
+        } catch (e) {
+          dispatch(addError("Cannot start screen capturing: " + e.message));
+        }
       };
       startScreenCapturing();
     }
@@ -57,22 +62,29 @@ export function useEmotionDetection(
   useEffect(() => {
     const detectEmotionsIfMeetingIsRunning = async () => {
       if (meetingRunning) {
-        const faceDetectionService = new FaceRecognitionService(
-          videoRef.current!
-        );
-        await faceDetectionService.loadModel();
-        intervalRef.current = window.setInterval(async () => {
-          const detections = await faceDetectionService.detectAllFaces();
-          dispatch(
-            addFaceExpressionScore({
-              score: aggregateAndCalculateExpressionScore(detections),
-              meetingID,
-            })
+        try {
+          const faceDetectionService = new FaceRecognitionService(
+            videoRef.current!
           );
-          if (!!canvasRef.current) {
-            faceDetectionService.drawDetections(detections, canvasRef.current);
-          }
-        }, 1000);
+          await faceDetectionService.loadModel();
+          intervalRef.current = window.setInterval(async () => {
+            const detections = await faceDetectionService.detectAllFaces();
+            dispatch(
+              addFaceExpressionScore({
+                score: aggregateAndCalculateExpressionScore(detections),
+                meetingID,
+              })
+            );
+            if (!!canvasRef.current) {
+              faceDetectionService.drawDetections(
+                detections,
+                canvasRef.current
+              );
+            }
+          }, 1000);
+        } catch (e) {
+          dispatch(addError("Error during emotion detection: " + e.message));
+        }
       }
     };
 
