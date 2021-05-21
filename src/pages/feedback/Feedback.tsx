@@ -62,7 +62,7 @@ export default function Feedback(): JSX.Element | null {
                   for the presentation <strong>{publicMeeting?.name}</strong>{" "}
                   which has just ended{" "}
                   <strong>
-                    {formatDistanceToNow(new Date(publicMeeting?.startedAt!), {
+                    {formatDistanceToNow(new Date(publicMeeting?.stoppedAt!), {
                       addSuffix: true,
                     })}
                   </strong>
