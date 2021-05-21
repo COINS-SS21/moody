@@ -55,7 +55,7 @@ export const removeMeeting = createAsyncThunk(
     );
 
     if (meetingToDelete) {
-      // Delete corresponding AudienceFaceExpressions first
+      // Delete AudienceFaceExpressions
       dispatch(
         deleteAudienceFaceExpressions(
           (
@@ -67,7 +67,10 @@ export const removeMeeting = createAsyncThunk(
       );
 
       // TODO: Delete Ratings here as well
-      // TODO: Delete public meeting here as well
+
+      if (!!meetingToDelete.PublicMeetingInfo) {
+        await DataStore.delete(meetingToDelete.PublicMeetingInfo);
+      }
 
       return (await DataStore.delete(meetingToDelete)) as Meeting;
     }

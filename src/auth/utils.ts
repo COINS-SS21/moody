@@ -6,7 +6,6 @@ export const syncUserWithRedux = async () => {
   try {
     const currentUser: any | null = await Auth.currentAuthenticatedUser();
     if (currentUser) {
-      console.log(currentUser);
       store.dispatch(
         signIn({
           name: currentUser.attributes.name,
