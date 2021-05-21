@@ -25,6 +25,12 @@ import { addMinutes, differenceInMinutes, formatDistanceToNow } from "date-fns";
 import { EXPIRATION_MINUTES } from "../feedback/constants";
 import { Alert, AlertTitle } from "@material-ui/lab";
 
+const FeedbackLinkExpiredButton = (): JSX.Element => (
+  <Button disabled color="primary" startIcon={<HourglassEmpty />}>
+    Feedback link expired
+  </Button>
+);
+
 export default function FeedbackLinkButton(): JSX.Element {
   const dispatch = useAppDispatch();
   const feedbackLinkId: string | undefined = useAppSelector(
@@ -46,9 +52,7 @@ export default function FeedbackLinkButton(): JSX.Element {
 
   return !!feedbackLinkId ? (
     linkExpired ? (
-      <Button disabled color="primary" startIcon={<HourglassEmpty />}>
-        Feedback link expired
-      </Button>
+      <FeedbackLinkExpiredButton />
     ) : (
       <>
         <SimpleDialog
@@ -116,6 +120,8 @@ export default function FeedbackLinkButton(): JSX.Element {
         </Button>
       </>
     )
+  ) : linkExpired ? (
+    <FeedbackLinkExpiredButton />
   ) : (
     <Button
       startIcon={<Feedback />}
