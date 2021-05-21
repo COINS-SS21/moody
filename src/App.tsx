@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import { useEffect } from "react";
 import { syncUserWithRedux } from "./auth/utils";
 import Feedback from "./pages/feedback/Feedback";
+import Page from "./components/Page";
 
 function PrivateApp(): JSX.Element {
   return (
@@ -30,6 +31,11 @@ function PrivateApp(): JSX.Element {
         </Route>
         <Route exact path="/debug">
           <Debug />
+        </Route>
+        <Route exact path="/feedback/:publicMeetingId">
+          <Page>
+            <Feedback />
+          </Page>
         </Route>
         <Route>
           <NotFound />

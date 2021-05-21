@@ -16,6 +16,7 @@ import NotFound from "../NotFound";
 import { useFetchPublicMeeting, useSubmitAnswer } from "./hooks";
 import { EXPIRATION_MINUTES, RATING_LABELS } from "./constants";
 import { red } from "@material-ui/core/colors";
+import { useAppSelector } from "../../reduxHooks";
 
 const useStyles = makeStyles((theme: Theme) => ({
   stars: {
@@ -31,6 +32,10 @@ export default function Feedback(): JSX.Element | null {
     publicMeeting?.id,
     publicMeeting?.owner
   );
+  const signedIn: boolean = useAppSelector((state) => state.auth.signedIn);
+  const userId: string | undefined = useAppSelector(
+    (state) => state.auth.user?.id
+  );
 
   const [stars, setStars] = useState<number | null>(3);
   const [hover, setHover] = useState(-1);
@@ -42,7 +47,13 @@ export default function Feedback(): JSX.Element | null {
     ) : (
       <Container>
         <Box px={[0, 4, 8, 16]}>
-          {!submitted ? (
+          {userId === publicMeeting.owner ? (
+            <Alert severity="warning">
+              <Typography variant="body1">
+                <strong>You cannot give yourself feedback!</strong>
+              </Typography>
+            </Alert>
+          ) : !submitted ? (
             <>
               <Box mb={2}>
                 <Error />
@@ -98,7 +109,9 @@ export default function Feedback(): JSX.Element | null {
                     <Alert severity="info" icon={<Security />}>
                       <AlertTitle>Your feedback is anonymous</AlertTitle>
                       <Typography variant="body1">
-                        We do not send any information related to your identity.
+                        We do not send any information related to your identity.{" "}
+                        {signedIn &&
+                          "Feel free to logout if you feel safer then."}
                       </Typography>
                     </Alert>
                   </Box>

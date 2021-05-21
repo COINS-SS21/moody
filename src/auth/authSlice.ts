@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type LoggedInUserInfo = {
   email: string;
   name: string;
+  id: string;
 };
 
 type ReduxAuthState = {

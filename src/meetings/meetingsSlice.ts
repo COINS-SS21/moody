@@ -253,7 +253,7 @@ export const { setActiveMeeting } = meetingsSlice.actions;
 export const { selectAll: selectAllMeetings, selectById: selectMeetingById } =
   meetingsAdapter.getSelectors((state: RootState) => state.meetings);
 
-const selectActiveMeeting = (state: RootState) =>
+export const selectActiveMeeting = (state: RootState) =>
   selectMeetingById(state, state.meetings.activeMeeting as EntityId);
 
 // Returns true if the currently visible meeting is running, else false
