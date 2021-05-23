@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   IconButton,
+  makeStyles,
   Tooltip,
   Typography,
 } from "@material-ui/core";
@@ -31,6 +32,12 @@ const FeedbackLinkExpiredButton = (): JSX.Element => (
   </Button>
 );
 
+const useStyles = makeStyles(() => ({
+  code: {
+    wordBreak: "break-all",
+  },
+}));
+
 export default function FeedbackLinkButton(): JSX.Element {
   const dispatch = useAppDispatch();
   const feedbackLinkId: string | undefined = useAppSelector(
@@ -49,6 +56,8 @@ export default function FeedbackLinkButton(): JSX.Element {
     : false;
 
   const [open, setOpen] = useState<boolean>(false);
+
+  const classes = useStyles();
 
   return !!feedbackLinkId ? (
     linkExpired ? (
@@ -83,7 +92,7 @@ export default function FeedbackLinkButton(): JSX.Element {
                 display="flex"
                 alignItems="center"
               >
-                <code>{feedbackLink!}</code>
+                <code className={classes.code}>{feedbackLink!}</code>
                 <Box>
                   <Tooltip title="Copy link">
                     <IconButton onClick={() => clipboardCopy(feedbackLink!)}>
