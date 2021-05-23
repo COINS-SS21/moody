@@ -80,12 +80,14 @@ export function useEmotionDetection(
           await faceDetectionService.loadModel();
           intervalRef.current = window.setInterval(async () => {
             const detections = await faceDetectionService.detectAllFaces();
-            dispatch(
-              addFaceExpressionScore({
-                score: aggregateAndCalculateExpressionScore(detections),
-                meetingID,
-              })
-            );
+            if (detections.length > 0) {
+              dispatch(
+                addFaceExpressionScore({
+                  score: aggregateAndCalculateExpressionScore(detections),
+                  meetingID,
+                })
+              );
+            }
             if (!!canvasRef.current) {
               faceDetectionService.drawDetections(
                 detections,
