@@ -9,6 +9,7 @@ import {
   startMeeting,
   stopMeeting,
 } from "../meetings/meetingsSlice";
+import { fetchActiveMeetingRatings } from "../meetings/ratingsSlice";
 
 type ErrorState = {
   errors: string[];
@@ -48,6 +49,7 @@ const errorSlice = createSlice({
     builder.addCase(startMeeting.rejected, addErrorReducer);
     builder.addCase(stopMeeting.rejected, addErrorReducer);
     builder.addCase(createFeedbackLink.rejected, addErrorReducer);
+    builder.addCase(fetchActiveMeetingRatings.rejected, addErrorReducer);
   },
 });
 

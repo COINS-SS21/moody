@@ -31,6 +31,7 @@ import {
 } from "./hooks";
 import FeedbackLinkButton from "./FeedbackLinkButton";
 import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
+import Ratings from "./Ratings";
 
 export default function Meeting(): JSX.Element {
   const { id } = useParams() as any;
@@ -129,6 +130,7 @@ export default function Meeting(): JSX.Element {
                   <TabList onChange={handleTabChange}>
                     <Tab label="Statistics" value="1" />
                     <Tab label="Faces" value="2" disabled={meetingEnded} />
+                    <Tab label="Ratings" value="3" />
                   </TabList>
                 </Paper>
                 <TabPanel value="1" style={{ padding: theme.spacing(2, 0) }}>
@@ -149,6 +151,9 @@ export default function Meeting(): JSX.Element {
                   ) : (
                     <canvas ref={canvasRef} />
                   )}
+                </TabPanel>
+                <TabPanel value="3">
+                  <Ratings />
                 </TabPanel>
               </TabContext>
             </Box>

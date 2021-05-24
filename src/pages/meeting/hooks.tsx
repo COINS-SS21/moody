@@ -1,19 +1,18 @@
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ScreenCaptureService from "../../media/ScreenCaptureService";
-import {
-  activeMeetingEnded,
-  activeMeetingRunning,
-  fetchMeeting,
-  selectMeetingById,
-  setActiveMeeting,
-} from "../../meetings/meetingsSlice";
+import { fetchMeeting, setActiveMeeting } from "../../meetings/meetingsSlice";
 import { Meeting as MeetingModel } from "../../models";
 import { unwrapResult } from "@reduxjs/toolkit";
 import FaceRecognitionService from "../../meetings/FaceRecognitionService";
 import { addFaceExpressionScore } from "../../meetings/audienceFaceExpressionSlice";
 import { aggregateAndCalculateExpressionScore } from "../../meetings/utils";
 import { addError } from "../../error/errorSlice";
+import {
+  activeMeetingEnded,
+  activeMeetingRunning,
+  selectMeetingById,
+} from "../../meetings/meetingsSelectors";
 
 // Returns a callback to start the screen capturing and automatically cleans up the react components.
 // Does nothing if the meeting is stopped.

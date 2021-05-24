@@ -2,7 +2,7 @@ import SimpleDialog from "../../components/SimpleDialog";
 import { Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../../reduxHooks";
-import { activeMeetingRunning } from "../../meetings/meetingsSlice";
+import { activeMeetingRunning } from "../../meetings/meetingsSelectors";
 
 export type StartScreenCapturingDialogProps = {
   handleStartScreenCapturing: () => void;

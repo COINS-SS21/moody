@@ -1,18 +1,22 @@
 import {
   createAsyncThunk,
   createEntityAdapter,
-  createSelector,
   createSlice,
-  EntityId,
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
-import { AudienceFaceExpression, Meeting, PublicMeetingInfo } from "../models";
+import {
+  AudienceFaceExpression,
+  Meeting,
+  PublicMeetingInfo,
+  Rating,
+} from "../models";
 import {
   deleteAudienceFaceExpressions,
   fetchAudienceFaceExpressions,
 } from "./audienceFaceExpressionSlice";
+import { deleteRatings } from "./ratingsSlice";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",
@@ -66,7 +70,21 @@ export const removeMeeting = createAsyncThunk(
         )
       );
 
-      // TODO: Delete Ratings here as well
+      // Delete Ratings if there are any
+      if (meetingToDelete.PublicMeetingInfo?.id) {
+        dispatch(
+          deleteRatings(
+            (
+              await DataStore.delete(Rating, (r) =>
+                r.publicmeetinginfoID(
+                  "eq",
+                  meetingToDelete.PublicMeetingInfo!.id
+                )
+              )
+            ).map((a) => a.id)
+          )
+        );
+      }
 
       if (!!meetingToDelete.PublicMeetingInfo) {
         await DataStore.delete(meetingToDelete.PublicMeetingInfo);
@@ -155,7 +173,7 @@ export const createFeedbackLink = createAsyncThunk(
   }
 );
 
-const meetingsAdapter = createEntityAdapter<Meeting>({
+export const meetingsAdapter = createEntityAdapter<Meeting>({
   sortComparer: (a: Meeting, b: Meeting) =>
     new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
 });
@@ -252,44 +270,5 @@ export const meetingsSlice = createSlice({
 });
 
 export const { setActiveMeeting } = meetingsSlice.actions;
-
-export const { selectAll: selectAllMeetings, selectById: selectMeetingById } =
-  meetingsAdapter.getSelectors((state: RootState) => state.meetings);
-
-export const selectActiveMeeting = (state: RootState) =>
-  selectMeetingById(state, state.meetings.activeMeeting as EntityId);
-
-// Returns true if the currently visible meeting is running, else false
-export const activeMeetingRunning = createSelector(
-  selectActiveMeeting,
-  (activeMeeting: Meeting | undefined) => {
-    return !!(
-      activeMeeting &&
-      !!activeMeeting.startedAt &&
-      !activeMeeting.stoppedAt
-    );
-  }
-);
-
-// Returns true if the currently active meeting has ended, else false
-export const activeMeetingEnded = createSelector(
-  selectActiveMeeting,
-  (activeMeeting: Meeting | undefined) => {
-    return !!(
-      activeMeeting &&
-      !!activeMeeting.startedAt &&
-      !!activeMeeting.stoppedAt
-    );
-  }
-);
-
-export const selectActiveMeetingFeedbackLinkId = createSelector(
-  selectActiveMeeting,
-  (activeMeeting: Meeting | undefined) => {
-    if (activeMeeting) {
-      return activeMeeting.PublicMeetingInfo?.id;
-    }
-  }
-);
 
 export default meetingsSlice.reducer;

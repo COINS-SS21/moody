@@ -11,11 +11,12 @@ import {
 import { ArrowForwardIos, Delete, MoreVert } from "@material-ui/icons";
 import { Link as RouterLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
-import { removeMeeting, selectAllMeetings } from "../../meetings/meetingsSlice";
+import { removeMeeting } from "../../meetings/meetingsSlice";
 import { useCallback, useState } from "react";
 import { red } from "@material-ui/core/colors";
 import { Meeting } from "../../models";
 import { formatDistance } from "date-fns";
+import { selectAllMeetings } from "../../meetings/meetingsSelectors";
 
 export default function MeetingTable(): JSX.Element {
   const dispatch = useAppDispatch();

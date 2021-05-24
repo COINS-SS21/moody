@@ -14,17 +14,17 @@ import {
   Visibility,
 } from "@material-ui/icons";
 import { useAppDispatch, useAppSelector } from "../../reduxHooks";
-import {
-  createFeedbackLink,
-  selectActiveMeeting,
-  selectActiveMeetingFeedbackLinkId,
-} from "../../meetings/meetingsSlice";
+import { createFeedbackLink } from "../../meetings/meetingsSlice";
 import SimpleDialog from "../../components/SimpleDialog";
 import { useState } from "react";
 import clipboardCopy from "clipboard-copy";
 import { addMinutes, differenceInMinutes, formatDistanceToNow } from "date-fns";
 import { EXPIRATION_MINUTES } from "../feedback/constants";
 import { Alert, AlertTitle } from "@material-ui/lab";
+import {
+  selectActiveMeeting,
+  selectActiveMeetingFeedbackLinkId,
+} from "../../meetings/meetingsSelectors";
 
 const FeedbackLinkExpiredButton = (): JSX.Element => (
   <Button disabled color="primary" startIcon={<HourglassEmpty />}>
