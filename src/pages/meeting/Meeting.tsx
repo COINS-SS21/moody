@@ -145,8 +145,8 @@ export default function Meeting(): JSX.Element {
                   {!meetingRunning ? (
                     <Alert severity="info">
                       <Typography variant="body1">
-                        This visualization is only available the meeting is
-                        currently running.
+                        This visualization is only available if the meeting is
+                        running.
                       </Typography>
                     </Alert>
                   ) : (
