@@ -129,7 +129,7 @@ export default function Meeting(): JSX.Element {
                 <Paper square>
                   <TabList onChange={handleTabChange}>
                     <Tab label="Statistics" value="1" />
-                    <Tab label="Faces" value="2" disabled={meetingEnded} />
+                    <Tab label="Faces" value="2" />
                     <Tab label="Ratings" value="3" />
                   </TabList>
                 </Paper>
@@ -145,7 +145,8 @@ export default function Meeting(): JSX.Element {
                   {!meetingRunning ? (
                     <Alert severity="info">
                       <Typography variant="body1">
-                        Start the meeting to enable this visualization.
+                        This visualization is only available the meeting is
+                        currently running.
                       </Typography>
                     </Alert>
                   ) : (

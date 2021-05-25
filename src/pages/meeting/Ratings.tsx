@@ -10,24 +10,37 @@ import Loader from "../../components/Loader";
 import { Alert } from "@material-ui/lab";
 import RatingsBarChart from "./RatingsBarChart";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { selectActiveMeetingFeedbackLinkId } from "../../meetings/meetingsSelectors";
 
 export default function Ratings(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchActiveMeetingRatings());
+  }, [dispatch]);
 
-    let subscription: any;
+  const activeMeetingFeedbackLinkId = useAppSelector(
+    selectActiveMeetingFeedbackLinkId
+  );
+
+  useEffect(() => {
+    let unsubscribe: () => void;
     const subscribeToRatings = async () => {
-      subscription = unwrapResult(
+      unsubscribe = unwrapResult(
         await dispatch(subscribeToActiveMeetingRatings())
       );
     };
     subscribeToRatings();
     return () => {
-      subscription?.unsubscribe();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
-  }, [dispatch]);
+  }, [
+    dispatch,
+    // If the feedback link is created after opening the ratings page, the subscription should be run again
+    activeMeetingFeedbackLinkId,
+  ]);
 
   const ratingsLength = useAppSelector(
     (state) => selectActiveMeetingRatings(state).length
@@ -47,7 +60,8 @@ export default function Ratings(): JSX.Element {
         <Alert severity="info">
           <Typography variant="body1">
             There are no ratings yet. Create a feedback link after you finished
-            the meeting and send it to your audience.
+            the meeting and send it to your audience. This page will refresh
+            automatically.
             <br />
             <strong>
               Note: Feedback links are only valid for 30 minutes after the

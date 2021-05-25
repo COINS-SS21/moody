@@ -7,6 +7,7 @@ import {
 import { Meeting, Rating } from "../models";
 import { RootState } from "../reduxStore";
 import { DataStore } from "aws-amplify";
+import { ZenObservable } from "zen-observable-ts";
 
 export const fetchActiveMeetingRatings = createAsyncThunk(
   "ratings/fetchActiveMeetingRatings",
@@ -29,21 +30,33 @@ export const fetchActiveMeetingRatings = createAsyncThunk(
 
 export const subscribeToActiveMeetingRatings = createAsyncThunk(
   "ratings/subscribeToActiveMeetingRatings",
-  async (_, { getState, dispatch }): Promise<any> => {
+  async (_, { getState, dispatch }): Promise<() => void> => {
     const state = getState() as RootState;
 
     if (!!state.meetings.activeMeeting) {
       const activeMeeting: Meeting | undefined =
         state.meetings.entities[state.meetings.activeMeeting];
 
-      if (activeMeeting && activeMeeting.PublicMeetingInfo?.id) {
-        return DataStore.observe(Rating, (r) =>
-          r.publicmeetinginfoID("eq", activeMeeting.PublicMeetingInfo!.id)
-        ).subscribe(() => {
-          dispatch(fetchActiveMeetingRatings());
+      if (activeMeeting) {
+        const subscription: ZenObservable.Subscription = DataStore.observe(
+          Rating
+        ).subscribe((msg) => {
+          if (
+            msg.element &&
+            msg.element.publicmeetinginfoID ===
+              activeMeeting.PublicMeetingInfo?.id
+          ) {
+            dispatch(fetchActiveMeetingRatings());
+          }
         });
+
+        return () => {
+          subscription.unsubscribe();
+        };
       }
     }
+
+    return () => {};
   }
 );
 

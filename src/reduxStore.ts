@@ -23,7 +23,12 @@ export const store = configureStore({
           serializableCheck: {
             isSerializable: (value: any) =>
               // Allow Immer.js compatible classes
-              Boolean(value?.constructor[immerable]) || isPlain(value),
+              Boolean(value?.constructor[immerable]) ||
+              // Allow functions to be returned by action creators
+              // This might be useful if you return WebSocket unsubscribe functions from a ReduxThunk
+              typeof value === "function" ||
+              // Allow all plain values
+              isPlain(value),
           },
         }).concat(logger)
       : getDefaultMiddleware(),
