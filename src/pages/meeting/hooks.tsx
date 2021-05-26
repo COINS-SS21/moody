@@ -6,7 +6,10 @@ import { Meeting as MeetingModel } from "../../models";
 import { unwrapResult } from "@reduxjs/toolkit";
 import FaceRecognitionService from "../../meetings/FaceRecognitionService";
 import { addFaceExpressionScore } from "../../meetings/audienceFaceExpressionSlice";
-import { aggregateAndCalculateExpressionScore } from "../../meetings/utils";
+import {
+  aggregateAndCalculateExpressionScore,
+  aggregateAndCalculatePaulEkmanEmotionScore,
+} from "../../meetings/utils";
 import { addError } from "../../error/errorSlice";
 import {
   activeMeetingEnded,
@@ -83,6 +86,7 @@ export function useEmotionDetection(
               dispatch(
                 addFaceExpressionScore({
                   score: aggregateAndCalculateExpressionScore(detections),
+                  raw: aggregateAndCalculatePaulEkmanEmotionScore(detections),
                   meetingID,
                 })
               );

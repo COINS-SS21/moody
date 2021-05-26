@@ -1,5 +1,6 @@
 import { FaceExpressions, WithFaceExpressions } from "face-api.js";
 import flow from "lodash-es/flow";
+import { PaulEkmanEmotion } from "./types";
 
 export type AggregatedExpression = {
   positive: number;
@@ -44,3 +45,43 @@ export const aggregateAndCalculateExpressionScore: (
     expressions: FaceExpressions;
   }>[]
 ) => number = flow(aggregateExpressions, calculateExpressionScore);
+
+export function aggregatePaulEkmanEmotions(
+  detections: WithFaceExpressions<{
+    expressions: FaceExpressions;
+  }>[]
+): PaulEkmanEmotion[] {
+  return detections.map((detection) => detection.expressions);
+}
+
+export function calculatePaulEkmanEmotionScore(
+  aggregatedPaulEkmanEmotions: PaulEkmanEmotion[]
+): PaulEkmanEmotion {
+  const meanEmotionFor = (emotionName: keyof PaulEkmanEmotion) => {
+    return aggregatedPaulEkmanEmotions.length > 0
+      ? aggregatedPaulEkmanEmotions.reduce(
+          (acc, current) => acc + current[emotionName],
+          0
+        ) / aggregatedPaulEkmanEmotions.length
+      : 0;
+  };
+
+  return {
+    happy: meanEmotionFor("happy"),
+    surprised: meanEmotionFor("surprised"),
+    neutral: meanEmotionFor("neutral"),
+    sad: meanEmotionFor("sad"),
+    angry: meanEmotionFor("angry"),
+    disgusted: meanEmotionFor("disgusted"),
+    fearful: meanEmotionFor("fearful"),
+  };
+}
+
+export const aggregateAndCalculatePaulEkmanEmotionScore: (
+  detections: WithFaceExpressions<{
+    expressions: FaceExpressions;
+  }>[]
+) => PaulEkmanEmotion = flow(
+  aggregatePaulEkmanEmotions,
+  calculatePaulEkmanEmotionScore
+);

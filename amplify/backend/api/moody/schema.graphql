@@ -28,6 +28,13 @@ type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedA
   id: ID!
   timestamp: AWSTimestamp!
   score: Float!
+  surprised: Float
+  happy: Float
+  neutral: Float
+  sad: Float
+  disgusted: Float
+  fearful: Float
+  angry: Float
   meetingID: ID!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime

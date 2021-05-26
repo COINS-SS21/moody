@@ -146,6 +146,13 @@ export const createMeeting = /* GraphQL */ `
           id
           timestamp
           score
+          surprised
+          happy
+          neutral
+          sad
+          disgusted
+          fearful
+          angry
           meetingID
           createdAt
           updatedAt
@@ -193,6 +200,13 @@ export const updateMeeting = /* GraphQL */ `
           id
           timestamp
           score
+          surprised
+          happy
+          neutral
+          sad
+          disgusted
+          fearful
+          angry
           meetingID
           createdAt
           updatedAt
@@ -240,6 +254,13 @@ export const deleteMeeting = /* GraphQL */ `
           id
           timestamp
           score
+          surprised
+          happy
+          neutral
+          sad
+          disgusted
+          fearful
+          angry
           meetingID
           createdAt
           updatedAt
@@ -263,6 +284,13 @@ export const createAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      surprised
+      happy
+      neutral
+      sad
+      disgusted
+      fearful
+      angry
       meetingID
       createdAt
       updatedAt
@@ -282,6 +310,13 @@ export const updateAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      surprised
+      happy
+      neutral
+      sad
+      disgusted
+      fearful
+      angry
       meetingID
       createdAt
       updatedAt
@@ -301,6 +336,13 @@ export const deleteAudienceFaceExpression = /* GraphQL */ `
       id
       timestamp
       score
+      surprised
+      happy
+      neutral
+      sad
+      disgusted
+      fearful
+      angry
       meetingID
       createdAt
       updatedAt

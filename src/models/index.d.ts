@@ -51,6 +51,13 @@ export declare class AudienceFaceExpression {
   readonly id: string;
   readonly timestamp: number;
   readonly score: number;
+  readonly surprised?: number;
+  readonly happy?: number;
+  readonly neutral?: number;
+  readonly sad?: number;
+  readonly disgusted?: number;
+  readonly fearful?: number;
+  readonly angry?: number;
   readonly meetingID: string;
   readonly createdAt?: string;
   readonly updatedAt?: string;
