@@ -73,7 +73,7 @@ export default function Meeting(): JSX.Element {
         height={564}
         autoPlay
         muted
-        style={{ display: "none" }}
+        style={{ display: "none", visibility: "hidden" }}
       />
       <Container>
         <Button
