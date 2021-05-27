@@ -3,8 +3,8 @@ import FrequencyBar from "../media/FrequencyBar";
 import Counter from "../counter/Counter";
 import { Box, Button, Container, Typography } from "@material-ui/core";
 import ScreenCapture from "../media/ScreenCapture";
-import { GoogleChromeIcon } from "../components/GoogleChromeIcon";
 import Page from "../components/Page";
+import { BrowserInformation } from "../components/BrowserInformation";
 
 function Debug(): JSX.Element {
   const [audioStarted, setAudioStarted] = useState<boolean>(false);
@@ -24,12 +24,8 @@ function Debug(): JSX.Element {
         <Typography paragraph variant="h6">
           Use this page to debug if all functions are supported by your browser.
         </Typography>
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <Box fontSize="h6.fontSize">We recommend using Google Chrome.</Box>
-          <Box ml={2}>
-            <GoogleChromeIcon />
-          </Box>
-          <Box />
+        <Box>
+          <BrowserInformation />
         </Box>
         <Box component="section" mt={2}>
           <Typography variant="h2">Data store</Typography>

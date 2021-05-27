@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from "@material-ui/core";
 import CTAButton from "../components/CTAButton";
 import { Link as RouterLink } from "react-router-dom";
+import { BrowserInformation } from "../components/BrowserInformation";
 
 export function Welcome(): JSX.Element {
   return (
@@ -28,10 +29,15 @@ export function Welcome(): JSX.Element {
             improvements.
           </Typography>
         </Box>
-        <Box mt={4} width={1}>
-          <CTAButton component={RouterLink} to="/login">
-            Start
-          </CTAButton>
+        <Box mt={4} width={1} display="flex" alignItems="center">
+          <Box>
+            <CTAButton component={RouterLink} to="/login">
+              Start
+            </CTAButton>
+          </Box>
+          <Box ml={2}>
+            <BrowserInformation />
+          </Box>
         </Box>
       </Box>
     </Container>
