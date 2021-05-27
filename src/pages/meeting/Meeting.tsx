@@ -32,6 +32,7 @@ import {
 import FeedbackLinkButton from "./FeedbackLinkButton";
 import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
 import Ratings from "./Ratings";
+import EmotionRadar from "./EmotionRadar";
 
 export default function Meeting(): JSX.Element {
   const { id } = useParams() as any;
@@ -135,7 +136,11 @@ export default function Meeting(): JSX.Element {
                 </Paper>
                 <TabPanel value="1" style={{ padding: theme.spacing(2, 0) }}>
                   <Box display="inline-block" mr={2}>
-                    <AudienceEmotionBarometer />
+                    {meetingEnded ? (
+                      <EmotionRadar />
+                    ) : (
+                      <AudienceEmotionBarometer />
+                    )}
                   </Box>
                   <Box display="inline-block">
                     <AudienceEmotionRollercoaster />

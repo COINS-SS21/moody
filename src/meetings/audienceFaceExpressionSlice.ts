@@ -64,7 +64,7 @@ export const selectActiveMeetingAudienceFaceExpressions = createSelector(
     selectAllAudienceFaceExpressions,
   ],
   (activeMeetingId: string | null, expressions: AudienceFaceExpression[]) =>
-    expressions.filter((e) => e.meetingID === activeMeetingId)
+    expressions.filter((e) => e.meetingID === activeMeetingId) || []
 );
 
 export const selectActiveMeetingAudienceFaceExpressionsCurrentScore =

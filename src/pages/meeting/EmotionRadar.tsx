@@ -8,15 +8,16 @@ import {
 } from "@material-ui/core";
 import { AudienceFaceExpression } from "../../models";
 import { useAppSelector } from "../../reduxHooks";
-import { selectActiveMeetingAudienceFaceExpressionsCurrentScore } from "../../meetings/audienceFaceExpressionSlice";
+import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";
+import { calculatePaulEkmanEmotionScore } from "../../meetings/utils";
 
-export default function AudienceEmotionBarometer() {
+export default function EmotionRadar() {
   const theme = useTheme();
-  const expression: AudienceFaceExpression | undefined = useAppSelector(
-    selectActiveMeetingAudienceFaceExpressionsCurrentScore
+  const expressions: AudienceFaceExpression[] = useAppSelector(
+    selectActiveMeetingAudienceFaceExpressions
   );
 
   // Popover
@@ -54,8 +55,8 @@ export default function AudienceEmotionBarometer() {
           >
             <Box p={2}>
               <Typography variant="body2">
-                Shows the currently active emotions by the audience on a range
-                from -1 (negative) to +1 (positive).
+                Shows the average emotion distribution throughout the whole
+                meeting on a logarithmic scale.
               </Typography>
             </Box>
           </Popover>
@@ -66,16 +67,25 @@ export default function AudienceEmotionBarometer() {
           displayModeBar: false,
         }}
         layout={{
-          title: "Emotion Barometer",
+          title: "Emotion Radar",
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
+          polar: {
+            bgcolor: "transparent",
+            radialaxis: {
+              visible: true,
+              ticks: "",
+              showticklabels: false,
+              showline: false,
+            },
+          },
           hovermode: false,
-          width: 300,
+          width: 400,
           margin: {
-            l: 30,
-            r: 10,
+            l: 50,
+            r: 50,
             t: 80,
-            b: 70,
+            b: 40,
           },
           yaxis: {
             range: [-1.1, 1.1],
@@ -91,12 +101,33 @@ export default function AudienceEmotionBarometer() {
         }}
         data={[
           {
-            x: ["Score"],
-            y: [expression?.score || 0.0],
+            r: Object.values(
+              calculatePaulEkmanEmotionScore(
+                expressions.map((e) => ({
+                  happy: e.happy ? Math.log(e.happy) : 0.0,
+                  surprised: e.surprised ? Math.log(e.surprised) : 0.0,
+                  neutral: e.neutral ? Math.log(e.neutral) : 0.0,
+                  sad: e.sad ? Math.log(e.sad) : 0.0,
+                  angry: e.angry ? Math.log(e.angry) : 0.0,
+                  disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
+                  fearful: e.fearful ? Math.log(e.fearful) : 0.0,
+                }))
+              )
+            ),
             marker: {
               color: theme.palette.primary.main,
             },
-            type: "bar",
+            theta: [
+              "happy",
+              "surprised",
+              "neutral",
+              "sad",
+              "angry",
+              "disgusted",
+              "fearful",
+            ],
+            fill: "toself",
+            type: "scatterpolar",
           },
         ]}
       />
