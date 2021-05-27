@@ -16,6 +16,7 @@
     "face-api.js": "^0.22.2",
     "immer": "^9.0.2",
     "lodash-es": "^4.17.21",
+    "meyda": "^5.1.6",
     "plotly.js": "^1.58.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.4",
+    "@types/meyda": "^4.3.1",
     "@types/node": "^15.0.2",
     "@types/react": "^17.0.6",
     "@types/react-dom": "^17.0.5",

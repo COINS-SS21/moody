@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { syncUserWithRedux } from "./auth/utils";
 import Feedback from "./pages/feedback/Feedback";
 import Page from "./components/Page";
+import MFCC from "./pages/MFCC";
 
 function PrivateApp(): JSX.Element {
   return (
@@ -28,6 +29,9 @@ function PrivateApp(): JSX.Element {
         </Route>
         <Route exact path="/meetings/:id">
           <Meeting />
+        </Route>
+        <Route exact path="/mfcc">
+          <MFCC />
         </Route>
         <Route exact path="/debug">
           <Debug />
