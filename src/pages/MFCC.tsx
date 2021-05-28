@@ -31,7 +31,7 @@ const useAudioCapturing = (
         audioContext: audioContext,
         source: source,
         bufferSize: 512,
-        featureExtractors: ["mfcc"],
+        featureExtractors: ["mfcc", "rms"],
         sampleRate: 22050,
         numberOfMFCCCoefficients: 40,
         callback,
@@ -46,13 +46,16 @@ export default function MFCC(): JSX.Element {
   const [data, setData] = useState<number[][]>(
     new Array(40).fill(new Array(40).fill(0))
   );
+  const THRESHOLD_RMS = 0.002; // Ignore audio that is almost silent
   let counter = 0;
   const startCapturing = useAudioCapturing((features) => {
-    data[counter] = features.mfcc!;
-    if (counter === 0) {
-      setData([...data]);
+    if (features.rms! > THRESHOLD_RMS) {
+      data[counter] = features.mfcc!;
+      if (counter === 0) {
+        setData([...data]);
+      }
+      counter = (counter + 1) % 40;
     }
-    counter = (counter + 1) % 40;
   });
   const theme = useTheme();
 
@@ -73,7 +76,7 @@ export default function MFCC(): JSX.Element {
           }}
           data={[{ type: "heatmap", z: data }]}
           layout={{
-            title: "Mel spectogram",
+            title: "MFCC Spectrogram",
             paper_bgcolor: "transparent",
             plot_bgcolor: "transparent",
             hovermode: false,
