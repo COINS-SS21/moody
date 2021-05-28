@@ -17,11 +17,15 @@ const useAudioCapturing = (
       const audioContext = new AudioContext();
       const audioStream: MediaStream =
         await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: {
+            noiseSuppression: true,
+            sampleRate: 22050,
+            echoCancellation: true,
+          },
           video: false,
         });
       const source = audioContext.createMediaStreamSource(audioStream);
-      source.connect(audioContext.destination);
+      //source.connect(audioContext.destination);
 
       const analyzer = Meyda.createMeydaAnalyzer({
         audioContext: audioContext,
