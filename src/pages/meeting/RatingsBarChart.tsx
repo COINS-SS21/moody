@@ -90,6 +90,7 @@ export default function RatingsBarChart({
           },
           yaxis: {
             tickformat: ",d",
+            rangemode: "nonnegative",
           },
           transition: {
             duration: 500,
