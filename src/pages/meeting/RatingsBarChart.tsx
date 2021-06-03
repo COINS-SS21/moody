@@ -14,7 +14,17 @@ import Plot from "react-plotly.js";
 import { selectActiveMeetingRatings } from "../../meetings/ratingsSlice";
 import { range } from "lodash-es";
 
-export default function RatingsBarChart(): JSX.Element {
+type RatingsBarChartProps = {
+  questionType: "overallStars" | "contentStars" | "paceStars";
+  title: string;
+  explanation: string;
+};
+
+export default function RatingsBarChart({
+  questionType,
+  title,
+  explanation,
+}: RatingsBarChartProps): JSX.Element {
   const theme = useTheme();
   const ratings: Rating[] = useAppSelector(selectActiveMeetingRatings);
 
@@ -52,11 +62,7 @@ export default function RatingsBarChart(): JSX.Element {
             }}
           >
             <Box p={2}>
-              <Typography variant="body2">
-                Shows the distribution of the overall experience scored by stars
-                from 1 to 5 (1=useless, 5=excellent). This is the score your
-                audience gave using the feedback link you sent them.
-              </Typography>
+              <Typography variant="body2">{explanation}</Typography>
             </Box>
           </Popover>
         </Box>
@@ -66,11 +72,12 @@ export default function RatingsBarChart(): JSX.Element {
           displayModeBar: false,
         }}
         layout={{
-          title: "Overall experience",
+          title,
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
           hovermode: false,
-          width: 600,
+          width: 550,
+          height: 375,
           margin: {
             l: 30,
             r: 30,
@@ -95,7 +102,7 @@ export default function RatingsBarChart(): JSX.Element {
               range(1, i).reduce((prev) => prev + "⭐", "⭐")
             ),
             y: range(1, 6).map(
-              (i) => ratings.filter((r) => r.overallStars === i).length
+              (i) => ratings.filter((r) => r[questionType] === i).length
             ),
             marker: {
               color: theme.palette.primary.main,

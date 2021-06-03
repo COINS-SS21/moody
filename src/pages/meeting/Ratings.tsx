@@ -70,9 +70,31 @@ export default function Ratings(): JSX.Element {
           </Typography>
         </Alert>
       ) : (
-        <Box display="inline-block">
-          <RatingsBarChart />
-        </Box>
+        <>
+          <Box display="flex">
+            <Box mr={2}>
+              <RatingsBarChart
+                questionType="overallStars"
+                title="Overall experience"
+                explanation="Shows the distribution of the overall experience scored by stars rom 1 to 5 (1=useless, 5=excellent). This is the score your audience gave using the feedback link you sent them."
+              />
+            </Box>
+            <Box>
+              <RatingsBarChart
+                questionType="paceStars"
+                title="Speaker's pace"
+                explanation="Shows the distribution of the speaker's pace scored by stars from 1 to 5 (1=way too fast / slow, 5=just right). This is the score your audience gave using the feedback link you sent them."
+              />
+            </Box>
+          </Box>
+          <Box display="inline-block" mt={2}>
+            <RatingsBarChart
+              questionType="contentStars"
+              title="Usefulness of content"
+              explanation="Shows the distribution of the usefulness of the presentation's content scored by stars from 1 to 5 (1=useless, 5=excellent). This is the score your audience gave using the feedback link you sent them."
+            />
+          </Box>
+        </>
       )}
     </>
   );
