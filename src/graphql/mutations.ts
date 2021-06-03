@@ -67,6 +67,8 @@ export const createRating = /* GraphQL */ `
     createRating(input: $input, condition: $condition) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version
@@ -85,6 +87,8 @@ export const updateRating = /* GraphQL */ `
     updateRating(input: $input, condition: $condition) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version
@@ -103,6 +107,8 @@ export const deleteRating = /* GraphQL */ `
     deleteRating(input: $input, condition: $condition) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version

@@ -1,28 +1,16 @@
-import {
-  Box,
-  Button,
-  Container,
-  makeStyles,
-  Theme,
-  Typography,
-} from "@material-ui/core";
+import { Box, Button, Container, Typography } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import Error from "../../error/Error";
 import { useState } from "react";
-import { Alert, AlertTitle, Rating } from "@material-ui/lab";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import { Favorite, Security, Send } from "@material-ui/icons";
 import { formatDistanceToNow } from "date-fns";
 import NotFound from "../NotFound";
 import { useFetchPublicMeeting, useSubmitAnswer } from "./hooks";
-import { EXPIRATION_MINUTES, RATING_LABELS } from "./constants";
+import { EXPIRATION_MINUTES } from "./constants";
 import { red } from "@material-ui/core/colors";
 import { useAppSelector } from "../../reduxHooks";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  stars: {
-    fontSize: theme.typography.h1.fontSize,
-  },
-}));
+import Question from "./Question";
 
 export default function Feedback(): JSX.Element | null {
   const { publicMeetingId } = useParams() as any;
@@ -37,9 +25,9 @@ export default function Feedback(): JSX.Element | null {
     (state) => state.auth.user?.id
   );
 
-  const [stars, setStars] = useState<number | null>(3);
-  const [hover, setHover] = useState(-1);
-  const classes = useStyles();
+  const [overallStars, setOverallStars] = useState<number | null>(3);
+  const [paceStars, setPaceStars] = useState<number | null>(null);
+  const [contentStars, setContentStars] = useState<number | null>(null);
 
   return !meetingLoading ? (
     !publicMeeting ? (
@@ -70,37 +58,48 @@ export default function Feedback(): JSX.Element | null {
               </Box>
               {!expired ? (
                 <>
-                  <Box mb={2}>
-                    <Typography variant="h2">
-                      How was the overall experience?
-                    </Typography>
-                    <Box display="flex" alignItems="center">
-                      <Rating
-                        name="feedback"
-                        className={classes.stars}
-                        value={stars}
-                        onChange={(event, newValue) => {
-                          setStars(newValue);
-                        }}
-                        onChangeActive={(event, newHover) => {
-                          setHover(newHover);
-                        }}
-                      />
-                      {stars !== null && (
-                        <Box ml={2}>
-                          {RATING_LABELS[hover !== -1 ? hover : stars]}
-                        </Box>
-                      )}
-                    </Box>
-                    <Typography variant="subtitle2">(Required)</Typography>
+                  <Box mb={3}>
+                    <Question
+                      name="overallStars"
+                      stars={overallStars}
+                      onChange={(event, newValue) => {
+                        setOverallStars(newValue);
+                      }}
+                      question="How do you rate the overall experience?"
+                      required={true}
+                    />
+                  </Box>
+                  <Box mb={3}>
+                    <Question
+                      name="paceStars"
+                      stars={paceStars}
+                      onChange={(event, newValue) => {
+                        setPaceStars(newValue);
+                      }}
+                      question="Was the speaker's pace right for you?"
+                      required={false}
+                    />
+                  </Box>
+                  <Box mb={3}>
+                    <Question
+                      name="contentStars"
+                      stars={contentStars}
+                      onChange={(event, newValue) => {
+                        setContentStars(newValue);
+                      }}
+                      question="Was the content useful?"
+                      required={false}
+                    />
                   </Box>
                   <Box mb={2}>
                     <Button
-                      disabled={!stars || submitLoading}
+                      disabled={!overallStars || submitLoading}
                       endIcon={<Send />}
                       variant="contained"
                       color="primary"
-                      onClick={() => submitAnswer(stars!)}
+                      onClick={() =>
+                        submitAnswer(overallStars!, paceStars, contentStars)
+                      }
                     >
                       Submit
                     </Button>

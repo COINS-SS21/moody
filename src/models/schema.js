@@ -84,6 +84,20 @@ export const schema = {
           isRequired: true,
           attributes: [],
         },
+        contentStars: {
+          name: "contentStars",
+          isArray: false,
+          type: "Int",
+          isRequired: false,
+          attributes: [],
+        },
+        paceStars: {
+          name: "paceStars",
+          isArray: false,
+          type: "Int",
+          isRequired: false,
+          attributes: [],
+        },
         owner: {
           name: "owner",
           isArray: false,
@@ -361,5 +375,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "f1ec26347f50a57928bdec36e063cdf9",
+  version: "43d1274d05a16f7d5db673ea2373fa1a",
 };

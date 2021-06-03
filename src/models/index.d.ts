@@ -22,6 +22,8 @@ export declare class PublicMeetingInfo {
 export declare class Rating {
   readonly id: string;
   readonly overallStars: number;
+  readonly contentStars?: number;
+  readonly paceStars?: number;
   readonly owner?: string;
   readonly publicmeetinginfoID: string;
   constructor(init: ModelInit<Rating>);

@@ -9,6 +9,8 @@ type PublicMeetingInfo @model @auth(rules: [{allow: owner, operations: [read, cr
 type Rating @model @auth(rules: [{allow: owner, operations: [read]}, {allow: public, operations: [create], provider: iam}]) {
   id: ID!
   overallStars: Int!
+  contentStars: Int
+  paceStars: Int
   owner: String
   publicmeetinginfoID: ID!
 }

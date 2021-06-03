@@ -1,5 +1,5 @@
 // Labels for the number of stars in the rating
-export const RATING_LABELS: { [index: string]: string } = {
+export const DEFAULT_RATING_LABELS: { [index: string]: string } = {
   1: "Useless",
   2: "Poor",
   3: "Ok",

@@ -61,16 +61,16 @@ export type ModelSizeInput = {
 
 export type PublicMeetingInfo = {
   __typename: "PublicMeetingInfo";
-  id?: string;
-  name?: string;
-  startedAt?: string;
-  stoppedAt?: string;
+  id: string;
+  name: string;
+  startedAt: string;
+  stoppedAt: string;
   owner?: string | null;
-  _version?: number;
+  _version: number;
   _deleted?: boolean | null;
-  _lastChangedAt?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  _lastChangedAt: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type UpdatePublicMeetingInfoInput = {
@@ -90,6 +90,8 @@ export type DeletePublicMeetingInfoInput = {
 export type CreateRatingInput = {
   id?: string | null;
   overallStars: number;
+  contentStars?: number | null;
+  paceStars?: number | null;
   owner?: string | null;
   publicmeetinginfoID: string;
   _version?: number | null;
@@ -97,6 +99,8 @@ export type CreateRatingInput = {
 
 export type ModelRatingConditionInput = {
   overallStars?: ModelIntInput | null;
+  contentStars?: ModelIntInput | null;
+  paceStars?: ModelIntInput | null;
   publicmeetinginfoID?: ModelIDInput | null;
   and?: Array<ModelRatingConditionInput | null> | null;
   or?: Array<ModelRatingConditionInput | null> | null;
@@ -133,20 +137,24 @@ export type ModelIDInput = {
 
 export type Rating = {
   __typename: "Rating";
-  id?: string;
-  overallStars?: number;
+  id: string;
+  overallStars: number;
+  contentStars?: number | null;
+  paceStars?: number | null;
   owner?: string | null;
-  publicmeetinginfoID?: string;
-  _version?: number;
+  publicmeetinginfoID: string;
+  _version: number;
   _deleted?: boolean | null;
-  _lastChangedAt?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  _lastChangedAt: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type UpdateRatingInput = {
   id: string;
   overallStars?: number | null;
+  contentStars?: number | null;
+  paceStars?: number | null;
   owner?: string | null;
   publicmeetinginfoID?: string | null;
   _version?: number | null;
@@ -181,18 +189,18 @@ export type ModelMeetingConditionInput = {
 
 export type Meeting = {
   __typename: "Meeting";
-  id?: string;
-  name?: string;
+  id: string;
+  name: string;
   startedAt?: string | null;
   stoppedAt?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
-  _version?: number;
+  _version: number;
   _deleted?: boolean | null;
-  _lastChangedAt?: number;
-  PublicMeetingInfo?: PublicMeetingInfo;
+  _lastChangedAt: number;
+  PublicMeetingInfo?: PublicMeetingInfo | null;
   owner?: string | null;
-  AudienceFaceExpressions?: ModelAudienceFaceExpressionConnection;
+  AudienceFaceExpressions?: ModelAudienceFaceExpressionConnection | null;
 };
 
 export type ModelAudienceFaceExpressionConnection = {
@@ -204,9 +212,9 @@ export type ModelAudienceFaceExpressionConnection = {
 
 export type AudienceFaceExpression = {
   __typename: "AudienceFaceExpression";
-  id?: string;
-  timestamp?: number;
-  score?: number;
+  id: string;
+  timestamp: number;
+  score: number;
   surprised?: number | null;
   happy?: number | null;
   neutral?: number | null;
@@ -214,12 +222,12 @@ export type AudienceFaceExpression = {
   disgusted?: number | null;
   fearful?: number | null;
   angry?: number | null;
-  meetingID?: string;
+  meetingID: string;
   createdAt?: string | null;
   updatedAt?: string | null;
-  _version?: number;
+  _version: number;
   _deleted?: boolean | null;
-  _lastChangedAt?: number;
+  _lastChangedAt: number;
   owner?: string | null;
 };
 
@@ -329,6 +337,8 @@ export type ModelPublicMeetingInfoConnection = {
 export type ModelRatingFilterInput = {
   id?: ModelIDInput | null;
   overallStars?: ModelIntInput | null;
+  contentStars?: ModelIntInput | null;
+  paceStars?: ModelIntInput | null;
   owner?: ModelStringInput | null;
   publicmeetinginfoID?: ModelIDInput | null;
   and?: Array<ModelRatingFilterInput | null> | null;
@@ -382,7 +392,7 @@ export type ModelAudienceFaceExpressionFilterInput = {
 };
 
 export type CreatePublicMeetingInfoMutationVariables = {
-  input?: CreatePublicMeetingInfoInput;
+  input: CreatePublicMeetingInfoInput;
   condition?: ModelPublicMeetingInfoConditionInput | null;
 };
 
@@ -403,7 +413,7 @@ export type CreatePublicMeetingInfoMutation = {
 };
 
 export type UpdatePublicMeetingInfoMutationVariables = {
-  input?: UpdatePublicMeetingInfoInput;
+  input: UpdatePublicMeetingInfoInput;
   condition?: ModelPublicMeetingInfoConditionInput | null;
 };
 
@@ -424,7 +434,7 @@ export type UpdatePublicMeetingInfoMutation = {
 };
 
 export type DeletePublicMeetingInfoMutationVariables = {
-  input?: DeletePublicMeetingInfoInput;
+  input: DeletePublicMeetingInfoInput;
   condition?: ModelPublicMeetingInfoConditionInput | null;
 };
 
@@ -445,7 +455,7 @@ export type DeletePublicMeetingInfoMutation = {
 };
 
 export type CreateRatingMutationVariables = {
-  input?: CreateRatingInput;
+  input: CreateRatingInput;
   condition?: ModelRatingConditionInput | null;
 };
 
@@ -454,6 +464,8 @@ export type CreateRatingMutation = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;
@@ -465,7 +477,7 @@ export type CreateRatingMutation = {
 };
 
 export type UpdateRatingMutationVariables = {
-  input?: UpdateRatingInput;
+  input: UpdateRatingInput;
   condition?: ModelRatingConditionInput | null;
 };
 
@@ -474,6 +486,8 @@ export type UpdateRatingMutation = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;
@@ -485,7 +499,7 @@ export type UpdateRatingMutation = {
 };
 
 export type DeleteRatingMutationVariables = {
-  input?: DeleteRatingInput;
+  input: DeleteRatingInput;
   condition?: ModelRatingConditionInput | null;
 };
 
@@ -494,6 +508,8 @@ export type DeleteRatingMutation = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;
@@ -505,7 +521,7 @@ export type DeleteRatingMutation = {
 };
 
 export type CreateMeetingMutationVariables = {
-  input?: CreateMeetingInput;
+  input: CreateMeetingInput;
   condition?: ModelMeetingConditionInput | null;
 };
 
@@ -564,7 +580,7 @@ export type CreateMeetingMutation = {
 };
 
 export type UpdateMeetingMutationVariables = {
-  input?: UpdateMeetingInput;
+  input: UpdateMeetingInput;
   condition?: ModelMeetingConditionInput | null;
 };
 
@@ -623,7 +639,7 @@ export type UpdateMeetingMutation = {
 };
 
 export type DeleteMeetingMutationVariables = {
-  input?: DeleteMeetingInput;
+  input: DeleteMeetingInput;
   condition?: ModelMeetingConditionInput | null;
 };
 
@@ -682,7 +698,7 @@ export type DeleteMeetingMutation = {
 };
 
 export type CreateAudienceFaceExpressionMutationVariables = {
-  input?: CreateAudienceFaceExpressionInput;
+  input: CreateAudienceFaceExpressionInput;
   condition?: ModelAudienceFaceExpressionConditionInput | null;
 };
 
@@ -710,7 +726,7 @@ export type CreateAudienceFaceExpressionMutation = {
 };
 
 export type UpdateAudienceFaceExpressionMutationVariables = {
-  input?: UpdateAudienceFaceExpressionInput;
+  input: UpdateAudienceFaceExpressionInput;
   condition?: ModelAudienceFaceExpressionConditionInput | null;
 };
 
@@ -738,7 +754,7 @@ export type UpdateAudienceFaceExpressionMutation = {
 };
 
 export type DeleteAudienceFaceExpressionMutationVariables = {
-  input?: DeleteAudienceFaceExpressionInput;
+  input: DeleteAudienceFaceExpressionInput;
   condition?: ModelAudienceFaceExpressionConditionInput | null;
 };
 
@@ -766,7 +782,7 @@ export type DeleteAudienceFaceExpressionMutation = {
 };
 
 export type GetPublicMeetingInfoQueryVariables = {
-  id?: string;
+  id: string;
 };
 
 export type GetPublicMeetingInfoQuery = {
@@ -841,7 +857,7 @@ export type SyncPublicMeetingInfosQuery = {
 };
 
 export type GetRatingQueryVariables = {
-  id?: string;
+  id: string;
 };
 
 export type GetRatingQuery = {
@@ -849,6 +865,8 @@ export type GetRatingQuery = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;
@@ -872,6 +890,8 @@ export type ListRatingsQuery = {
       __typename: "Rating";
       id: string;
       overallStars: number;
+      contentStars?: number | null;
+      paceStars?: number | null;
       owner?: string | null;
       publicmeetinginfoID: string;
       _version: number;
@@ -899,6 +919,8 @@ export type SyncRatingsQuery = {
       __typename: "Rating";
       id: string;
       overallStars: number;
+      contentStars?: number | null;
+      paceStars?: number | null;
       owner?: string | null;
       publicmeetinginfoID: string;
       _version: number;
@@ -913,7 +935,7 @@ export type SyncRatingsQuery = {
 };
 
 export type GetMeetingQueryVariables = {
-  id?: string;
+  id: string;
 };
 
 export type GetMeetingQuery = {
@@ -1062,7 +1084,7 @@ export type SyncMeetingsQuery = {
 };
 
 export type GetAudienceFaceExpressionQueryVariables = {
-  id?: string;
+  id: string;
 };
 
 export type GetAudienceFaceExpressionQuery = {
@@ -1226,6 +1248,8 @@ export type OnCreateRatingSubscription = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;
@@ -1245,6 +1269,8 @@ export type OnUpdateRatingSubscription = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;
@@ -1264,6 +1290,8 @@ export type OnDeleteRatingSubscription = {
     __typename: "Rating";
     id: string;
     overallStars: number;
+    contentStars?: number | null;
+    paceStars?: number | null;
     owner?: string | null;
     publicmeetinginfoID: string;
     _version: number;

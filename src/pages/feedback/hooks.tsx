@@ -55,13 +55,25 @@ export const useFetchPublicMeeting = (
 export const useSubmitAnswer = (
   publicmeetinginfoID?: string,
   owner?: string
-): [boolean, boolean, (stars: number) => void] => {
+): [
+  boolean,
+  boolean,
+  (
+    overallStars: number,
+    paceStars: number | null,
+    contentStars: number | null
+  ) => void
+] => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
   const callback = useCallback(
-    async (overallStars: number): Promise<void> => {
+    async (
+      overallStars: number,
+      paceStars: number | null,
+      contentStars: number | null
+    ): Promise<void> => {
       try {
         if (!publicmeetinginfoID || !owner) {
           dispatch(
@@ -75,7 +87,15 @@ export const useSubmitAnswer = (
         setLoading(true);
         await API.graphql({
           query: createRating,
-          variables: { input: { overallStars, publicmeetinginfoID, owner } },
+          variables: {
+            input: {
+              overallStars,
+              paceStars,
+              contentStars,
+              publicmeetinginfoID,
+              owner,
+            },
+          },
           authMode: GRAPHQL_AUTH_MODE.AWS_IAM,
         });
         setSubmitted(true);

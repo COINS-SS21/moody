@@ -55,6 +55,8 @@ export const onCreateRating = /* GraphQL */ `
     onCreateRating(owner: $owner) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version
@@ -70,6 +72,8 @@ export const onUpdateRating = /* GraphQL */ `
     onUpdateRating(owner: $owner) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version
@@ -85,6 +89,8 @@ export const onDeleteRating = /* GraphQL */ `
     onDeleteRating(owner: $owner) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version

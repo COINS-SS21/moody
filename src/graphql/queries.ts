@@ -81,6 +81,8 @@ export const getRating = /* GraphQL */ `
     getRating(id: $id) {
       id
       overallStars
+      contentStars
+      paceStars
       owner
       publicmeetinginfoID
       _version
@@ -101,6 +103,8 @@ export const listRatings = /* GraphQL */ `
       items {
         id
         overallStars
+        contentStars
+        paceStars
         owner
         publicmeetinginfoID
         _version
@@ -130,6 +134,8 @@ export const syncRatings = /* GraphQL */ `
       items {
         id
         overallStars
+        contentStars
+        paceStars
         owner
         publicmeetinginfoID
         _version
