@@ -152,9 +152,9 @@ export function useEmotionDetection(
             canvasRef.current
           );
         }
-        requestAnimationFrame(drawDetections);
+        animationFrame = requestAnimationFrame(drawDetections);
       };
-      requestAnimationFrame(drawDetections);
+      animationFrame = requestAnimationFrame(drawDetections);
 
       return () => {
         cancelAnimationFrame(animationFrame);
