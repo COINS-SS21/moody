@@ -197,6 +197,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
                       ? "primary.main"
                       : "inherit"
                   }
+                  borderBottom={max(predictions) === predictions[index] ? 1 : 0}
                   key={emotion}
                 >
                   <Typography variant="body1">
