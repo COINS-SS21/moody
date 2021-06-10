@@ -76,7 +76,7 @@ let data: number[] = [];
 export default function RavdessVoiceEmotion(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [activeVoice, setActiveVoice] = useState<string>(
-    "/03-01-08-01-01-01-08.wav"
+    "/ravdess/03-01-01-01-01-01-03.wav"
   );
 
   const onnxSession = useRef<InferenceSession | null>(null);
@@ -101,10 +101,11 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     },
     async () => {
       if (onnxSession.current instanceof InferenceSession) {
-        const tooLong = data.length - 88200;
         data = data.slice(
-          Math.floor(tooLong / 2 + 6500),
-          data.length - Math.floor(tooLong / 2 - 6500)
+          // 0.6 seconds offset
+          Math.floor(22050 * 2 * 0.6),
+          // 2 seconds duration after offset
+          Math.floor(22050 * 2 * 2) + Math.floor(22050 * 2 * 0.6)
         );
         const inputs = [
           new Tensor(new Float32Array(data), "float32", [1, 88200]),
@@ -151,36 +152,68 @@ export default function RavdessVoiceEmotion(): JSX.Element {
           </Box>
           <ButtonGroup color="primary">
             <Button
-              disabled={activeVoice === "/03-01-08-01-01-01-08.wav"}
+              disabled={activeVoice === "/ravdess/03-01-01-01-01-01-03.wav"}
               onClick={() => {
-                setActiveVoice("/03-01-08-01-01-01-08.wav");
+                setActiveVoice("/ravdess/03-01-01-01-01-01-03.wav");
               }}
             >
-              Surprised
+              Neutral
             </Button>
             <Button
-              disabled={activeVoice === "/03-01-06-02-01-02-16.wav"}
+              disabled={activeVoice === "/ravdess/03-01-02-02-01-01-22.wav"}
               onClick={() => {
-                setActiveVoice("/03-01-06-02-01-02-16.wav");
+                setActiveVoice("/ravdess/03-01-02-02-01-01-22.wav");
               }}
             >
-              Fearful
+              Calm
             </Button>
             <Button
-              disabled={activeVoice === "/03-01-04-01-01-02-16.wav"}
+              disabled={activeVoice === "/ravdess/03-01-03-01-02-01-07.wav"}
               onClick={() => {
-                setActiveVoice("/03-01-04-01-01-02-16.wav");
+                setActiveVoice("/ravdess/03-01-03-01-02-01-07.wav");
+              }}
+            >
+              Happy
+            </Button>
+            <Button
+              disabled={activeVoice === "/ravdess/03-01-04-01-01-02-16.wav"}
+              onClick={() => {
+                setActiveVoice("/ravdess/03-01-04-01-01-02-16.wav");
               }}
             >
               Sad
             </Button>
             <Button
-              disabled={activeVoice === "/03-01-01-01-01-01-03.wav"}
+              disabled={activeVoice === "/ravdess/03-01-05-01-02-01-13.wav"}
               onClick={() => {
-                setActiveVoice("/03-01-01-01-01-01-03.wav");
+                setActiveVoice("/ravdess/03-01-05-01-02-01-13.wav");
               }}
             >
-              Neutral
+              Angry
+            </Button>
+            <Button
+              disabled={activeVoice === "/ravdess/03-01-06-02-01-02-16.wav"}
+              onClick={() => {
+                setActiveVoice("/ravdess/03-01-06-02-01-02-16.wav");
+              }}
+            >
+              Fearful
+            </Button>
+            <Button
+              disabled={activeVoice === "/ravdess/03-01-07-01-01-01-19.wav"}
+              onClick={() => {
+                setActiveVoice("/ravdess/03-01-07-01-01-01-19.wav");
+              }}
+            >
+              Disgust
+            </Button>
+            <Button
+              disabled={activeVoice === "/ravdess/03-01-08-01-01-01-08.wav"}
+              onClick={() => {
+                setActiveVoice("/ravdess/03-01-08-01-01-01-08.wav");
+              }}
+            >
+              Surprised
             </Button>
           </ButtonGroup>
         </Box>
