@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../reduxHooks";
-import { AudienceFaceExpression } from "../../models";
+import { AudienceFaceExpression, SpeakerVoiceEmotion } from "../../models";
 import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import {
@@ -12,11 +12,15 @@ import {
 } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";
+import { selectActiveMeetingSpeakerVoiceEmotions } from "../../meetings/speakerVoiceEmotionSlice";
 
 export default function AudienceEmotionRollercoaster(): JSX.Element {
   const theme = useTheme();
-  const expressions: AudienceFaceExpression[] = useAppSelector(
+  const audienceFaceExpressions: AudienceFaceExpression[] = useAppSelector(
     selectActiveMeetingAudienceFaceExpressions
+  );
+  const speakerVoiceEmotions: SpeakerVoiceEmotion[] = useAppSelector(
+    selectActiveMeetingSpeakerVoiceEmotions
   );
 
   // Popover
@@ -74,8 +78,8 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
             bgcolor: theme.palette.primary.main,
           },
           margin: {
-            l: 30,
-            r: 10,
+            l: 40,
+            r: 30,
             t: 80,
             b: 70,
           },
@@ -87,6 +91,8 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
             family: theme.typography.fontFamily,
             color: theme.palette.text.primary,
           },
+          showlegend: true,
+          legend: { orientation: "h" },
           transition: {
             duration: 500,
             easing: "cubic-in-out",
@@ -94,11 +100,20 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
         }}
         data={[
           {
-            x: expressions.map((e) => new Date(e.timestamp)),
-            y: expressions.map((e) => e.score),
+            name: "Audience face expressions",
+            x: audienceFaceExpressions.map((e) => new Date(e.timestamp)),
+            y: audienceFaceExpressions.map((e) => e.score),
             type: "scatter",
             mode: "lines",
             line: { color: theme.palette.primary.main },
+          },
+          {
+            name: "Speaker voice emotions",
+            x: speakerVoiceEmotions.map((e) => new Date(e.timestamp)),
+            y: speakerVoiceEmotions.map((e) => e.score),
+            type: "scatter",
+            mode: "lines",
+            line: { color: theme.palette.secondary.main },
           },
         ]}
       />
