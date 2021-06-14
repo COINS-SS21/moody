@@ -6,18 +6,22 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { AudienceFaceExpression } from "../../models";
+import { AudienceFaceExpression, SpeakerVoiceEmotion } from "../../models";
 import { useAppSelector } from "../../reduxHooks";
 import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";
 import { calculatePaulEkmanEmotionScore } from "../../meetings/audienceFaceExpressionUtils";
+import { selectActiveMeetingSpeakerVoiceEmotions } from "../../meetings/speakerVoiceEmotionSlice";
 
 export default function EmotionRadar() {
   const theme = useTheme();
-  const expressions: AudienceFaceExpression[] = useAppSelector(
+  const audienceFaceExpressions: AudienceFaceExpression[] = useAppSelector(
     selectActiveMeetingAudienceFaceExpressions
+  );
+  const speakerVoiceEmotions: SpeakerVoiceEmotion[] = useAppSelector(
+    selectActiveMeetingSpeakerVoiceEmotions
   );
 
   // Popover
@@ -54,9 +58,13 @@ export default function EmotionRadar() {
             }}
           >
             <Box p={2}>
+              <Typography variant="body2" paragraph>
+                Shows the audience's average emotion distribution throughout the
+                whole meeting as measured by their faces on a logarithmic scale.
+              </Typography>
               <Typography variant="body2">
-                Shows the average emotion distribution throughout the whole
-                meeting on a logarithmic scale.
+                In addition, the speaker's average emotion distribution as
+                measured by his/her voice is plotted on a logarithmic scale.
               </Typography>
             </Box>
           </Popover>
@@ -85,11 +93,13 @@ export default function EmotionRadar() {
             l: 50,
             r: 50,
             t: 80,
-            b: 40,
+            b: 60,
           },
           yaxis: {
             range: [-1.1, 1.1],
           },
+          showlegend: true,
+          legend: { orientation: "h" },
           font: {
             family: theme.typography.fontFamily,
             color: theme.palette.text.primary,
@@ -101,9 +111,10 @@ export default function EmotionRadar() {
         }}
         data={[
           {
+            name: "Audience face expressions",
             r: Object.values(
               calculatePaulEkmanEmotionScore(
-                expressions.map((e) => ({
+                audienceFaceExpressions.map((e) => ({
                   happy: e.happy ? Math.log(e.happy) : 0.0,
                   surprised: e.surprised ? Math.log(e.surprised) : 0.0,
                   neutral: e.neutral ? Math.log(e.neutral) : 0.0,
@@ -116,6 +127,38 @@ export default function EmotionRadar() {
             ),
             marker: {
               color: theme.palette.primary.main,
+            },
+            theta: [
+              "happy",
+              "surprised",
+              "neutral",
+              "sad",
+              "angry",
+              "disgusted",
+              "fearful",
+            ],
+            fill: "toself",
+            type: "scatterpolar",
+          },
+          {
+            name: "Speaker voice emotions",
+            r: Object.values(
+              calculatePaulEkmanEmotionScore(
+                speakerVoiceEmotions.map((e) => ({
+                  happy: e.happy ? Math.log(e.happy) : 0.0,
+                  surprised: e.surprised ? Math.log(e.surprised) : 0.0,
+                  // Please note that calm and neutral are aggregated to have class parity with the face emotions
+                  neutral:
+                    e.neutral && e.calm ? Math.log(e.neutral + e.calm) : 0.0,
+                  sad: e.sad ? Math.log(e.sad) : 0.0,
+                  angry: e.angry ? Math.log(e.angry) : 0.0,
+                  disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
+                  fearful: e.fearful ? Math.log(e.fearful) : 0.0,
+                }))
+              )
+            ),
+            marker: {
+              color: theme.palette.secondary.main,
             },
             theta: [
               "happy",

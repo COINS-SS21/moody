@@ -18,7 +18,10 @@ import {
   fetchAudienceFaceExpressions,
 } from "./audienceFaceExpressionSlice";
 import { deleteRatings } from "./ratingsSlice";
-import { deleteSpeakerVoiceEmotions } from "./speakerVoiceEmotionSlice";
+import {
+  deleteSpeakerVoiceEmotions,
+  fetchSpeakerVoiceEmotions,
+} from "./speakerVoiceEmotionSlice";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",
@@ -34,12 +37,19 @@ export const fetchMeeting = createAsyncThunk(
 
     if (meeting) {
       // Fetch corresponding AudienceFaceExpressions
-      const audienceFaceExpressions = (
-        await DataStore.query(AudienceFaceExpression, (a) =>
-          a.meetingID("eq", meeting.id)
-        )
-      ).filter((faceExpression) => faceExpression.meetingID === meeting.id);
+      const audienceFaceExpressions = await DataStore.query(
+        AudienceFaceExpression,
+        (predicate) => predicate.meetingID("eq", meeting.id)
+      );
       await dispatch(fetchAudienceFaceExpressions(audienceFaceExpressions));
+
+      // Fetch corresponding SpeakerVoiceEmotions
+      const speakerVoiceEmotions = await DataStore.query(
+        SpeakerVoiceEmotion,
+        (predicate) => predicate.meetingID("eq", meeting.id)
+      );
+      await dispatch(fetchSpeakerVoiceEmotions(speakerVoiceEmotions));
+
       return meeting;
     }
   }
