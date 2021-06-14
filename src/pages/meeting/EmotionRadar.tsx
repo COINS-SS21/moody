@@ -12,7 +12,7 @@ import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audie
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";
-import { calculatePaulEkmanEmotionScore } from "../../meetings/utils";
+import { calculatePaulEkmanEmotionScore } from "../../meetings/audienceFaceExpressionUtils";
 
 export default function EmotionRadar() {
   const theme = useTheme();

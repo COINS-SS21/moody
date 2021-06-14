@@ -1,6 +1,15 @@
 import { FaceExpressions, WithFaceExpressions } from "face-api.js";
 import flow from "lodash-es/flow";
-import { PaulEkmanEmotion } from "./types";
+
+export type PaulEkmanEmotion = {
+  happy: number;
+  surprised: number;
+  neutral: number;
+  sad: number;
+  disgusted: number;
+  fearful: number;
+  angry: number;
+};
 
 export type AggregatedExpression = {
   positive: number;

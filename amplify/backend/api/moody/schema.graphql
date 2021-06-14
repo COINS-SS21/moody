@@ -1,3 +1,18 @@
+type SpeakerVoiceEmotion @model @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
+  id: ID!
+  timestamp: AWSTimestamp!
+  score: Float!
+  neutral: Float!
+  calm: Float!
+  happy: Float!
+  sad: Float!
+  angry: Float!
+  fearful: Float!
+  disgusted: Float!
+  surprised: Float!
+  meetingID: ID
+}
+
 type PublicMeetingInfo @model @auth(rules: [{allow: owner, operations: [read, create, update, delete]}, {allow: public, operations: [read], provider: iam}]) {
   id: ID!
   name: String!
@@ -24,6 +39,7 @@ type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   PublicMeetingInfo: PublicMeetingInfo @connection
+  SpeakerVoiceEmotions: [SpeakerVoiceEmotion] @connection(keyName: "byMeeting", fields: ["id"])
 }
 
 type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {

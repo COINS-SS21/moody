@@ -2,6 +2,78 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateSpeakerVoiceEmotion = /* GraphQL */ `
+  subscription OnCreateSpeakerVoiceEmotion($owner: String) {
+    onCreateSpeakerVoiceEmotion(owner: $owner) {
+      id
+      timestamp
+      score
+      neutral
+      calm
+      happy
+      sad
+      angry
+      fearful
+      disgusted
+      surprised
+      meetingID
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onUpdateSpeakerVoiceEmotion = /* GraphQL */ `
+  subscription OnUpdateSpeakerVoiceEmotion($owner: String) {
+    onUpdateSpeakerVoiceEmotion(owner: $owner) {
+      id
+      timestamp
+      score
+      neutral
+      calm
+      happy
+      sad
+      angry
+      fearful
+      disgusted
+      surprised
+      meetingID
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const onDeleteSpeakerVoiceEmotion = /* GraphQL */ `
+  subscription OnDeleteSpeakerVoiceEmotion($owner: String) {
+    onDeleteSpeakerVoiceEmotion(owner: $owner) {
+      id
+      timestamp
+      score
+      neutral
+      calm
+      happy
+      sad
+      angry
+      fearful
+      disgusted
+      surprised
+      meetingID
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
 export const onCreatePublicMeetingInfo = /* GraphQL */ `
   subscription OnCreatePublicMeetingInfo($owner: String) {
     onCreatePublicMeetingInfo(owner: $owner) {
@@ -113,6 +185,30 @@ export const onCreateMeeting = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      SpeakerVoiceEmotions {
+        items {
+          id
+          timestamp
+          score
+          neutral
+          calm
+          happy
+          sad
+          angry
+          fearful
+          disgusted
+          surprised
+          meetingID
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+        startedAt
+      }
       PublicMeetingInfo {
         id
         name
@@ -164,6 +260,30 @@ export const onUpdateMeeting = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      SpeakerVoiceEmotions {
+        items {
+          id
+          timestamp
+          score
+          neutral
+          calm
+          happy
+          sad
+          angry
+          fearful
+          disgusted
+          surprised
+          meetingID
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+        startedAt
+      }
       PublicMeetingInfo {
         id
         name
@@ -215,6 +335,30 @@ export const onDeleteMeeting = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      SpeakerVoiceEmotions {
+        items {
+          id
+          timestamp
+          score
+          neutral
+          calm
+          happy
+          sad
+          angry
+          fearful
+          disgusted
+          surprised
+          meetingID
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+        startedAt
+      }
       PublicMeetingInfo {
         id
         name

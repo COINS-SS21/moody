@@ -15,7 +15,7 @@ import { addFaceExpressionScore } from "../../meetings/audienceFaceExpressionSli
 import {
   aggregateAndCalculateExpressionScore,
   aggregateAndCalculatePaulEkmanEmotionScore,
-} from "../../meetings/utils";
+} from "../../meetings/audienceFaceExpressionUtils";
 import { addError } from "../../error/errorSlice";
 import {
   activeMeetingEnded,
@@ -27,6 +27,16 @@ import {
   FaceExpressions,
   WithFaceExpressions,
 } from "face-api.js";
+import VoiceCaptureService from "../../media/VoiceCaptureService";
+import { InferenceSession, Tensor } from "onnxjs";
+import { MeydaFeaturesObject } from "meyda";
+import { softmax } from "../../utils";
+import {
+  aggregateAndCalculateVoiceEmotionScore,
+  PaulEkmanVoiceEmotion,
+  VOICE_EMOTIONS,
+} from "../../meetings/speakerVoiceEmotionUtils";
+import { addVoiceEmotionScore } from "../../meetings/speakerVoiceEmotionSlice";
 
 // Returns a callback to start the screen capturing and automatically cleans up the react components.
 // Does nothing if the meeting is stopped.
@@ -53,21 +63,23 @@ export function useScreenCapturingIfMeetingIsRunning(
           .getTracks()[0]
           .addEventListener("ended", handleStopMeeting);
       } catch (e) {
-        dispatch(addError("Cannot start screen capturing: " + e.message));
+        dispatch(
+          addError(
+            "Cannot start screen capturing: " +
+              e.message +
+              ". Try to reload the page."
+          )
+        );
       }
     }
   }, [dispatch, handleStopMeeting, meetingRunning, videoRef]);
-
-  const stopScreenCapturing = useCallback(() => {
-    screenCaptureServiceRef.current?.stopCapturing();
-  }, []);
 
   // Cleanup function
   useEffect(() => {
     return () => {
       screenCaptureServiceRef.current?.stopCapturing();
     };
-  }, [stopScreenCapturing, meetingRunning]);
+  }, [meetingRunning]);
 
   return startScreenCapturing;
 }
@@ -204,4 +216,125 @@ export function useMeetingInformation(
   );
 
   return [meetingLoading, meetingRunning, meetingEnded, meetingName];
+}
+
+export function useVoiceCapturingIfMeetingIsRunning(
+  callback: (features: Partial<MeydaFeaturesObject>) => void
+): [() => Promise<void>, () => Promise<void>] {
+  const voiceCaptureServiceRef = useRef<VoiceCaptureService | null>(null);
+  const dispatch = useAppDispatch();
+  const meetingRunning = useAppSelector(activeMeetingRunning);
+
+  const startVoiceCapturing = useCallback(async () => {
+    voiceCaptureServiceRef.current = new VoiceCaptureService();
+    try {
+      await voiceCaptureServiceRef.current.startCapturing();
+      voiceCaptureServiceRef.current?.startAnalyzer(callback);
+    } catch (e) {
+      dispatch(
+        addError(
+          "Cannot start voice capturing: " +
+            e.message +
+            ". Try to reload the page."
+        )
+      );
+    }
+  }, [callback, dispatch]);
+
+  const stopVoiceCapturing = useCallback(async () => {
+    try {
+      await voiceCaptureServiceRef.current?.stopCapturing();
+    } catch (e) {
+      dispatch(addError(e.message));
+    }
+    voiceCaptureServiceRef.current = null;
+  }, [dispatch]);
+
+  // Auto cleanup on component unmount or if the meeting is stopped
+  useEffect(() => {
+    return () => {
+      stopVoiceCapturing();
+    };
+  }, [meetingRunning, stopVoiceCapturing]);
+
+  return [startVoiceCapturing, stopVoiceCapturing];
+}
+
+export function useVoiceEmotionCapturing(): [
+  () => Promise<void>,
+  (features: Partial<MeydaFeaturesObject>) => Promise<void>
+] {
+  const onnxSession = useRef<InferenceSession | null>(null);
+
+  const warmupModel = useCallback(async () => {
+    onnxSession.current = new InferenceSession();
+    await onnxSession.current.loadModel("/onnx/voice_emotion_cnn.onnx");
+  }, []);
+
+  const dispatch = useAppDispatch();
+  const meetingID: string = useAppSelector(
+    (state) => state.meetings.activeMeeting!
+  );
+
+  // Create a buffer for the audio data.
+  // This gets flushed every 2 seconds by the callback.
+  let dataRef = useRef<number[]>([]);
+
+  // Gets the features extracted by the audio analyzer (@see VoiceCaptureService).
+  // This callback should be passed to the useVoiceCapturingIfMeetingIsRunning hook.
+  // It will be called with as soon as an internal buffer of 512 is full
+  const extractAndPersistVoiceEmotionsCallback = useCallback(
+    async (features: Partial<MeydaFeaturesObject>) => {
+      dataRef.current.push(...features.buffer!);
+
+      // Every 2 seconds: Save the voice emotions and flush the buffer.
+      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 2) {
+        // Copy the data to a local variable and reset the global dataRef.
+        // This avoids an infinite loop if the callback is called faster than it executes.
+        // This is necessary because this is an async function with a race condition on dataRef.
+        const data: number[] = dataRef.current.slice(
+          0,
+          VoiceCaptureService.SAMPLE_RATE * 2
+        );
+        dataRef.current = [];
+
+        const inputs = [
+          new Tensor(new Float32Array(data), "float32", [
+            1,
+            VoiceCaptureService.SAMPLE_RATE * 2,
+          ]),
+        ];
+        const outputMap = await onnxSession.current?.run(inputs);
+        const outputTensor = outputMap?.values().next().value;
+        const outputTensorProbabilities: number[] = softmax(outputTensor.data);
+        const voiceEmotionObject: PaulEkmanVoiceEmotion = VOICE_EMOTIONS.reduce(
+          (
+            obj: PaulEkmanVoiceEmotion,
+            emotionName: keyof PaulEkmanVoiceEmotion,
+            index: number
+          ) => ({ ...obj, [emotionName]: outputTensorProbabilities[index] }),
+          {
+            neutral: 0.0,
+            calm: 0.0,
+            happy: 0.0,
+            sad: 0.0,
+            angry: 0.0,
+            fearful: 0.0,
+            disgusted: 0.0,
+            surprised: 0.0,
+          }
+        );
+        await dispatch(
+          addVoiceEmotionScore({
+            score: aggregateAndCalculateVoiceEmotionScore(voiceEmotionObject),
+            meetingID,
+            raw: voiceEmotionObject,
+          })
+        );
+      }
+    },
+    [meetingID, dataRef, dispatch]
+  );
+
+  return [warmupModel, extractAndPersistVoiceEmotionsCallback];
 }

@@ -11,12 +11,14 @@ import {
   Meeting,
   PublicMeetingInfo,
   Rating,
+  SpeakerVoiceEmotion,
 } from "../models";
 import {
   deleteAudienceFaceExpressions,
   fetchAudienceFaceExpressions,
 } from "./audienceFaceExpressionSlice";
 import { deleteRatings } from "./ratingsSlice";
+import { deleteSpeakerVoiceEmotions } from "./speakerVoiceEmotionSlice";
 
 export const fetchAllMeetings = createAsyncThunk(
   "meetings/fetchAll",
@@ -63,10 +65,21 @@ export const removeMeeting = createAsyncThunk(
       dispatch(
         deleteAudienceFaceExpressions(
           (
-            await DataStore.delete(AudienceFaceExpression, (a) =>
-              a.meetingID("eq", meetingToDelete.id)
+            await DataStore.delete(AudienceFaceExpression, (predicate) =>
+              predicate.meetingID("eq", meetingToDelete.id)
             )
-          ).map((a) => a.id)
+          ).map((predicate) => predicate.id)
+        )
+      );
+
+      // Delete SpeakerVoiceEmotions
+      dispatch(
+        deleteSpeakerVoiceEmotions(
+          (
+            await DataStore.delete(SpeakerVoiceEmotion, (predicate) =>
+              predicate.meetingID("eq", meetingToDelete.id)
+            )
+          ).map((predicate) => predicate.id)
         )
       );
 

@@ -2,6 +2,145 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
+export type CreateSpeakerVoiceEmotionInput = {
+  id?: string | null;
+  timestamp: number;
+  score: number;
+  neutral: number;
+  calm: number;
+  happy: number;
+  sad: number;
+  angry: number;
+  fearful: number;
+  disgusted: number;
+  surprised: number;
+  meetingID?: string | null;
+  _version?: number | null;
+};
+
+export type ModelSpeakerVoiceEmotionConditionInput = {
+  timestamp?: ModelIntInput | null;
+  score?: ModelFloatInput | null;
+  neutral?: ModelFloatInput | null;
+  calm?: ModelFloatInput | null;
+  happy?: ModelFloatInput | null;
+  sad?: ModelFloatInput | null;
+  angry?: ModelFloatInput | null;
+  fearful?: ModelFloatInput | null;
+  disgusted?: ModelFloatInput | null;
+  surprised?: ModelFloatInput | null;
+  meetingID?: ModelIDInput | null;
+  and?: Array<ModelSpeakerVoiceEmotionConditionInput | null> | null;
+  or?: Array<ModelSpeakerVoiceEmotionConditionInput | null> | null;
+  not?: ModelSpeakerVoiceEmotionConditionInput | null;
+};
+
+export type ModelIntInput = {
+  ne?: number | null;
+  eq?: number | null;
+  le?: number | null;
+  lt?: number | null;
+  ge?: number | null;
+  gt?: number | null;
+  between?: Array<number | null> | null;
+  attributeExists?: boolean | null;
+  attributeType?: ModelAttributeTypes | null;
+};
+
+export enum ModelAttributeTypes {
+  binary = "binary",
+  binarySet = "binarySet",
+  bool = "bool",
+  list = "list",
+  map = "map",
+  number = "number",
+  numberSet = "numberSet",
+  string = "string",
+  stringSet = "stringSet",
+  _null = "_null",
+}
+
+export type ModelFloatInput = {
+  ne?: number | null;
+  eq?: number | null;
+  le?: number | null;
+  lt?: number | null;
+  ge?: number | null;
+  gt?: number | null;
+  between?: Array<number | null> | null;
+  attributeExists?: boolean | null;
+  attributeType?: ModelAttributeTypes | null;
+};
+
+export type ModelIDInput = {
+  ne?: string | null;
+  eq?: string | null;
+  le?: string | null;
+  lt?: string | null;
+  ge?: string | null;
+  gt?: string | null;
+  contains?: string | null;
+  notContains?: string | null;
+  between?: Array<string | null> | null;
+  beginsWith?: string | null;
+  attributeExists?: boolean | null;
+  attributeType?: ModelAttributeTypes | null;
+  size?: ModelSizeInput | null;
+};
+
+export type ModelSizeInput = {
+  ne?: number | null;
+  eq?: number | null;
+  le?: number | null;
+  lt?: number | null;
+  ge?: number | null;
+  gt?: number | null;
+  between?: Array<number | null> | null;
+};
+
+export type SpeakerVoiceEmotion = {
+  __typename: "SpeakerVoiceEmotion";
+  id: string;
+  timestamp: number;
+  score: number;
+  neutral: number;
+  calm: number;
+  happy: number;
+  sad: number;
+  angry: number;
+  fearful: number;
+  disgusted: number;
+  surprised: number;
+  meetingID?: string | null;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+  createdAt: string;
+  updatedAt: string;
+  owner?: string | null;
+};
+
+export type UpdateSpeakerVoiceEmotionInput = {
+  id: string;
+  timestamp?: number | null;
+  score?: number | null;
+  neutral?: number | null;
+  calm?: number | null;
+  happy?: number | null;
+  sad?: number | null;
+  angry?: number | null;
+  fearful?: number | null;
+  disgusted?: number | null;
+  surprised?: number | null;
+  meetingID?: string | null;
+  _version?: number | null;
+};
+
+export type DeleteSpeakerVoiceEmotionInput = {
+  id: string;
+  _version?: number | null;
+};
+
 export type CreatePublicMeetingInfoInput = {
   id?: string | null;
   name: string;
@@ -34,29 +173,6 @@ export type ModelStringInput = {
   attributeExists?: boolean | null;
   attributeType?: ModelAttributeTypes | null;
   size?: ModelSizeInput | null;
-};
-
-export enum ModelAttributeTypes {
-  binary = "binary",
-  binarySet = "binarySet",
-  bool = "bool",
-  list = "list",
-  map = "map",
-  number = "number",
-  numberSet = "numberSet",
-  string = "string",
-  stringSet = "stringSet",
-  _null = "_null",
-}
-
-export type ModelSizeInput = {
-  ne?: number | null;
-  eq?: number | null;
-  le?: number | null;
-  lt?: number | null;
-  ge?: number | null;
-  gt?: number | null;
-  between?: Array<number | null> | null;
 };
 
 export type PublicMeetingInfo = {
@@ -105,34 +221,6 @@ export type ModelRatingConditionInput = {
   and?: Array<ModelRatingConditionInput | null> | null;
   or?: Array<ModelRatingConditionInput | null> | null;
   not?: ModelRatingConditionInput | null;
-};
-
-export type ModelIntInput = {
-  ne?: number | null;
-  eq?: number | null;
-  le?: number | null;
-  lt?: number | null;
-  ge?: number | null;
-  gt?: number | null;
-  between?: Array<number | null> | null;
-  attributeExists?: boolean | null;
-  attributeType?: ModelAttributeTypes | null;
-};
-
-export type ModelIDInput = {
-  ne?: string | null;
-  eq?: string | null;
-  le?: string | null;
-  lt?: string | null;
-  ge?: string | null;
-  gt?: string | null;
-  contains?: string | null;
-  notContains?: string | null;
-  between?: Array<string | null> | null;
-  beginsWith?: string | null;
-  attributeExists?: boolean | null;
-  attributeType?: ModelAttributeTypes | null;
-  size?: ModelSizeInput | null;
 };
 
 export type Rating = {
@@ -198,9 +286,17 @@ export type Meeting = {
   _version: number;
   _deleted?: boolean | null;
   _lastChangedAt: number;
+  SpeakerVoiceEmotions?: ModelSpeakerVoiceEmotionConnection | null;
   PublicMeetingInfo?: PublicMeetingInfo | null;
   owner?: string | null;
   AudienceFaceExpressions?: ModelAudienceFaceExpressionConnection | null;
+};
+
+export type ModelSpeakerVoiceEmotionConnection = {
+  __typename: "ModelSpeakerVoiceEmotionConnection";
+  items?: Array<SpeakerVoiceEmotion | null> | null;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type ModelAudienceFaceExpressionConnection = {
@@ -282,18 +378,6 @@ export type ModelAudienceFaceExpressionConditionInput = {
   not?: ModelAudienceFaceExpressionConditionInput | null;
 };
 
-export type ModelFloatInput = {
-  ne?: number | null;
-  eq?: number | null;
-  le?: number | null;
-  lt?: number | null;
-  ge?: number | null;
-  gt?: number | null;
-  between?: Array<number | null> | null;
-  attributeExists?: boolean | null;
-  attributeType?: ModelAttributeTypes | null;
-};
-
 export type UpdateAudienceFaceExpressionInput = {
   id: string;
   timestamp?: number | null;
@@ -314,6 +398,24 @@ export type UpdateAudienceFaceExpressionInput = {
 export type DeleteAudienceFaceExpressionInput = {
   id: string;
   _version?: number | null;
+};
+
+export type ModelSpeakerVoiceEmotionFilterInput = {
+  id?: ModelIDInput | null;
+  timestamp?: ModelIntInput | null;
+  score?: ModelFloatInput | null;
+  neutral?: ModelFloatInput | null;
+  calm?: ModelFloatInput | null;
+  happy?: ModelFloatInput | null;
+  sad?: ModelFloatInput | null;
+  angry?: ModelFloatInput | null;
+  fearful?: ModelFloatInput | null;
+  disgusted?: ModelFloatInput | null;
+  surprised?: ModelFloatInput | null;
+  meetingID?: ModelIDInput | null;
+  and?: Array<ModelSpeakerVoiceEmotionFilterInput | null> | null;
+  or?: Array<ModelSpeakerVoiceEmotionFilterInput | null> | null;
+  not?: ModelSpeakerVoiceEmotionFilterInput | null;
 };
 
 export type ModelPublicMeetingInfoFilterInput = {
@@ -389,6 +491,93 @@ export type ModelAudienceFaceExpressionFilterInput = {
   and?: Array<ModelAudienceFaceExpressionFilterInput | null> | null;
   or?: Array<ModelAudienceFaceExpressionFilterInput | null> | null;
   not?: ModelAudienceFaceExpressionFilterInput | null;
+};
+
+export type CreateSpeakerVoiceEmotionMutationVariables = {
+  input: CreateSpeakerVoiceEmotionInput;
+  condition?: ModelSpeakerVoiceEmotionConditionInput | null;
+};
+
+export type CreateSpeakerVoiceEmotionMutation = {
+  createSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
+  } | null;
+};
+
+export type UpdateSpeakerVoiceEmotionMutationVariables = {
+  input: UpdateSpeakerVoiceEmotionInput;
+  condition?: ModelSpeakerVoiceEmotionConditionInput | null;
+};
+
+export type UpdateSpeakerVoiceEmotionMutation = {
+  updateSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
+  } | null;
+};
+
+export type DeleteSpeakerVoiceEmotionMutationVariables = {
+  input: DeleteSpeakerVoiceEmotionInput;
+  condition?: ModelSpeakerVoiceEmotionConditionInput | null;
+};
+
+export type DeleteSpeakerVoiceEmotionMutation = {
+  deleteSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
+  } | null;
 };
 
 export type CreatePublicMeetingInfoMutationVariables = {
@@ -537,6 +726,32 @@ export type CreateMeetingMutation = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;
@@ -596,6 +811,32 @@ export type UpdateMeetingMutation = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;
@@ -655,6 +896,32 @@ export type DeleteMeetingMutation = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;
@@ -778,6 +1045,105 @@ export type DeleteAudienceFaceExpressionMutation = {
     _deleted?: boolean | null;
     _lastChangedAt: number;
     owner?: string | null;
+  } | null;
+};
+
+export type GetSpeakerVoiceEmotionQueryVariables = {
+  id: string;
+};
+
+export type GetSpeakerVoiceEmotionQuery = {
+  getSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
+  } | null;
+};
+
+export type ListSpeakerVoiceEmotionsQueryVariables = {
+  filter?: ModelSpeakerVoiceEmotionFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+};
+
+export type ListSpeakerVoiceEmotionsQuery = {
+  listSpeakerVoiceEmotions?: {
+    __typename: "ModelSpeakerVoiceEmotionConnection";
+    items?: Array<{
+      __typename: "SpeakerVoiceEmotion";
+      id: string;
+      timestamp: number;
+      score: number;
+      neutral: number;
+      calm: number;
+      happy: number;
+      sad: number;
+      angry: number;
+      fearful: number;
+      disgusted: number;
+      surprised: number;
+      meetingID?: string | null;
+      _version: number;
+      _deleted?: boolean | null;
+      _lastChangedAt: number;
+      createdAt: string;
+      updatedAt: string;
+      owner?: string | null;
+    } | null> | null;
+    nextToken?: string | null;
+    startedAt?: number | null;
+  } | null;
+};
+
+export type SyncSpeakerVoiceEmotionsQueryVariables = {
+  filter?: ModelSpeakerVoiceEmotionFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+  lastSync?: number | null;
+};
+
+export type SyncSpeakerVoiceEmotionsQuery = {
+  syncSpeakerVoiceEmotions?: {
+    __typename: "ModelSpeakerVoiceEmotionConnection";
+    items?: Array<{
+      __typename: "SpeakerVoiceEmotion";
+      id: string;
+      timestamp: number;
+      score: number;
+      neutral: number;
+      calm: number;
+      happy: number;
+      sad: number;
+      angry: number;
+      fearful: number;
+      disgusted: number;
+      surprised: number;
+      meetingID?: string | null;
+      _version: number;
+      _deleted?: boolean | null;
+      _lastChangedAt: number;
+      createdAt: string;
+      updatedAt: string;
+      owner?: string | null;
+    } | null> | null;
+    nextToken?: string | null;
+    startedAt?: number | null;
   } | null;
 };
 
@@ -950,6 +1316,32 @@ export type GetMeetingQuery = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;
@@ -1012,6 +1404,11 @@ export type ListMeetingsQuery = {
       _version: number;
       _deleted?: boolean | null;
       _lastChangedAt: number;
+      SpeakerVoiceEmotions?: {
+        __typename: "ModelSpeakerVoiceEmotionConnection";
+        nextToken?: string | null;
+        startedAt?: number | null;
+      } | null;
       PublicMeetingInfo?: {
         __typename: "PublicMeetingInfo";
         id: string;
@@ -1058,6 +1455,11 @@ export type SyncMeetingsQuery = {
       _version: number;
       _deleted?: boolean | null;
       _lastChangedAt: number;
+      SpeakerVoiceEmotions?: {
+        __typename: "ModelSpeakerVoiceEmotionConnection";
+        nextToken?: string | null;
+        startedAt?: number | null;
+      } | null;
       PublicMeetingInfo?: {
         __typename: "PublicMeetingInfo";
         id: string;
@@ -1176,6 +1578,90 @@ export type SyncAudienceFaceExpressionsQuery = {
     } | null> | null;
     nextToken?: string | null;
     startedAt?: number | null;
+  } | null;
+};
+
+export type OnCreateSpeakerVoiceEmotionSubscriptionVariables = {
+  owner?: string | null;
+};
+
+export type OnCreateSpeakerVoiceEmotionSubscription = {
+  onCreateSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
+  } | null;
+};
+
+export type OnUpdateSpeakerVoiceEmotionSubscriptionVariables = {
+  owner?: string | null;
+};
+
+export type OnUpdateSpeakerVoiceEmotionSubscription = {
+  onUpdateSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
+  } | null;
+};
+
+export type OnDeleteSpeakerVoiceEmotionSubscriptionVariables = {
+  owner?: string | null;
+};
+
+export type OnDeleteSpeakerVoiceEmotionSubscription = {
+  onDeleteSpeakerVoiceEmotion?: {
+    __typename: "SpeakerVoiceEmotion";
+    id: string;
+    timestamp: number;
+    score: number;
+    neutral: number;
+    calm: number;
+    happy: number;
+    sad: number;
+    angry: number;
+    fearful: number;
+    disgusted: number;
+    surprised: number;
+    meetingID?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+    createdAt: string;
+    updatedAt: string;
+    owner?: string | null;
   } | null;
 };
 
@@ -1318,6 +1804,32 @@ export type OnCreateMeetingSubscription = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;
@@ -1376,6 +1888,32 @@ export type OnUpdateMeetingSubscription = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;
@@ -1434,6 +1972,32 @@ export type OnDeleteMeetingSubscription = {
     _version: number;
     _deleted?: boolean | null;
     _lastChangedAt: number;
+    SpeakerVoiceEmotions?: {
+      __typename: "ModelSpeakerVoiceEmotionConnection";
+      items?: Array<{
+        __typename: "SpeakerVoiceEmotion";
+        id: string;
+        timestamp: number;
+        score: number;
+        neutral: number;
+        calm: number;
+        happy: number;
+        sad: number;
+        angry: number;
+        fearful: number;
+        disgusted: number;
+        surprised: number;
+        meetingID?: string | null;
+        _version: number;
+        _deleted?: boolean | null;
+        _lastChangedAt: number;
+        createdAt: string;
+        updatedAt: string;
+        owner?: string | null;
+      } | null> | null;
+      nextToken?: string | null;
+      startedAt?: number | null;
+    } | null;
     PublicMeetingInfo?: {
       __typename: "PublicMeetingInfo";
       id: string;

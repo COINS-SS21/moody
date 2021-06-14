@@ -8,7 +8,7 @@ import { AudienceFaceExpression } from "../models";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
 import last from "lodash-es/last";
-import { PaulEkmanEmotion } from "./types";
+import { PaulEkmanEmotion } from "./audienceFaceExpressionUtils";
 
 export const addFaceExpressionScore = createAsyncThunk(
   "audienceFaceExpressions/addScore",

@@ -33,6 +33,7 @@ import FeedbackLinkButton from "./FeedbackLinkButton";
 import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
 import Ratings from "./Ratings";
 import EmotionRadar from "./EmotionRadar";
+import VoiceCaptureControls from "./VoiceCaptureControls";
 
 export default function Meeting(): JSX.Element {
   const { id } = useParams() as any;
@@ -108,7 +109,7 @@ export default function Meeting(): JSX.Element {
                 <FeedbackLinkButton />
               </>
             ) : (
-              <>
+              <Box display="flex" alignItems="center">
                 <StartScreenCapturingDialog
                   handleStartScreenCapturing={handleStartScreenCapturing}
                 />
@@ -123,7 +124,12 @@ export default function Meeting(): JSX.Element {
                 >
                   {meetingRunning ? "Stop" : "Start"} the meeting
                 </Button>
-              </>
+                {meetingRunning && (
+                  <Box ml={3}>
+                    <VoiceCaptureControls />
+                  </Box>
+                )}
+              </Box>
             )}
             <Box mt={2}>
               <TabContext value={tabValue}>
@@ -131,7 +137,8 @@ export default function Meeting(): JSX.Element {
                   <TabList onChange={handleTabChange}>
                     <Tab label="Statistics" value="1" />
                     <Tab label="Faces" value="2" />
-                    <Tab label="Ratings" value="3" />
+                    <Tab label="Voice" value="3" />
+                    <Tab label="Ratings" value="4" />
                   </TabList>
                 </Paper>
                 <TabPanel value="1" style={{ padding: theme.spacing(2, 0) }}>
@@ -159,6 +166,9 @@ export default function Meeting(): JSX.Element {
                   )}
                 </TabPanel>
                 <TabPanel value="3">
+                  <div>Voice</div>
+                </TabPanel>
+                <TabPanel value="4">
                   <Ratings />
                 </TabPanel>
               </TabContext>

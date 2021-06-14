@@ -4,6 +4,7 @@ import errorReducer from "./error/errorSlice";
 import authReducer from "./auth/authSlice";
 import meetingsReducer from "./meetings/meetingsSlice";
 import audienceFaceExpressionsReducer from "./meetings/audienceFaceExpressionSlice";
+import speakerVoiceEmotionsReducer from "./meetings/speakerVoiceEmotionSlice";
 import ratingsReducer from "./meetings/ratingsSlice";
 import logger from "redux-logger";
 import { immerable } from "immer";
@@ -15,6 +16,7 @@ export const store = configureStore({
     auth: authReducer,
     meetings: meetingsReducer,
     audienceFaceExpressions: audienceFaceExpressionsReducer,
+    speakerVoiceEmotions: speakerVoiceEmotionsReducer,
     ratings: ratingsReducer,
   },
   middleware: (getDefaultMiddleware) =>

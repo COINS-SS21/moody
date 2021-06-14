@@ -2,6 +2,104 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getSpeakerVoiceEmotion = /* GraphQL */ `
+  query GetSpeakerVoiceEmotion($id: ID!) {
+    getSpeakerVoiceEmotion(id: $id) {
+      id
+      timestamp
+      score
+      neutral
+      calm
+      happy
+      sad
+      angry
+      fearful
+      disgusted
+      surprised
+      meetingID
+      _version
+      _deleted
+      _lastChangedAt
+      createdAt
+      updatedAt
+      owner
+    }
+  }
+`;
+export const listSpeakerVoiceEmotions = /* GraphQL */ `
+  query ListSpeakerVoiceEmotions(
+    $filter: ModelSpeakerVoiceEmotionFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSpeakerVoiceEmotions(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        timestamp
+        score
+        neutral
+        calm
+        happy
+        sad
+        angry
+        fearful
+        disgusted
+        surprised
+        meetingID
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncSpeakerVoiceEmotions = /* GraphQL */ `
+  query SyncSpeakerVoiceEmotions(
+    $filter: ModelSpeakerVoiceEmotionFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncSpeakerVoiceEmotions(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        timestamp
+        score
+        neutral
+        calm
+        happy
+        sad
+        angry
+        fearful
+        disgusted
+        surprised
+        meetingID
+        _version
+        _deleted
+        _lastChangedAt
+        createdAt
+        updatedAt
+        owner
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const getPublicMeetingInfo = /* GraphQL */ `
   query GetPublicMeetingInfo($id: ID!) {
     getPublicMeetingInfo(id: $id) {
@@ -161,6 +259,30 @@ export const getMeeting = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      SpeakerVoiceEmotions {
+        items {
+          id
+          timestamp
+          score
+          neutral
+          calm
+          happy
+          sad
+          angry
+          fearful
+          disgusted
+          surprised
+          meetingID
+          _version
+          _deleted
+          _lastChangedAt
+          createdAt
+          updatedAt
+          owner
+        }
+        nextToken
+        startedAt
+      }
       PublicMeetingInfo {
         id
         name
@@ -217,6 +339,10 @@ export const listMeetings = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        SpeakerVoiceEmotions {
+          nextToken
+          startedAt
+        }
         PublicMeetingInfo {
           id
           name
@@ -263,6 +389,10 @@ export const syncMeetings = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        SpeakerVoiceEmotions {
+          nextToken
+          startedAt
+        }
         PublicMeetingInfo {
           id
           name

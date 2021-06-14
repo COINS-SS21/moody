@@ -1,5 +1,123 @@
 export const schema = {
   models: {
+    SpeakerVoiceEmotion: {
+      name: "SpeakerVoiceEmotion",
+      fields: {
+        id: {
+          name: "id",
+          isArray: false,
+          type: "ID",
+          isRequired: true,
+          attributes: [],
+        },
+        timestamp: {
+          name: "timestamp",
+          isArray: false,
+          type: "AWSTimestamp",
+          isRequired: true,
+          attributes: [],
+        },
+        score: {
+          name: "score",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        neutral: {
+          name: "neutral",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        calm: {
+          name: "calm",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        happy: {
+          name: "happy",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        sad: {
+          name: "sad",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        angry: {
+          name: "angry",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        fearful: {
+          name: "fearful",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        disgusted: {
+          name: "disgusted",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        surprised: {
+          name: "surprised",
+          isArray: false,
+          type: "Float",
+          isRequired: true,
+          attributes: [],
+        },
+        meetingID: {
+          name: "meetingID",
+          isArray: false,
+          type: "ID",
+          isRequired: false,
+          attributes: [],
+        },
+      },
+      syncable: true,
+      pluralName: "SpeakerVoiceEmotions",
+      attributes: [
+        {
+          type: "model",
+          properties: {},
+        },
+        {
+          type: "key",
+          properties: {
+            name: "byMeeting",
+            fields: ["meetingID"],
+          },
+        },
+        {
+          type: "auth",
+          properties: {
+            rules: [
+              {
+                provider: "userPools",
+                ownerField: "owner",
+                allow: "owner",
+                operations: ["read", "create", "update", "delete"],
+                identityClaim: "cognito:username",
+              },
+            ],
+          },
+        },
+      ],
+    },
     PublicMeetingInfo: {
       name: "PublicMeetingInfo",
       fields: {
@@ -213,6 +331,20 @@ export const schema = {
             targetName: "meetingPublicMeetingInfoId",
           },
         },
+        SpeakerVoiceEmotions: {
+          name: "SpeakerVoiceEmotions",
+          isArray: true,
+          type: {
+            model: "SpeakerVoiceEmotion",
+          },
+          isRequired: false,
+          attributes: [],
+          isArrayNullable: true,
+          association: {
+            connectionType: "HAS_MANY",
+            associatedWith: "meetingID",
+          },
+        },
       },
       syncable: true,
       pluralName: "Meetings",
@@ -375,5 +507,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "43d1274d05a16f7d5db673ea2373fa1a",
+  version: "f76944adf7af8afd2d69191933ba458c",
 };
