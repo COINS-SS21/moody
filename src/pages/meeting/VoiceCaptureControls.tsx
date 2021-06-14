@@ -1,4 +1,10 @@
-import { FormControlLabel, Switch } from "@material-ui/core";
+import {
+  Box,
+  FormControlLabel,
+  LinearProgress,
+  Switch,
+  Typography,
+} from "@material-ui/core";
 import { ChangeEvent, useCallback, useState } from "react";
 import { useAppSelector } from "../../reduxHooks";
 import { activeMeetingRunning } from "../../meetings/meetingsSelectors";
@@ -6,7 +12,6 @@ import {
   useVoiceCapturingIfMeetingIsRunning,
   useVoiceEmotionCapturing,
 } from "./hooks";
-import Loader from "../../components/Loader";
 
 export default function VoiceCaptureControls(): JSX.Element {
   const meetingRunning = useAppSelector(activeMeetingRunning);
@@ -20,7 +25,6 @@ export default function VoiceCaptureControls(): JSX.Element {
   const handleChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       setChecked(e.target.checked);
-      console.log("Handle Change.");
 
       if (meetingRunning) {
         if (e.target.checked) {
@@ -40,13 +44,20 @@ export default function VoiceCaptureControls(): JSX.Element {
   );
 
   return modelLoading ? (
-    <Loader />
+    <Box display="flex" width={200} alignItems="center">
+      <Box flexGrow={1}>
+        <LinearProgress color="primary" />
+      </Box>
+      <Box ml={2}>
+        <Typography variant="body1">Warming up ...</Typography>
+      </Box>
+    </Box>
   ) : (
     <FormControlLabel
       control={
         <Switch checked={checked} onChange={handleChange} color="primary" />
       }
-      label={`${checked ? "Disable" : "Enable"} voice tracking`}
+      label={`${checked ? "Disable" : "Enable"} voice emotion tracking`}
     />
   );
 }

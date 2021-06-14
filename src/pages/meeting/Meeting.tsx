@@ -162,7 +162,18 @@ export default function Meeting(): JSX.Element {
                       </Typography>
                     </Alert>
                   ) : (
-                    <canvas ref={canvasRef} />
+                    <>
+                      {!videoRef.current?.srcObject && (
+                        <Alert severity="info">
+                          <Typography variant="body1">
+                            There is no active screen capturing. Did you allow
+                            the application access to your screen? Reload the
+                            page to try again.
+                          </Typography>
+                        </Alert>
+                      )}
+                      <canvas ref={canvasRef} />
+                    </>
                   )}
                 </TabPanel>
                 <TabPanel value="3">

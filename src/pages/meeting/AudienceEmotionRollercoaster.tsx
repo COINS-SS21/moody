@@ -79,6 +79,7 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
             t: 80,
             b: 70,
           },
+          width: 750,
           yaxis: {
             range: [-1.1, 1.1],
           },

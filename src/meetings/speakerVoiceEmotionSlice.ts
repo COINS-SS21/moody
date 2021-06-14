@@ -7,7 +7,6 @@ import {
 import { SpeakerVoiceEmotion } from "../models";
 import { DataStore } from "aws-amplify";
 import { RootState } from "../reduxStore";
-import last from "lodash-es/last";
 import { PaulEkmanVoiceEmotion } from "./speakerVoiceEmotionUtils";
 
 export const addVoiceEmotionScore = createAsyncThunk(
@@ -66,9 +65,10 @@ export const selectActiveMeetingSpeakerVoiceEmotions = createSelector(
     emotions.filter((e) => e.meetingID === activeMeetingId) || []
 );
 
-export const selectActiveMeetingSpeakerVoiceEmotionsCurrentScore =
+// Returns the last n voice emotions
+export const selectActiveMeetingSpeakerVoiceEmotionsLastN = (n: number) =>
   createSelector(selectActiveMeetingSpeakerVoiceEmotions, (emotions) =>
-    last(emotions)
+    emotions.slice(Math.max(emotions.length - n, 0))
   );
 
 export default speakerVoiceEmotionSlice.reducer;

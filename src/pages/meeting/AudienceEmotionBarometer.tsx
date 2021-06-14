@@ -6,17 +6,21 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { AudienceFaceExpression } from "../../models";
+import { AudienceFaceExpression, SpeakerVoiceEmotion } from "../../models";
 import { useAppSelector } from "../../reduxHooks";
 import { selectActiveMeetingAudienceFaceExpressionsCurrentScore } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
 import { useState } from "react";
+import { selectActiveMeetingSpeakerVoiceEmotionsLastN } from "../../meetings/speakerVoiceEmotionSlice";
+import meanBy from "lodash-es/meanBy";
 
 export default function AudienceEmotionBarometer() {
   const theme = useTheme();
-  const expression: AudienceFaceExpression | undefined = useAppSelector(
-    selectActiveMeetingAudienceFaceExpressionsCurrentScore
+  const audienceFaceExpression: AudienceFaceExpression | undefined =
+    useAppSelector(selectActiveMeetingAudienceFaceExpressionsCurrentScore);
+  const speakerVoiceEmotions: SpeakerVoiceEmotion[] = useAppSelector(
+    selectActiveMeetingSpeakerVoiceEmotionsLastN(5)
   );
 
   // Popover
@@ -53,9 +57,13 @@ export default function AudienceEmotionBarometer() {
             }}
           >
             <Box p={2}>
-              <Typography variant="body2">
+              <Typography variant="body2" paragraph>
                 Shows the currently active emotions by the audience on a range
                 from -1 (negative) to +1 (positive).
+              </Typography>
+              <Typography variant="body2">
+                In addition, the speaker's voice emotions are visualized
+                smoothed by a moving average of order 5.
               </Typography>
             </Box>
           </Popover>
@@ -70,7 +78,7 @@ export default function AudienceEmotionBarometer() {
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
           hovermode: false,
-          width: 300,
+          width: 465,
           margin: {
             l: 30,
             r: 10,
@@ -80,6 +88,7 @@ export default function AudienceEmotionBarometer() {
           yaxis: {
             range: [-1.1, 1.1],
           },
+          legend: { orientation: "h" },
           font: {
             family: theme.typography.fontFamily,
             color: theme.palette.text.primary,
@@ -88,13 +97,24 @@ export default function AudienceEmotionBarometer() {
             duration: 500,
             easing: "cubic-in-out",
           },
+          barmode: "group",
         }}
         data={[
           {
+            name: "Audience face expressions",
             x: ["Score"],
-            y: [expression?.score || 0.0],
+            y: [audienceFaceExpression?.score || 0.0],
             marker: {
               color: theme.palette.primary.main,
+            },
+            type: "bar",
+          },
+          {
+            name: "Speaker voice emotions (moving average)",
+            x: ["Score"],
+            y: [meanBy(speakerVoiceEmotions, "score") || 0.0],
+            marker: {
+              color: theme.palette.secondary.main,
             },
             type: "bar",
           },

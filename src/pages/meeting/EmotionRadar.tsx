@@ -80,7 +80,7 @@ export default function EmotionRadar() {
             },
           },
           hovermode: false,
-          width: 400,
+          width: 465,
           margin: {
             l: 50,
             r: 50,
