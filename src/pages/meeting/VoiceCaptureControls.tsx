@@ -1,7 +1,9 @@
 import {
   Box,
   FormControlLabel,
+  IconButton,
   LinearProgress,
+  Popover,
   Switch,
   Typography,
 } from "@material-ui/core";
@@ -12,6 +14,7 @@ import {
   useVoiceCapturingIfMeetingIsRunning,
   useVoiceEmotionCapturing,
 } from "./hooks";
+import { InfoOutlined } from "@material-ui/icons";
 
 export default function VoiceCaptureControls(): JSX.Element {
   const meetingRunning = useAppSelector(activeMeetingRunning);
@@ -43,6 +46,19 @@ export default function VoiceCaptureControls(): JSX.Element {
     [meetingRunning, startVoiceCapturing, stopVoiceCapturing, warmupModel]
   );
 
+  // Popover
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleOpenPopover = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
   return modelLoading ? (
     <Box display="flex" width={200} alignItems="center">
       <Box flexGrow={1}>
@@ -53,11 +69,46 @@ export default function VoiceCaptureControls(): JSX.Element {
       </Box>
     </Box>
   ) : (
-    <FormControlLabel
-      control={
-        <Switch checked={checked} onChange={handleChange} color="primary" />
-      }
-      label={`${checked ? "Disable" : "Enable"} voice emotion tracking`}
-    />
+    <>
+      <FormControlLabel
+        control={
+          <Switch checked={checked} onChange={handleChange} color="primary" />
+        }
+        label={`${checked ? "Disable" : "Enable"} voice emotion tracking`}
+      />
+      {!checked && (
+        <>
+          <IconButton
+            color="secondary"
+            onClick={handleOpenPopover}
+            size="small"
+          >
+            <InfoOutlined />
+          </IconButton>
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClosePopover}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <Box p={2}>
+              <Typography variant="body2">
+                If you enable this function, we will ask you to access your
+                microphone in order to track the emotions transmitted by your
+                voice. You can enable and disable it at any time during a
+                meeting.
+              </Typography>
+            </Box>
+          </Popover>
+        </>
+      )}
+    </>
   );
 }
