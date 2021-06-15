@@ -76,7 +76,7 @@ export default function RatingsBarChart({
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
           hovermode: false,
-          width: 550,
+          width: 605,
           height: 375,
           margin: {
             l: 30,

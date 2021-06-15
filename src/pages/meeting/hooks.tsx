@@ -220,16 +220,19 @@ export function useMeetingInformation(
 
 export function useVoiceCapturingIfMeetingIsRunning(
   callback: (features: Partial<MeydaFeaturesObject>) => void
-): [() => Promise<void>, () => Promise<void>] {
+): [() => Promise<MediaStream | undefined>, () => Promise<void>] {
   const voiceCaptureServiceRef = useRef<VoiceCaptureService | null>(null);
   const dispatch = useAppDispatch();
   const meetingRunning = useAppSelector(activeMeetingRunning);
 
-  const startVoiceCapturing = useCallback(async () => {
+  const startVoiceCapturing = useCallback(async (): Promise<
+    MediaStream | undefined
+  > => {
     voiceCaptureServiceRef.current = new VoiceCaptureService();
     try {
       await voiceCaptureServiceRef.current.startCapturing();
       voiceCaptureServiceRef.current?.startAnalyzer(callback);
+      return voiceCaptureServiceRef.current?.mediaStream;
     } catch (e) {
       dispatch(
         addError(

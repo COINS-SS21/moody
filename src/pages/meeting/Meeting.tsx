@@ -34,6 +34,7 @@ import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
 import Ratings from "./Ratings";
 import EmotionRadar from "./EmotionRadar";
 import VoiceCaptureControls from "./VoiceCaptureControls";
+import VoiceVisualization from "./VoiceVisualization";
 
 export default function Meeting(): JSX.Element {
   const { id } = useParams() as any;
@@ -58,6 +59,10 @@ export default function Meeting(): JSX.Element {
     handleStopMeeting
   );
   useEmotionDetection(videoRef, canvasRef);
+
+  const [audioStream, setAudioStream] = useState<MediaStream | undefined>(
+    undefined
+  );
 
   const [tabValue, setTabValue] = useState<string>("1");
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -126,7 +131,7 @@ export default function Meeting(): JSX.Element {
                 </Button>
                 {meetingRunning && (
                   <Box ml={3}>
-                    <VoiceCaptureControls />
+                    <VoiceCaptureControls handleMediaStream={setAudioStream} />
                   </Box>
                 )}
               </Box>
@@ -176,10 +181,31 @@ export default function Meeting(): JSX.Element {
                     </>
                   )}
                 </TabPanel>
-                <TabPanel value="3">
-                  <div>Voice</div>
+                <TabPanel value="3" style={{ padding: theme.spacing(2, 0) }}>
+                  {!meetingRunning ? (
+                    <Alert severity="info">
+                      <Typography variant="body1">
+                        This visualization is only available if the meeting is
+                        running.
+                      </Typography>
+                    </Alert>
+                  ) : (
+                    <>
+                      {audioStream instanceof MediaStream ? (
+                        <VoiceVisualization audioStream={audioStream} />
+                      ) : (
+                        <Alert severity="info">
+                          <Typography variant="body1">
+                            This visualization is only available if the voice
+                            tracking is active. Enable it using the switch
+                            above.
+                          </Typography>
+                        </Alert>
+                      )}
+                    </>
+                  )}
                 </TabPanel>
-                <TabPanel value="4">
+                <TabPanel value="4" style={{ padding: theme.spacing(2, 0) }}>
                   <Ratings />
                 </TabPanel>
               </TabContext>

@@ -16,7 +16,13 @@ import {
 } from "./hooks";
 import { InfoOutlined } from "@material-ui/icons";
 
-export default function VoiceCaptureControls(): JSX.Element {
+type VoiceCaputreControlsProps = {
+  handleMediaStream: (mediaStream: MediaStream | undefined) => void;
+};
+
+export default function VoiceCaptureControls({
+  handleMediaStream,
+}: VoiceCaputreControlsProps): JSX.Element {
   const meetingRunning = useAppSelector(activeMeetingRunning);
   const [checked, setChecked] = useState<boolean>(false);
   const [warmupModel, extractAndPersistVoiceEmotionsCallback] =
@@ -36,14 +42,21 @@ export default function VoiceCaptureControls(): JSX.Element {
           setModelLoading(false);
 
           // Acquire access to the microphone and start predicting the emotions
-          await startVoiceCapturing();
+          handleMediaStream(await startVoiceCapturing());
         } else {
           // Stop accessing microphone
           await stopVoiceCapturing();
+          handleMediaStream(undefined);
         }
       }
     },
-    [meetingRunning, startVoiceCapturing, stopVoiceCapturing, warmupModel]
+    [
+      handleMediaStream,
+      meetingRunning,
+      startVoiceCapturing,
+      stopVoiceCapturing,
+      warmupModel,
+    ]
   );
 
   // Popover

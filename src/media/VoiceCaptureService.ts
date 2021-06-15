@@ -72,4 +72,14 @@ export default class VoiceCaptureService {
 
     this._analyzer?.stop();
   }
+
+  public get mediaStream(): MediaStream {
+    if (this._mediaStream && this._mediaStream.getTracks().length > 0) {
+      return this._mediaStream;
+    }
+
+    throw new Error(
+      "No media stream is registered. Did you start the voice capturing?"
+    );
+  }
 }
