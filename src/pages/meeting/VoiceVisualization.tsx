@@ -17,6 +17,10 @@ type VoiceVisualizationProps = {
 const findMaxEmotion = (
   voiceEmotion: SpeakerVoiceEmotion
 ): keyof PaulEkmanVoiceEmotion | undefined => {
+  if (!voiceEmotion) {
+    return undefined;
+  }
+
   let maxScore: number = 0.0;
   let maxEmotion: keyof PaulEkmanVoiceEmotion | undefined = undefined;
 
