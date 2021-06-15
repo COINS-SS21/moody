@@ -1,5 +1,7 @@
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   Paper,
   Popover,
@@ -11,7 +13,7 @@ import { useAppSelector } from "../../reduxHooks";
 import { selectActiveMeetingAudienceFaceExpressionsCurrentScore } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
-import { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { selectActiveMeetingSpeakerVoiceEmotionsLastN } from "../../meetings/speakerVoiceEmotionSlice";
 import meanBy from "lodash-es/meanBy";
 
@@ -36,11 +38,47 @@ export default function AudienceEmotionBarometer() {
 
   const open = Boolean(anchorEl);
 
+  // Checkbox
+  const [checkboxes, setCheckboxes] = useState({
+    audience: true,
+    speaker: true,
+  });
+  const handleCheckboxes = (event: ChangeEvent<HTMLInputElement>) => {
+    setCheckboxes({ ...checkboxes, [event.target.name]: event.target.checked });
+  };
+  const data: object[] = [];
+  if (checkboxes.audience) {
+    data.push({
+      name: "Audience face expressions",
+      x: ["Score"],
+      y: [audienceFaceExpression?.score || 0.0],
+      marker: {
+        color: theme.palette.primary.main,
+      },
+      type: "bar",
+    });
+  }
+  if (checkboxes.speaker) {
+    data.push({
+      name: "Speaker voice emotions (moving average)",
+      x: ["Score"],
+      y: [meanBy(speakerVoiceEmotions, "score") || 0.0],
+      marker: {
+        color: theme.palette.secondary.main,
+      },
+      type: "bar",
+    });
+  }
+
   return (
     <Paper>
       <Box position="relative">
-        <Box position="absolute" top={0} right={0} zIndex={1}>
-          <IconButton color="secondary" onClick={handleOpenPopover}>
+        <Box position="absolute" top={0} right={0} zIndex={1} p={1}>
+          <IconButton
+            color="secondary"
+            onClick={handleOpenPopover}
+            size="small"
+          >
             <InfoOutlined />
           </IconButton>
           <Popover
@@ -69,6 +107,32 @@ export default function AudienceEmotionBarometer() {
           </Popover>
         </Box>
       </Box>
+      <Box px={2} py={1}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              checked={checkboxes.audience}
+              onChange={handleCheckboxes}
+              name="audience"
+              size="small"
+            />
+          }
+          label="Audience"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="secondary"
+              checked={checkboxes.speaker}
+              onChange={handleCheckboxes}
+              name="speaker"
+              size="small"
+            />
+          }
+          label="Speaker"
+        />
+      </Box>
       <Plot
         config={{
           displayModeBar: false,
@@ -88,6 +152,7 @@ export default function AudienceEmotionBarometer() {
           yaxis: {
             range: [-1.1, 1.1],
           },
+          showlegend: true,
           legend: { orientation: "h" },
           font: {
             family: theme.typography.fontFamily,
@@ -99,26 +164,7 @@ export default function AudienceEmotionBarometer() {
           },
           barmode: "group",
         }}
-        data={[
-          {
-            name: "Audience face expressions",
-            x: ["Score"],
-            y: [audienceFaceExpression?.score || 0.0],
-            marker: {
-              color: theme.palette.primary.main,
-            },
-            type: "bar",
-          },
-          {
-            name: "Speaker voice emotions (moving average)",
-            x: ["Score"],
-            y: [meanBy(speakerVoiceEmotions, "score") || 0.0],
-            marker: {
-              color: theme.palette.secondary.main,
-            },
-            type: "bar",
-          },
-        ]}
+        data={data}
       />
     </Paper>
   );

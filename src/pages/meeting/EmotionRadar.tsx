@@ -1,5 +1,7 @@
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   Paper,
   Popover,
@@ -11,7 +13,7 @@ import { useAppSelector } from "../../reduxHooks";
 import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audienceFaceExpressionSlice";
 import Plot from "react-plotly.js";
 import { InfoOutlined } from "@material-ui/icons";
-import { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { calculatePaulEkmanEmotionScore } from "../../meetings/audienceFaceExpressionUtils";
 import { selectActiveMeetingSpeakerVoiceEmotions } from "../../meetings/speakerVoiceEmotionSlice";
 
@@ -37,11 +39,90 @@ export default function EmotionRadar() {
 
   const open = Boolean(anchorEl);
 
+  // Checkbox
+  const [checkboxes, setCheckboxes] = useState({
+    audience: true,
+    speaker: true,
+  });
+  const handleCheckboxes = (event: ChangeEvent<HTMLInputElement>) => {
+    setCheckboxes({ ...checkboxes, [event.target.name]: event.target.checked });
+  };
+  const data: object[] = [];
+  if (checkboxes.audience) {
+    data.push({
+      name: "Audience face expressions",
+      r: Object.values(
+        calculatePaulEkmanEmotionScore(
+          audienceFaceExpressions.map((e) => ({
+            happy: e.happy ? Math.log(e.happy) : 0.0,
+            surprised: e.surprised ? Math.log(e.surprised) : 0.0,
+            neutral: e.neutral ? Math.log(e.neutral) : 0.0,
+            sad: e.sad ? Math.log(e.sad) : 0.0,
+            angry: e.angry ? Math.log(e.angry) : 0.0,
+            disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
+            fearful: e.fearful ? Math.log(e.fearful) : 0.0,
+          }))
+        )
+      ),
+      marker: {
+        color: theme.palette.primary.main,
+      },
+      theta: [
+        "happy",
+        "surprised",
+        "neutral",
+        "sad",
+        "angry",
+        "disgusted",
+        "fearful",
+      ],
+      fill: "toself",
+      type: "scatterpolar",
+    });
+  }
+  if (checkboxes.speaker) {
+    data.push({
+      name: "Speaker voice emotions",
+      r: Object.values(
+        calculatePaulEkmanEmotionScore(
+          speakerVoiceEmotions.map((e) => ({
+            happy: e.happy ? Math.log(e.happy) : 0.0,
+            surprised: e.surprised ? Math.log(e.surprised) : 0.0,
+            // Please note that calm and neutral are aggregated to have class parity with the face emotions
+            neutral: e.neutral && e.calm ? Math.log(e.neutral + e.calm) : 0.0,
+            sad: e.sad ? Math.log(e.sad) : 0.0,
+            angry: e.angry ? Math.log(e.angry) : 0.0,
+            disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
+            fearful: e.fearful ? Math.log(e.fearful) : 0.0,
+          }))
+        )
+      ),
+      marker: {
+        color: theme.palette.secondary.main,
+      },
+      theta: [
+        "happy",
+        "surprised",
+        "neutral",
+        "sad",
+        "angry",
+        "disgusted",
+        "fearful",
+      ],
+      fill: "toself",
+      type: "scatterpolar",
+    });
+  }
+
   return (
     <Paper>
       <Box position="relative">
-        <Box position="absolute" top={0} right={0} zIndex={1}>
-          <IconButton color="secondary" onClick={handleOpenPopover}>
+        <Box position="absolute" top={0} right={0} zIndex={1} p={1}>
+          <IconButton
+            color="secondary"
+            onClick={handleOpenPopover}
+            size="small"
+          >
             <InfoOutlined />
           </IconButton>
           <Popover
@@ -69,6 +150,32 @@ export default function EmotionRadar() {
             </Box>
           </Popover>
         </Box>
+      </Box>
+      <Box px={2} py={1}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              checked={checkboxes.audience}
+              onChange={handleCheckboxes}
+              name="audience"
+              size="small"
+            />
+          }
+          label="Audience"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="secondary"
+              checked={checkboxes.speaker}
+              onChange={handleCheckboxes}
+              name="speaker"
+              size="small"
+            />
+          }
+          label="Speaker"
+        />
       </Box>
       <Plot
         config={{
@@ -109,70 +216,7 @@ export default function EmotionRadar() {
             easing: "cubic-in-out",
           },
         }}
-        data={[
-          {
-            name: "Audience face expressions",
-            r: Object.values(
-              calculatePaulEkmanEmotionScore(
-                audienceFaceExpressions.map((e) => ({
-                  happy: e.happy ? Math.log(e.happy) : 0.0,
-                  surprised: e.surprised ? Math.log(e.surprised) : 0.0,
-                  neutral: e.neutral ? Math.log(e.neutral) : 0.0,
-                  sad: e.sad ? Math.log(e.sad) : 0.0,
-                  angry: e.angry ? Math.log(e.angry) : 0.0,
-                  disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
-                  fearful: e.fearful ? Math.log(e.fearful) : 0.0,
-                }))
-              )
-            ),
-            marker: {
-              color: theme.palette.primary.main,
-            },
-            theta: [
-              "happy",
-              "surprised",
-              "neutral",
-              "sad",
-              "angry",
-              "disgusted",
-              "fearful",
-            ],
-            fill: "toself",
-            type: "scatterpolar",
-          },
-          {
-            name: "Speaker voice emotions",
-            r: Object.values(
-              calculatePaulEkmanEmotionScore(
-                speakerVoiceEmotions.map((e) => ({
-                  happy: e.happy ? Math.log(e.happy) : 0.0,
-                  surprised: e.surprised ? Math.log(e.surprised) : 0.0,
-                  // Please note that calm and neutral are aggregated to have class parity with the face emotions
-                  neutral:
-                    e.neutral && e.calm ? Math.log(e.neutral + e.calm) : 0.0,
-                  sad: e.sad ? Math.log(e.sad) : 0.0,
-                  angry: e.angry ? Math.log(e.angry) : 0.0,
-                  disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
-                  fearful: e.fearful ? Math.log(e.fearful) : 0.0,
-                }))
-              )
-            ),
-            marker: {
-              color: theme.palette.secondary.main,
-            },
-            theta: [
-              "happy",
-              "surprised",
-              "neutral",
-              "sad",
-              "angry",
-              "disgusted",
-              "fearful",
-            ],
-            fill: "toself",
-            type: "scatterpolar",
-          },
-        ]}
+        data={data}
       />
     </Paper>
   );

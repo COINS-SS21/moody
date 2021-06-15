@@ -4,6 +4,8 @@ import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audie
 import Plot from "react-plotly.js";
 import {
   Box,
+  Checkbox,
+  FormControlLabel,
   IconButton,
   Paper,
   Popover,
@@ -11,7 +13,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { InfoOutlined } from "@material-ui/icons";
-import { useState } from "react";
+import React, { ChangeEvent, MouseEvent, useState } from "react";
 import { selectActiveMeetingSpeakerVoiceEmotions } from "../../meetings/speakerVoiceEmotionSlice";
 
 export default function AudienceEmotionRollercoaster(): JSX.Element {
@@ -26,7 +28,7 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
   // Popover
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleOpenPopover = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpenPopover = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -36,11 +38,45 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
 
   const open = Boolean(anchorEl);
 
+  // Checkbox
+  const [checkboxes, setCheckboxes] = useState({
+    audience: true,
+    speaker: true,
+  });
+  const handleCheckboxes = (event: ChangeEvent<HTMLInputElement>) => {
+    setCheckboxes({ ...checkboxes, [event.target.name]: event.target.checked });
+  };
+  const data: object[] = [];
+  if (checkboxes.audience) {
+    data.push({
+      name: "Audience face expressions",
+      x: audienceFaceExpressions.map((e) => new Date(e.timestamp)),
+      y: audienceFaceExpressions.map((e) => e.score),
+      type: "scatter",
+      mode: "lines",
+      line: { color: theme.palette.primary.main },
+    });
+  }
+  if (checkboxes.speaker) {
+    data.push({
+      name: "Speaker voice emotions",
+      x: speakerVoiceEmotions.map((e) => new Date(e.timestamp)),
+      y: speakerVoiceEmotions.map((e) => e.score),
+      type: "scatter",
+      mode: "lines",
+      line: { color: theme.palette.secondary.main },
+    });
+  }
+
   return (
     <Paper>
       <Box position="relative">
-        <Box position="absolute" top={0} right={0} zIndex={1}>
-          <IconButton color="secondary" onClick={handleOpenPopover}>
+        <Box position="absolute" top={0} right={0} zIndex={1} p={1}>
+          <IconButton
+            color="secondary"
+            onClick={handleOpenPopover}
+            size="small"
+          >
             <InfoOutlined />
           </IconButton>
           <Popover
@@ -71,6 +107,32 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
           </Popover>
         </Box>
       </Box>
+      <Box px={2} py={1}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              checked={checkboxes.audience}
+              onChange={handleCheckboxes}
+              name="audience"
+              size="small"
+            />
+          }
+          label="Audience"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="secondary"
+              checked={checkboxes.speaker}
+              onChange={handleCheckboxes}
+              name="speaker"
+              size="small"
+            />
+          }
+          label="Speaker"
+        />
+      </Box>
       <Plot
         config={{
           displayModeBar: false,
@@ -85,7 +147,7 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
           margin: {
             l: 40,
             r: 30,
-            t: 80,
+            t: 50,
             b: 70,
           },
           width: 750,
@@ -103,24 +165,7 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
             easing: "cubic-in-out",
           },
         }}
-        data={[
-          {
-            name: "Audience face expressions",
-            x: audienceFaceExpressions.map((e) => new Date(e.timestamp)),
-            y: audienceFaceExpressions.map((e) => e.score),
-            type: "scatter",
-            mode: "lines",
-            line: { color: theme.palette.primary.main },
-          },
-          {
-            name: "Speaker voice emotions",
-            x: speakerVoiceEmotions.map((e) => new Date(e.timestamp)),
-            y: speakerVoiceEmotions.map((e) => e.score),
-            type: "scatter",
-            mode: "lines",
-            line: { color: theme.palette.secondary.main },
-          },
-        ]}
+        data={data}
       />
     </Paper>
   );
