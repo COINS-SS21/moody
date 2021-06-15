@@ -146,7 +146,7 @@ export default function AudienceEmotionBarometer() {
           margin: {
             l: 30,
             r: 10,
-            t: 80,
+            t: 50,
             b: 70,
           },
           yaxis: {

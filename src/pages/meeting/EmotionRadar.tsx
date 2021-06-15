@@ -199,7 +199,7 @@ export default function EmotionRadar() {
           margin: {
             l: 50,
             r: 50,
-            t: 80,
+            t: 50,
             b: 60,
           },
           yaxis: {
