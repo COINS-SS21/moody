@@ -35,7 +35,7 @@ const useAudioAnalyzer = (
 
   return useEffect(() => {
     const createAnalyzer = async (): Promise<void> => {
-      const audioContext = new AudioContext();
+      const audioContext = new AudioContext({ sampleRate: 22050 });
       const source = audioContext.createMediaElementSource(audioRef.current!);
       source.connect(audioContext.destination);
 
@@ -44,7 +44,7 @@ const useAudioAnalyzer = (
         source: source,
         bufferSize: 512,
         featureExtractors: ["buffer"],
-        sampleRate: 22050 * 2,
+        sampleRate: 22050,
         hopSize: 512,
         windowingFunction: "hanning",
         callback: analyzerCallback,
@@ -87,7 +87,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
   useEffect(() => {
     const loadModel = async () => {
       setModelLoading(true);
-      onnxSession.current = new InferenceSession();
+      onnxSession.current = new InferenceSession({ backendHint: "webgl" });
       await onnxSession.current.loadModel("/onnx/voice_emotion_cnn.onnx");
       setModelLoading(false);
     };
@@ -101,14 +101,11 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     },
     async () => {
       if (onnxSession.current instanceof InferenceSession) {
-        data = data.slice(
-          // 0.6 seconds offset
-          Math.floor(22050 * 2 * 0.6),
-          // 2 seconds duration after offset
-          Math.floor(22050 * 2 * 2) + Math.floor(22050 * 2 * 0.6)
-        );
+        const offset = Math.floor((data.length - 66150) / 2);
+        // Cut off the overhead equally at the beginning and the end
+        data = data.slice(offset, 66150 + offset);
         const inputs = [
-          new Tensor(new Float32Array(data), "float32", [1, 88200]),
+          new Tensor(new Float32Array(data), "float32", [1, 66150]),
         ];
         const outputMap = await onnxSession.current.run(inputs);
         const outputTensor = outputMap.values().next().value;
@@ -119,7 +116,6 @@ export default function RavdessVoiceEmotion(): JSX.Element {
       }
     }
   );
-
   const theme = useTheme();
 
   return (

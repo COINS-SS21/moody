@@ -280,7 +280,7 @@ export function useVoiceEmotionCapturing(): [
   );
 
   // Create a buffer for the audio data.
-  // This gets flushed every 2 seconds by the callback.
+  // This gets flushed every 3 seconds by the callback.
   let dataRef = useRef<number[]>([]);
 
   // Gets the features extracted by the audio analyzer (@see VoiceCaptureService).
@@ -290,21 +290,21 @@ export function useVoiceEmotionCapturing(): [
     async (features: Partial<MeydaFeaturesObject>) => {
       dataRef.current.push(...features.buffer!);
 
-      // Every 2 seconds: Save the voice emotions and flush the buffer.
-      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 2) {
+      // Every 3 seconds: Save the voice emotions and flush the buffer.
+      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 3) {
         // Copy the data to a local variable and reset the global dataRef.
         // This avoids an infinite loop if the callback is called faster than it executes.
         // This is necessary because this is an async function with a race condition on dataRef.
         const data: number[] = dataRef.current.slice(
           0,
-          VoiceCaptureService.SAMPLE_RATE * 2
+          VoiceCaptureService.SAMPLE_RATE * 3
         );
         dataRef.current = [];
 
         const inputs = [
           new Tensor(new Float32Array(data), "float32", [
             1,
-            VoiceCaptureService.SAMPLE_RATE * 2,
+            VoiceCaptureService.SAMPLE_RATE * 3,
           ]),
         ];
         const outputMap = await onnxSession.current?.run(inputs);

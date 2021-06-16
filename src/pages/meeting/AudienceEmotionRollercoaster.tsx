@@ -101,7 +101,7 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
               <Typography variant="body2">
                 In addition, the speakers voice emotions are plotted for any
                 given point in time on a range from -1 (negative) to +1
-                (positive). Voice motion data is tracked every 2 seconds.
+                (positive). Voice motion data is tracked every 3 seconds.
               </Typography>
             </Box>
           </Popover>
