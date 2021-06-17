@@ -270,7 +270,7 @@ export function useVoiceEmotionCapturing(): [
   const onnxSession = useRef<InferenceSession | null>(null);
 
   const warmupModel = useCallback(async () => {
-    onnxSession.current = new InferenceSession();
+    onnxSession.current = new InferenceSession({ backendHint: "webgl" });
     await onnxSession.current.loadModel("/onnx/voice_emotion_cnn.onnx");
   }, []);
 
