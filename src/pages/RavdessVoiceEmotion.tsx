@@ -35,6 +35,8 @@ const useAudioAnalyzer = (
 
   return useEffect(() => {
     const createAnalyzer = async (): Promise<void> => {
+      const AudioContext =
+        window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContext({ sampleRate: 22050 });
       const source = audioContext.createMediaElementSource(audioRef.current!);
       source.connect(audioContext.destination);

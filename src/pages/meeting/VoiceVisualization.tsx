@@ -9,6 +9,7 @@ import { useAppSelector } from "../../reduxHooks";
 import { selectActiveMeetingSpeakerVoiceEmotionsLastN } from "../../meetings/speakerVoiceEmotionSlice";
 import { SpeakerVoiceEmotion } from "../../models";
 import { Alert } from "@material-ui/lab";
+import VoiceCaptureService from "../../media/VoiceCaptureService";
 
 type VoiceVisualizationProps = {
   audioStream: MediaStream;
@@ -42,9 +43,11 @@ export default function VoiceVisualization({
   useEffect(() => {
     let stopDrawing: Function = () => {};
     const startVisualization = async () => {
+      const AudioContext =
+        window.AudioContext || (window as any).webkitAudioContext;
       stopDrawing = await new FrequencyBarVisualizerService(
         canvasRef.current!,
-        new AudioContext(),
+        new AudioContext({ sampleRate: VoiceCaptureService.SAMPLE_RATE }),
         audioStream
       ).startDrawing();
     };

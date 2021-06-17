@@ -32,6 +32,8 @@ export default function FrequencyBar({
         return console.error(msg);
       }
 
+      const AudioContext =
+        window.AudioContext || (window as any).webkitAudioContext;
       const visualizer = new FrequencyBarVisualizerService(
         canvasRef.current,
         new AudioContext(),

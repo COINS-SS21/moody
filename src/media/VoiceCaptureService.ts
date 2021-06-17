@@ -19,6 +19,8 @@ export default class VoiceCaptureService {
     });
 
     if (this._mediaStream) {
+      const AudioContext =
+        window.AudioContext || (window as any).webkitAudioContext;
       this._context = new AudioContext({
         sampleRate: VoiceCaptureService.SAMPLE_RATE,
       });
