@@ -9,11 +9,14 @@ import {
 import { RefObject, useEffect, useRef, useState } from "react";
 import Meyda, { MeydaAnalyzer } from "meyda";
 import Plot from "react-plotly.js";
-import { InferenceSession, Tensor } from "onnxjs";
 import { softmax } from "../utils";
 import Loader from "../components/Loader";
 import max from "lodash-es/max";
 import Page from "../components/Page";
+// onnxruntime is included in public/index.html as <script>
+// .wasm files are currently not compatible with the creact-react-app webpack config
+const InferenceSession = (window as any).ort.InferenceSession;
+const Tensor = (window as any).ort.Tensor;
 
 const VOICE_EMOTIONS = [
   "neutral",
@@ -81,6 +84,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     "/ravdess/03-01-01-01-01-01-03.wav"
   );
 
+  // @ts-ignore
   const onnxSession = useRef<InferenceSession | null>(null);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [waveform, setWaveform] = useState<number[]>([]);
@@ -89,8 +93,9 @@ export default function RavdessVoiceEmotion(): JSX.Element {
   useEffect(() => {
     const loadModel = async () => {
       setModelLoading(true);
-      onnxSession.current = new InferenceSession({ backendHint: "webgl" });
-      await onnxSession.current.loadModel("/onnx/voice_emotion_cnn.onnx");
+      onnxSession.current = await InferenceSession.create(
+        "/onnx/voice_emotion_cnn.onnx"
+      );
       setModelLoading(false);
     };
     loadModel();
@@ -102,17 +107,18 @@ export default function RavdessVoiceEmotion(): JSX.Element {
       data.push(...features.buffer!);
     },
     async () => {
-      if (onnxSession.current instanceof InferenceSession) {
+      if (onnxSession.current) {
         const offset = Math.floor((data.length - 66150) / 2);
         // Cut off the overhead equally at the beginning and the end
         data = data.slice(offset, 66150 + offset);
-        const inputs = [
-          new Tensor(new Float32Array(data), "float32", [1, 66150]),
-        ];
-        const outputMap = await onnxSession.current.run(inputs);
-        const outputTensor = outputMap.values().next().value;
+        const input = new Tensor(
+          "float32",
+          Float32Array.from(data),
+          [1, 66150]
+        );
+        const results = await onnxSession.current.run({ input });
 
-        setPredictions(softmax(outputTensor.data));
+        setPredictions(softmax(results.output.data as any));
         setWaveform([...data]);
         data = [];
       }
