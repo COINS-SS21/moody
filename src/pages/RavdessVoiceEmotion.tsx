@@ -13,8 +13,8 @@ import { softmax } from "../utils";
 import Loader from "../components/Loader";
 import max from "lodash-es/max";
 import Page from "../components/Page";
-// onnxruntime is included in public/index.html as <script>
-// .wasm files are currently not compatible with the creact-react-app webpack config
+// onnxruntime-web is included in public/index.html as <script>
+// .wasm files are currently not compatible with the create-react-app webpack config
 const InferenceSession = (window as any).ort.InferenceSession;
 const Tensor = (window as any).ort.Tensor;
 
@@ -84,8 +84,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     "/ravdess/03-01-01-01-01-01-03.wav"
   );
 
-  // @ts-ignore
-  const onnxSession = useRef<InferenceSession | null>(null);
+  const onnxSession = useRef<typeof InferenceSession | null>(null);
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [waveform, setWaveform] = useState<number[]>([]);
   const [predictions, setPredictions] = useState<number[]>([]);
@@ -118,7 +117,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
         );
         const results = await onnxSession.current.run({ input });
 
-        setPredictions(softmax(results.output.data as any));
+        setPredictions(softmax(Array.from(results.output.data)));
         setWaveform([...data]);
         data = [];
       }

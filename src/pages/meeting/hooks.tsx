@@ -28,7 +28,6 @@ import {
   WithFaceExpressions,
 } from "face-api.js";
 import VoiceCaptureService from "../../media/VoiceCaptureService";
-import { InferenceSession, Tensor } from "onnxjs";
 import { MeydaFeaturesObject } from "meyda";
 import { softmax } from "../../utils";
 import {
@@ -37,6 +36,10 @@ import {
   VOICE_EMOTIONS,
 } from "../../meetings/speakerVoiceEmotionUtils";
 import { addVoiceEmotionScore } from "../../meetings/speakerVoiceEmotionSlice";
+// onnxruntime-web is included in public/index.html as <script>
+// .wasm files are currently not compatible with the create-react-app webpack config
+const InferenceSession = (window as any).ort.InferenceSession;
+const Tensor = (window as any).ort.Tensor;
 
 // Returns a callback to start the screen capturing and automatically cleans up the react components.
 // Does nothing if the meeting is stopped.
@@ -267,11 +270,12 @@ export function useVoiceEmotionCapturing(): [
   () => Promise<void>,
   (features: Partial<MeydaFeaturesObject>) => Promise<void>
 ] {
-  const onnxSession = useRef<InferenceSession | null>(null);
+  const onnxSession = useRef<typeof InferenceSession | null>(null);
 
   const warmupModel = useCallback(async () => {
-    onnxSession.current = new InferenceSession({ backendHint: "webgl" });
-    await onnxSession.current.loadModel("/onnx/voice_emotion_cnn.onnx");
+    onnxSession.current = await InferenceSession.create(
+      "/onnx/voice_emotion_cnn.onnx"
+    );
   }, []);
 
   const dispatch = useAppDispatch();
@@ -301,15 +305,14 @@ export function useVoiceEmotionCapturing(): [
         );
         dataRef.current = [];
 
-        const inputs = [
-          new Tensor(new Float32Array(data), "float32", [
-            1,
-            VoiceCaptureService.SAMPLE_RATE * 3,
-          ]),
-        ];
-        const outputMap = await onnxSession.current?.run(inputs);
-        const outputTensor = outputMap?.values().next().value;
-        const outputTensorProbabilities: number[] = softmax(outputTensor.data);
+        const input = new Tensor("float32", Float32Array.from(data), [
+          1,
+          VoiceCaptureService.SAMPLE_RATE * 3,
+        ]);
+        const results = await onnxSession.current.run({ input });
+        const outputTensorProbabilities: number[] = softmax(
+          Array.from(results.output.data)
+        );
         const voiceEmotionObject: PaulEkmanVoiceEmotion = VOICE_EMOTIONS.reduce(
           (
             obj: PaulEkmanVoiceEmotion,
