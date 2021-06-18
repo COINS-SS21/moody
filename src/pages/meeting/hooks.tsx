@@ -287,56 +287,66 @@ export function useVoiceEmotionCapturing(): [
   // This gets flushed every 3 seconds by the callback.
   let dataRef = useRef<number[]>([]);
 
+  // Audio data below this threshold will be considered as silence
+  // This is useful to exclude disturbing background noises for example
+  const THRESHOLD_RMS = 0.002;
+
   // Gets the features extracted by the audio analyzer (@see VoiceCaptureService).
   // This callback should be passed to the useVoiceCapturingIfMeetingIsRunning hook.
   // It will be called with as soon as an internal buffer of 512 is full
   const extractAndPersistVoiceEmotionsCallback = useCallback(
     async (features: Partial<MeydaFeaturesObject>) => {
-      dataRef.current.push(...features.buffer!);
+      if (features.rms! > THRESHOLD_RMS) {
+        dataRef.current.push(...features.buffer!);
 
-      // Every 3 seconds: Save the voice emotions and flush the buffer.
-      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 3) {
-        // Copy the data to a local variable and reset the global dataRef.
-        // This avoids an infinite loop if the callback is called faster than it executes.
-        // This is necessary because this is an async function with a race condition on dataRef.
-        const data: number[] = dataRef.current.slice(
-          0,
-          VoiceCaptureService.SAMPLE_RATE * 3
-        );
-        dataRef.current = [];
+        // Every 3 seconds: Save the voice emotions and flush the buffer.
+        if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 3) {
+          // Copy the data to a local variable and reset the global dataRef.
+          // This avoids an infinite loop if the callback is called faster than it executes.
+          // This is necessary because this is an async function with a race condition on dataRef.
+          const data: number[] = dataRef.current.slice(
+            0,
+            VoiceCaptureService.SAMPLE_RATE * 3
+          );
+          dataRef.current = [];
 
-        const input = new Tensor("float32", Float32Array.from(data), [
-          1,
-          VoiceCaptureService.SAMPLE_RATE * 3,
-        ]);
-        const results = await onnxSession.current.run({ input });
-        const outputTensorProbabilities: number[] = softmax(
-          Array.from(results.output.data)
-        );
-        const voiceEmotionObject: PaulEkmanVoiceEmotion = VOICE_EMOTIONS.reduce(
-          (
-            obj: PaulEkmanVoiceEmotion,
-            emotionName: keyof PaulEkmanVoiceEmotion,
-            index: number
-          ) => ({ ...obj, [emotionName]: outputTensorProbabilities[index] }),
-          {
-            neutral: 0.0,
-            calm: 0.0,
-            happy: 0.0,
-            sad: 0.0,
-            angry: 0.0,
-            fearful: 0.0,
-            disgusted: 0.0,
-            surprised: 0.0,
-          }
-        );
-        await dispatch(
-          addVoiceEmotionScore({
-            score: aggregateAndCalculateVoiceEmotionScore(voiceEmotionObject),
-            meetingID,
-            raw: voiceEmotionObject,
-          })
-        );
+          const input = new Tensor("float32", Float32Array.from(data), [
+            1,
+            VoiceCaptureService.SAMPLE_RATE * 3,
+          ]);
+          const results = await onnxSession.current.run({ input });
+          const outputTensorProbabilities: number[] = softmax(
+            Array.from(results.output.data)
+          );
+          const voiceEmotionObject: PaulEkmanVoiceEmotion =
+            VOICE_EMOTIONS.reduce(
+              (
+                obj: PaulEkmanVoiceEmotion,
+                emotionName: keyof PaulEkmanVoiceEmotion,
+                index: number
+              ) => ({
+                ...obj,
+                [emotionName]: outputTensorProbabilities[index],
+              }),
+              {
+                neutral: 0.0,
+                calm: 0.0,
+                happy: 0.0,
+                sad: 0.0,
+                angry: 0.0,
+                fearful: 0.0,
+                disgusted: 0.0,
+                surprised: 0.0,
+              }
+            );
+          await dispatch(
+            addVoiceEmotionScore({
+              score: aggregateAndCalculateVoiceEmotionScore(voiceEmotionObject),
+              meetingID,
+              raw: voiceEmotionObject,
+            })
+          );
+        }
       }
     },
     [meetingID, dataRef, dispatch]

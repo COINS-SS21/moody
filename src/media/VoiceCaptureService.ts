@@ -59,7 +59,7 @@ export default class VoiceCaptureService {
       audioContext: this._context,
       source: this._source,
       bufferSize: 512,
-      featureExtractors: ["buffer"],
+      featureExtractors: ["buffer", "rms"],
       sampleRate: VoiceCaptureService.SAMPLE_RATE,
       hopSize: 512,
       windowingFunction: "hanning",
