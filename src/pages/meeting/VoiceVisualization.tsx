@@ -64,10 +64,15 @@ export default function VoiceVisualization({
   return (
     <Paper>
       <Box display="flex">
-        <canvas ref={canvasRef} width={700} height={400} />
-        <Box ml={4} mt={2}>
-          <Typography variant="h4" gutterBottom>
-            Predictions
+        <canvas ref={canvasRef} width={700} height={375} />
+        <Box ml={6} mt={2}>
+          <Typography variant="h4">Predictions</Typography>
+          <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+            <Box lineHeight={1.25}>
+              Voice emotions are captured every 3 seconds. Your voice is{" "}
+              <strong>not</strong> recorded. Only the aggregated emotions are
+              saved.
+            </Box>
           </Typography>
           {latestVoiceEmotion ? (
             <>
