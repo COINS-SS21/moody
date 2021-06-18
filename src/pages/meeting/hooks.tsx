@@ -274,7 +274,8 @@ export function useVoiceEmotionCapturing(): [
 
   const warmupModel = useCallback(async () => {
     onnxSession.current = await InferenceSession.create(
-      "/onnx/voice_emotion_cnn.onnx"
+      "/onnx/voice_emotion_cnn.onnx",
+      { executionProviders: ["wasm"] }
     );
   }, []);
 
