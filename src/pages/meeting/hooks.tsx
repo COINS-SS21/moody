@@ -290,7 +290,7 @@ export function useVoiceEmotionCapturing(): [
 
   // Audio data below this threshold will be considered as silence
   // This is useful to exclude disturbing background noises for example
-  const THRESHOLD_RMS = 0.002;
+  const THRESHOLD_RMS = 0.001;
 
   // Gets the features extracted by the audio analyzer (@see VoiceCaptureService).
   // This callback should be passed to the useVoiceCapturingIfMeetingIsRunning hook.
