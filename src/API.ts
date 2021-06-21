@@ -7,7 +7,6 @@ export type CreateSpeakerVoiceEmotionInput = {
   timestamp: number;
   score: number;
   neutral: number;
-  calm: number;
   happy: number;
   sad: number;
   angry: number;
@@ -22,7 +21,6 @@ export type ModelSpeakerVoiceEmotionConditionInput = {
   timestamp?: ModelIntInput | null;
   score?: ModelFloatInput | null;
   neutral?: ModelFloatInput | null;
-  calm?: ModelFloatInput | null;
   happy?: ModelFloatInput | null;
   sad?: ModelFloatInput | null;
   angry?: ModelFloatInput | null;
@@ -104,7 +102,6 @@ export type SpeakerVoiceEmotion = {
   timestamp: number;
   score: number;
   neutral: number;
-  calm: number;
   happy: number;
   sad: number;
   angry: number;
@@ -125,7 +122,6 @@ export type UpdateSpeakerVoiceEmotionInput = {
   timestamp?: number | null;
   score?: number | null;
   neutral?: number | null;
-  calm?: number | null;
   happy?: number | null;
   sad?: number | null;
   angry?: number | null;
@@ -405,7 +401,6 @@ export type ModelSpeakerVoiceEmotionFilterInput = {
   timestamp?: ModelIntInput | null;
   score?: ModelFloatInput | null;
   neutral?: ModelFloatInput | null;
-  calm?: ModelFloatInput | null;
   happy?: ModelFloatInput | null;
   sad?: ModelFloatInput | null;
   angry?: ModelFloatInput | null;
@@ -505,7 +500,6 @@ export type CreateSpeakerVoiceEmotionMutation = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -534,7 +528,6 @@ export type UpdateSpeakerVoiceEmotionMutation = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -563,7 +556,6 @@ export type DeleteSpeakerVoiceEmotionMutation = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -734,7 +726,6 @@ export type CreateMeetingMutation = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;
@@ -819,7 +810,6 @@ export type UpdateMeetingMutation = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;
@@ -904,7 +894,6 @@ export type DeleteMeetingMutation = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;
@@ -1059,7 +1048,6 @@ export type GetSpeakerVoiceEmotionQuery = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -1091,7 +1079,6 @@ export type ListSpeakerVoiceEmotionsQuery = {
       timestamp: number;
       score: number;
       neutral: number;
-      calm: number;
       happy: number;
       sad: number;
       angry: number;
@@ -1127,7 +1114,6 @@ export type SyncSpeakerVoiceEmotionsQuery = {
       timestamp: number;
       score: number;
       neutral: number;
-      calm: number;
       happy: number;
       sad: number;
       angry: number;
@@ -1324,7 +1310,6 @@ export type GetMeetingQuery = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;
@@ -1592,7 +1577,6 @@ export type OnCreateSpeakerVoiceEmotionSubscription = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -1620,7 +1604,6 @@ export type OnUpdateSpeakerVoiceEmotionSubscription = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -1648,7 +1631,6 @@ export type OnDeleteSpeakerVoiceEmotionSubscription = {
     timestamp: number;
     score: number;
     neutral: number;
-    calm: number;
     happy: number;
     sad: number;
     angry: number;
@@ -1812,7 +1794,6 @@ export type OnCreateMeetingSubscription = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;
@@ -1896,7 +1877,6 @@ export type OnUpdateMeetingSubscription = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;
@@ -1980,7 +1960,6 @@ export type OnDeleteMeetingSubscription = {
         timestamp: number;
         score: number;
         neutral: number;
-        calm: number;
         happy: number;
         sad: number;
         angry: number;

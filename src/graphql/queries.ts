@@ -9,7 +9,6 @@ export const getSpeakerVoiceEmotion = /* GraphQL */ `
       timestamp
       score
       neutral
-      calm
       happy
       sad
       angry
@@ -42,7 +41,6 @@ export const listSpeakerVoiceEmotions = /* GraphQL */ `
         timestamp
         score
         neutral
-        calm
         happy
         sad
         angry
@@ -80,7 +78,6 @@ export const syncSpeakerVoiceEmotions = /* GraphQL */ `
         timestamp
         score
         neutral
-        calm
         happy
         sad
         angry
@@ -265,7 +262,6 @@ export const getMeeting = /* GraphQL */ `
           timestamp
           score
           neutral
-          calm
           happy
           sad
           angry

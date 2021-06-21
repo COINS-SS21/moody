@@ -29,7 +29,7 @@ import {
 } from "face-api.js";
 import VoiceCaptureService from "../../media/VoiceCaptureService";
 import { MeydaFeaturesObject } from "meyda";
-import { softmax } from "../../utils";
+import { peakNormalize, softmax } from "../../utils";
 import {
   aggregateAndCalculateVoiceEmotionScore,
   PaulEkmanVoiceEmotion,
@@ -274,7 +274,7 @@ export function useVoiceEmotionCapturing(): [
 
   const warmupModel = useCallback(async () => {
     onnxSession.current = await InferenceSession.create(
-      "/onnx/voice_emotion_cnn.onnx",
+      "/onnx/voice_emotion_cnn_resnet.onnx",
       { executionProviders: ["wasm"] }
     );
   }, []);
@@ -285,7 +285,7 @@ export function useVoiceEmotionCapturing(): [
   );
 
   // Create a buffer for the audio data.
-  // This gets flushed every 3 seconds by the callback.
+  // This gets flushed every 2.4 seconds by the callback.
   let dataRef = useRef<number[]>([]);
 
   // Audio data below this threshold will be considered as silence
@@ -299,21 +299,43 @@ export function useVoiceEmotionCapturing(): [
     async (features: Partial<MeydaFeaturesObject>) => {
       if (features.rms! > THRESHOLD_RMS) {
         dataRef.current.push(...features.buffer!);
+      } else {
+        // Push zeros
+        dataRef.current.push(...new Array(512).fill(0));
+      }
 
-        // Every 3 seconds: Save the voice emotions and flush the buffer.
-        if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 3) {
-          // Copy the data to a local variable and reset the global dataRef.
-          // This avoids an infinite loop if the callback is called faster than it executes.
-          // This is necessary because this is an async function with a race condition on dataRef.
-          const data: number[] = dataRef.current.slice(
-            0,
-            VoiceCaptureService.SAMPLE_RATE * 3
+      // Every 2.4 seconds: Save the voice emotions and flush the buffer.
+      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 2.4) {
+        // Copy the data to a local variable and reset the global dataRef.
+        // This avoids an infinite loop if the callback is called faster than it executes.
+        // This is necessary because this is an async function with a race condition on dataRef.
+        const data: number[] = peakNormalize(
+          dataRef.current.slice(0, VoiceCaptureService.SAMPLE_RATE * 2.4)
+        );
+        dataRef.current = [];
+
+        if (Math.min(...data) === 0 && Math.max(...data) === 0) {
+          // Complete silence is reported as neutral
+          await dispatch(
+            addVoiceEmotionScore({
+              score: 0.0,
+              meetingID,
+              raw: {
+                neutral: 1.0,
+                happy: 0.0,
+                sad: 0.0,
+                angry: 0.0,
+                fearful: 0.0,
+                disgusted: 0.0,
+                surprised: 0.0,
+              },
+            })
           );
-          dataRef.current = [];
-
+        } else {
+          // Otherwise report tensor probabilities
           const input = new Tensor("float32", Float32Array.from(data), [
             1,
-            VoiceCaptureService.SAMPLE_RATE * 3,
+            VoiceCaptureService.SAMPLE_RATE * 2.4,
           ]);
           const results = await onnxSession.current.run({ input });
           const outputTensorProbabilities: number[] = softmax(
@@ -331,7 +353,6 @@ export function useVoiceEmotionCapturing(): [
               }),
               {
                 neutral: 0.0,
-                calm: 0.0,
                 happy: 0.0,
                 sad: 0.0,
                 angry: 0.0,

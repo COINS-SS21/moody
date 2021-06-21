@@ -9,7 +9,6 @@ export const onCreateSpeakerVoiceEmotion = /* GraphQL */ `
       timestamp
       score
       neutral
-      calm
       happy
       sad
       angry
@@ -33,7 +32,6 @@ export const onUpdateSpeakerVoiceEmotion = /* GraphQL */ `
       timestamp
       score
       neutral
-      calm
       happy
       sad
       angry
@@ -57,7 +55,6 @@ export const onDeleteSpeakerVoiceEmotion = /* GraphQL */ `
       timestamp
       score
       neutral
-      calm
       happy
       sad
       angry
@@ -191,7 +188,6 @@ export const onCreateMeeting = /* GraphQL */ `
           timestamp
           score
           neutral
-          calm
           happy
           sad
           angry
@@ -266,7 +262,6 @@ export const onUpdateMeeting = /* GraphQL */ `
           timestamp
           score
           neutral
-          calm
           happy
           sad
           angry
@@ -341,7 +336,6 @@ export const onDeleteMeeting = /* GraphQL */ `
           timestamp
           score
           neutral
-          calm
           happy
           sad
           angry

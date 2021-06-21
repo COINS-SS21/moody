@@ -2,7 +2,6 @@ import flow from "lodash-es/flow";
 
 export type PaulEkmanVoiceEmotion = {
   neutral: number;
-  calm: number;
   happy: number;
   sad: number;
   angry: number;
@@ -14,7 +13,6 @@ export type PaulEkmanVoiceEmotion = {
 // The index is in order with the output tensor of the ONNX model
 export const VOICE_EMOTIONS: (keyof PaulEkmanVoiceEmotion)[] = [
   "neutral", // neutral
-  "calm", // neutral
   "happy", // positive
   "sad", // negative
   "angry", // negative
@@ -34,7 +32,7 @@ function aggregateVoiceEmotion(
 ): AggregatedVoiceEmotion {
   return {
     positive: emotion.happy + emotion.surprised,
-    neutral: emotion.neutral + emotion.calm,
+    neutral: emotion.neutral,
     negative: emotion.sad + emotion.angry + emotion.disgusted + emotion.fearful,
   };
 }

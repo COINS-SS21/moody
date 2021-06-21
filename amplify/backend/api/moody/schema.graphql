@@ -3,7 +3,6 @@ type SpeakerVoiceEmotion @model @key(name: "byMeeting", fields: ["meetingID"]) @
   timestamp: AWSTimestamp!
   score: Float!
   neutral: Float!
-  calm: Float!
   happy: Float!
   sad: Float!
   angry: Float!

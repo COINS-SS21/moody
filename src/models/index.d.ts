@@ -9,7 +9,6 @@ export declare class SpeakerVoiceEmotion {
   readonly timestamp: number;
   readonly score: number;
   readonly neutral: number;
-  readonly calm: number;
   readonly happy: number;
   readonly sad: number;
   readonly angry: number;

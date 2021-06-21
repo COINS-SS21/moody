@@ -88,8 +88,7 @@ export default function EmotionRadar() {
           speakerVoiceEmotions.map((e) => ({
             happy: e.happy ? Math.log(e.happy) : 0.0,
             surprised: e.surprised ? Math.log(e.surprised) : 0.0,
-            // Please note that calm and neutral are aggregated to have class parity with the face emotions
-            neutral: e.neutral && e.calm ? Math.log(e.neutral + e.calm) : 0.0,
+            neutral: e.neutral ? Math.log(e.neutral) : 0.0,
             sad: e.sad ? Math.log(e.sad) : 0.0,
             angry: e.angry ? Math.log(e.angry) : 0.0,
             disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,

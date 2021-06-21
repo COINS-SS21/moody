@@ -9,7 +9,7 @@ import {
 import { RefObject, useEffect, useRef, useState } from "react";
 import Meyda, { MeydaAnalyzer } from "meyda";
 import Plot from "react-plotly.js";
-import { softmax } from "../utils";
+import { peakNormalize, softmax } from "../utils";
 import Loader from "../components/Loader";
 import max from "lodash-es/max";
 import Page from "../components/Page";
@@ -20,7 +20,6 @@ const Tensor = (window as any).ort.Tensor;
 
 const VOICE_EMOTIONS = [
   "neutral",
-  "calm",
   "happy",
   "sad",
   "angry",
@@ -40,7 +39,7 @@ const useAudioAnalyzer = (
     const createAnalyzer = async (): Promise<void> => {
       const AudioContext =
         window.AudioContext || (window as any).webkitAudioContext;
-      const audioContext = new AudioContext({ sampleRate: 22050 });
+      const audioContext = new AudioContext({ sampleRate: 22050 * 2 });
       const source = audioContext.createMediaElementSource(audioRef.current!);
       source.connect(audioContext.destination);
 
@@ -49,7 +48,7 @@ const useAudioAnalyzer = (
         source: source,
         bufferSize: 512,
         featureExtractors: ["buffer"],
-        sampleRate: 22050,
+        sampleRate: 22050 * 2,
         hopSize: 512,
         windowingFunction: "hanning",
         callback: analyzerCallback,
@@ -93,7 +92,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     const loadModel = async () => {
       setModelLoading(true);
       onnxSession.current = await InferenceSession.create(
-        "/onnx/voice_emotion_cnn.onnx",
+        "/onnx/voice_emotion_cnn_resnet.onnx",
         { executionProviders: ["wasm"] }
       );
       setModelLoading(false);
@@ -108,14 +107,21 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     },
     async () => {
       if (onnxSession.current) {
-        const offset = Math.floor((data.length - 66150) / 2);
-        // Cut off the overhead equally at the beginning and the end
-        data = data.slice(offset, 66150 + offset);
-        const input = new Tensor(
-          "float32",
-          Float32Array.from(data),
-          [1, 66150]
-        );
+        const offset = Math.floor((data.length - 22050 * 2 * 2.4) / 2);
+        if (offset < 0) {
+          // Pad with zeros
+          data.unshift(...new Array<number>(Math.abs(offset)).fill(0.0));
+          data.push(...new Array<number>(Math.abs(offset)).fill(0.0));
+        } else {
+          // Cut off the overhead equally at the beginning and the end
+          data = data.slice(offset, 22050 * 2 * 2.4 + offset);
+        }
+        data = peakNormalize(data);
+
+        const input = new Tensor("float32", Float32Array.from(data), [
+          1,
+          22050 * 2 * 2.4,
+        ]);
         const results = await onnxSession.current.run({ input });
 
         setPredictions(softmax(Array.from(results.output.data)));
@@ -129,11 +135,11 @@ export default function RavdessVoiceEmotion(): JSX.Element {
   return (
     <Page>
       <Container>
-        <Typography variant="h1">RAVDESS Voice Emotion</Typography>
+        <Typography variant="h1">Voice Emotion Debugging</Typography>
         <Typography variant="h5">
           This page is useful for debugging the voice emotion model.
         </Typography>
-        <Box height="4rem" mt={2} display="flex" alignItems="center">
+        <Box minHeight="4rem" mt={2} display="flex" alignItems="center">
           {modelLoading && (
             <Box display="flex" alignItems="center">
               <Box mr={2}>
@@ -154,72 +160,199 @@ export default function RavdessVoiceEmotion(): JSX.Element {
               src={activeVoice}
             />
           </Box>
-          <ButtonGroup color="primary">
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-01-01-01-01-03.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-01-01-01-01-03.wav");
-              }}
-            >
-              Neutral
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-02-02-01-01-22.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-02-02-01-01-22.wav");
-              }}
-            >
-              Calm
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-03-01-02-01-07.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-03-01-02-01-07.wav");
-              }}
-            >
-              Happy
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-04-01-01-02-16.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-04-01-01-02-16.wav");
-              }}
-            >
-              Sad
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-05-01-02-01-13.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-05-01-02-01-13.wav");
-              }}
-            >
-              Angry
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-06-02-01-02-16.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-06-02-01-02-16.wav");
-              }}
-            >
-              Fearful
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-07-01-01-01-19.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-07-01-01-01-19.wav");
-              }}
-            >
-              Disgust
-            </Button>
-            <Button
-              disabled={activeVoice === "/ravdess/03-01-08-01-01-01-08.wav"}
-              onClick={() => {
-                setActiveVoice("/ravdess/03-01-08-01-01-01-08.wav");
-              }}
-            >
-              Surprised
-            </Button>
-          </ButtonGroup>
+          <Box display="flex" flexDirection="column">
+            <Typography variant="h6">RAVDESS</Typography>
+            <Typography variant="subtitle2">
+              Neutral and Calm have been merged into Neutral.
+            </Typography>
+            <ButtonGroup color="primary">
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-01-01-01-01-03.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-01-01-01-01-03.wav");
+                }}
+              >
+                Neutral
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-02-02-01-01-22.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-02-02-01-01-22.wav");
+                }}
+              >
+                Calm
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-03-01-02-01-07.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-03-01-02-01-07.wav");
+                }}
+              >
+                Happy
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-04-01-01-02-16.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-04-01-01-02-16.wav");
+                }}
+              >
+                Sad
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-05-01-02-01-13.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-05-01-02-01-13.wav");
+                }}
+              >
+                Angry
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-06-02-01-02-16.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-06-02-01-02-16.wav");
+                }}
+              >
+                Fearful
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-07-01-01-01-19.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-07-01-01-01-19.wav");
+                }}
+              >
+                Disgust
+              </Button>
+              <Button
+                disabled={activeVoice === "/ravdess/03-01-08-01-01-01-08.wav"}
+                onClick={() => {
+                  setActiveVoice("/ravdess/03-01-08-01-01-01-08.wav");
+                }}
+              >
+                Surprised
+              </Button>
+            </ButtonGroup>
+            <Typography variant="h6">SAVEE</Typography>
+            <ButtonGroup color="primary">
+              <Button
+                disabled={activeVoice === "/savee/n06.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/n06.wav");
+                }}
+              >
+                Neutral
+              </Button>
+              <Button
+                disabled={activeVoice === "/savee/h01.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/h01.wav");
+                }}
+              >
+                Happy
+              </Button>
+              <Button
+                disabled={activeVoice === "/savee/sa03.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/sa03.wav");
+                }}
+              >
+                Sad
+              </Button>
+              <Button
+                disabled={activeVoice === "/savee/a04.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/a04.wav");
+                }}
+              >
+                Angry
+              </Button>
+              <Button
+                disabled={activeVoice === "/savee/f01.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/f01.wav");
+                }}
+              >
+                Fearful
+              </Button>
+              <Button
+                disabled={activeVoice === "/savee/d01.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/d01.wav");
+                }}
+              >
+                Disgust
+              </Button>
+              <Button
+                disabled={activeVoice === "/savee/su08.wav"}
+                onClick={() => {
+                  setActiveVoice("/savee/su08.wav");
+                }}
+              >
+                Surprised
+              </Button>
+            </ButtonGroup>
+            <Typography variant="h6">EMO-DB</Typography>
+            <Typography variant="subtitle2">
+              Neutral and Boredom have been merged into Neutral.
+            </Typography>
+            <ButtonGroup color="primary">
+              <Button
+                disabled={activeVoice === "/emodb/03a01Nc.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/03a01Nc.wav");
+                }}
+              >
+                Neutral
+              </Button>
+              <Button
+                disabled={activeVoice === "/emodb/03a04Lc.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/03a04Lc.wav");
+                }}
+              >
+                Boredom
+              </Button>
+              <Button
+                disabled={activeVoice === "/emodb/03a01Fa.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/03a01Fa.wav");
+                }}
+              >
+                Happy
+              </Button>
+              <Button
+                disabled={activeVoice === "/emodb/11a02Tc.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/11a02Tc.wav");
+                }}
+              >
+                Sad
+              </Button>
+              <Button
+                disabled={activeVoice === "/emodb/03a01Wa.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/03a01Wa.wav");
+                }}
+              >
+                Angry
+              </Button>
+              <Button
+                disabled={activeVoice === "/emodb/10a05Aa.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/10a05Aa.wav");
+                }}
+              >
+                Fearful
+              </Button>
+              <Button
+                disabled={activeVoice === "/emodb/11b01Eb.wav"}
+                onClick={() => {
+                  setActiveVoice("/emodb/11b01Eb.wav");
+                }}
+              >
+                Disgust
+              </Button>
+            </ButtonGroup>
+          </Box>
         </Box>
         <Box mt={2}>
           <Typography variant="h6">Predictions</Typography>
@@ -257,7 +390,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
             }}
             data={[{ type: "scatter", mode: "lines", y: waveform }]}
             layout={{
-              title: "Waveform",
+              title: "Peak-normalized waveform",
               paper_bgcolor: "transparent",
               plot_bgcolor: "transparent",
               hovermode: false,

@@ -31,13 +31,6 @@ export const schema = {
           isRequired: true,
           attributes: [],
         },
-        calm: {
-          name: "calm",
-          isArray: false,
-          type: "Float",
-          isRequired: true,
-          attributes: [],
-        },
         happy: {
           name: "happy",
           isArray: false,
@@ -507,5 +500,5 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
-  version: "f76944adf7af8afd2d69191933ba458c",
+  version: "6e56eed3706d2eeb8d3d7aec31919920",
 };
