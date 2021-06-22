@@ -9,7 +9,7 @@ import {
 import { RefObject, useEffect, useRef, useState } from "react";
 import Meyda, { MeydaAnalyzer } from "meyda";
 import Plot from "react-plotly.js";
-import { peakNormalize, softmax } from "../utils";
+import { peakNormalize, softmax, standardize } from "../utils";
 import Loader from "../components/Loader";
 import max from "lodash-es/max";
 import Page from "../components/Page";
@@ -47,7 +47,7 @@ const useAudioAnalyzer = (
         audioContext: audioContext,
         source: source,
         bufferSize: 512,
-        featureExtractors: ["buffer"],
+        featureExtractors: ["buffer", "rms"],
         sampleRate: 22050 * 2,
         hopSize: 512,
         windowingFunction: "hanning",
@@ -75,6 +75,7 @@ const useAudioAnalyzer = (
   }, [audioRef, analyzerCallback, endedCallback]);
 };
 
+const THRESHOLD_RMS = 0.003;
 let data: number[] = [];
 
 export default function RavdessVoiceEmotion(): JSX.Element {
@@ -92,7 +93,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     const loadModel = async () => {
       setModelLoading(true);
       onnxSession.current = await InferenceSession.create(
-        "/onnx/voice_emotion_cnn_resnet.onnx",
+        "/onnx/voice_emotion_cnn.onnx",
         { executionProviders: ["wasm"] }
       );
       setModelLoading(false);
@@ -103,7 +104,12 @@ export default function RavdessVoiceEmotion(): JSX.Element {
   useAudioAnalyzer(
     audioRef,
     (features) => {
-      data.push(...features.buffer!);
+      if (features.rms! > THRESHOLD_RMS) {
+        data.push(...features.buffer!);
+      } else {
+        // Push zeros if silent
+        data.push(...new Array(512).fill(0));
+      }
     },
     async () => {
       if (onnxSession.current) {
@@ -116,7 +122,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
           // Cut off the overhead equally at the beginning and the end
           data = data.slice(offset, 22050 * 2 * 2.4 + offset);
         }
-        data = peakNormalize(data);
+        data = peakNormalize(standardize(data));
 
         const input = new Tensor("float32", Float32Array.from(data), [
           1,

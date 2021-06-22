@@ -29,7 +29,7 @@ import {
 } from "face-api.js";
 import VoiceCaptureService from "../../media/VoiceCaptureService";
 import { MeydaFeaturesObject } from "meyda";
-import { peakNormalize, softmax } from "../../utils";
+import { peakNormalize, softmax, standardize } from "../../utils";
 import {
   aggregateAndCalculateVoiceEmotionScore,
   PaulEkmanVoiceEmotion,
@@ -274,7 +274,7 @@ export function useVoiceEmotionCapturing(): [
 
   const warmupModel = useCallback(async () => {
     onnxSession.current = await InferenceSession.create(
-      "/onnx/voice_emotion_cnn_resnet.onnx",
+      "/onnx/voice_emotion_cnn.onnx",
       { executionProviders: ["wasm"] }
     );
   }, []);
@@ -290,7 +290,7 @@ export function useVoiceEmotionCapturing(): [
 
   // Audio data below this threshold will be considered as silence
   // This is useful to exclude disturbing background noises for example
-  const THRESHOLD_RMS = 0.001;
+  const THRESHOLD_RMS = 0.003;
 
   // Gets the features extracted by the audio analyzer (@see VoiceCaptureService).
   // This callback should be passed to the useVoiceCapturingIfMeetingIsRunning hook.
@@ -310,7 +310,9 @@ export function useVoiceEmotionCapturing(): [
         // This avoids an infinite loop if the callback is called faster than it executes.
         // This is necessary because this is an async function with a race condition on dataRef.
         const data: number[] = peakNormalize(
-          dataRef.current.slice(0, VoiceCaptureService.SAMPLE_RATE * 2.4)
+          standardize(
+            dataRef.current.slice(0, VoiceCaptureService.SAMPLE_RATE * 2.4)
+          )
         );
         dataRef.current = [];
 
