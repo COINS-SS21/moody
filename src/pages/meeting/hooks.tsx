@@ -298,9 +298,10 @@ export function useVoiceEmotionCapturing(): [
   const extractAndPersistVoiceEmotionsCallback = useCallback(
     async (features: Partial<MeydaFeaturesObject>) => {
       if (features.rms! > THRESHOLD_RMS) {
+        // Push amplitude if no silence is detected
         dataRef.current.push(...features.buffer!);
       } else {
-        // Push zeros
+        // Push zeros if silence is detected
         dataRef.current.push(...new Array(512).fill(0));
       }
 
@@ -334,7 +335,7 @@ export function useVoiceEmotionCapturing(): [
             })
           );
         } else {
-          // Otherwise report tensor probabilities
+          // Otherwise report predicted tensor probabilities
           const input = new Tensor("float32", Float32Array.from(data), [
             1,
             VoiceCaptureService.SAMPLE_RATE * 2.4,
