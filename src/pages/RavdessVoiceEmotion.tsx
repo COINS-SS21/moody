@@ -9,7 +9,7 @@ import {
 import { RefObject, useEffect, useRef, useState } from "react";
 import Meyda, { MeydaAnalyzer } from "meyda";
 import Plot from "react-plotly.js";
-import { peakNormalize, softmax } from "../utils";
+import { rmsNormalize, softmax } from "../utils";
 import Loader from "../components/Loader";
 import max from "lodash-es/max";
 import Page from "../components/Page";
@@ -116,7 +116,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
           // Cut off the overhead equally at the beginning and the end
           data = data.slice(offset, 22050 * 2.4 + offset);
         }
-        data = peakNormalize(data);
+        data = rmsNormalize(data);
 
         const input = new Tensor("float32", Float32Array.from(data), [
           1,

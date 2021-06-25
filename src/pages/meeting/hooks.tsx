@@ -29,7 +29,7 @@ import {
 } from "face-api.js";
 import VoiceCaptureService from "../../media/VoiceCaptureService";
 import { MeydaFeaturesObject } from "meyda";
-import { peakNormalize, softmax } from "../../utils";
+import { rmsNormalize, softmax } from "../../utils";
 import {
   aggregateAndCalculateVoiceEmotionScore,
   PaulEkmanVoiceEmotion,
@@ -310,7 +310,7 @@ export function useVoiceEmotionCapturing(): [
         // Copy the data to a local variable and reset the global dataRef.
         // This avoids an infinite loop if the callback is called faster than it executes.
         // This is necessary because this is an async function with a race condition on dataRef.
-        const data: number[] = peakNormalize(
+        const data: number[] = rmsNormalize(
           dataRef.current.slice(0, VoiceCaptureService.SAMPLE_RATE * 2.4)
         );
         dataRef.current = [];

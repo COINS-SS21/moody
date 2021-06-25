@@ -48,6 +48,17 @@ export function meanNormalize(arr: number[]): number[] {
   return arr.map((val: number) => (val - mean) / (max - min));
 }
 
+export function rmsNormalize(arr: number[], rmsLevel: number = 0.0): number[] {
+  const r = 10 ** (rmsLevel / 10.0);
+  const squaredSum = arr.reduce(
+    (prev: number, curr: number) => prev + curr ** 2,
+    0
+  );
+  const a = Math.sqrt((arr.length * r ** 2) / squaredSum);
+
+  return arr.map((val: number) => val * a);
+}
+
 export function peakNormalize(arr: number[]): number[] {
   const max: number = Math.max(...arr);
   if (max === 0.0) {
