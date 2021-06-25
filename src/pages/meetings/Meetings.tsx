@@ -6,6 +6,7 @@ import Page from "../../components/Page";
 import MeetingTable from "./MeetingTable";
 import AddMeetingButton from "./AddMeetingButton";
 import { PersonalVideo } from "@material-ui/icons";
+import { Hub } from "aws-amplify";
 
 export default function Meetings(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -18,6 +19,17 @@ export default function Meetings(): JSX.Element {
     };
 
     fetchMeetings();
+
+    const listener = Hub.listen("datastore", async (hubdata) => {
+      const { event } = hubdata.payload;
+      if (event === "ready") {
+        fetchMeetings();
+      }
+    });
+
+    return () => {
+      listener();
+    };
   }, [dispatch]);
 
   return (
