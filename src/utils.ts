@@ -56,7 +56,7 @@ export function rmsNormalize(arr: number[], rmsLevel: number = 0.0): number[] {
   );
   const a = Math.sqrt((arr.length * r ** 2) / squaredSum);
 
-  return arr.map((val: number) => val * a);
+  return arr.map((val: number) => val * a || 0);
 }
 
 export function peakNormalize(arr: number[]): number[] {
