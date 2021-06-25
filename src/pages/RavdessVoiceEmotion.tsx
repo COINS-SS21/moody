@@ -9,7 +9,7 @@ import {
 import { RefObject, useEffect, useRef, useState } from "react";
 import Meyda, { MeydaAnalyzer } from "meyda";
 import Plot from "react-plotly.js";
-import { peakNormalize, softmax, standardize } from "../utils";
+import { peakNormalize, softmax } from "../utils";
 import Loader from "../components/Loader";
 import max from "lodash-es/max";
 import Page from "../components/Page";
@@ -39,7 +39,7 @@ const useAudioAnalyzer = (
     const createAnalyzer = async (): Promise<void> => {
       const AudioContext =
         window.AudioContext || (window as any).webkitAudioContext;
-      const audioContext = new AudioContext({ sampleRate: 22050 * 2 });
+      const audioContext = new AudioContext({ sampleRate: 22050 });
       const source = audioContext.createMediaElementSource(audioRef.current!);
       source.connect(audioContext.destination);
 
@@ -48,7 +48,7 @@ const useAudioAnalyzer = (
         source: source,
         bufferSize: 512,
         featureExtractors: ["buffer", "rms"],
-        sampleRate: 22050 * 2,
+        sampleRate: 22050,
         hopSize: 512,
         windowingFunction: "hanning",
         callback: analyzerCallback,
@@ -75,7 +75,6 @@ const useAudioAnalyzer = (
   }, [audioRef, analyzerCallback, endedCallback]);
 };
 
-const THRESHOLD_RMS = 0.003;
 let data: number[] = [];
 
 export default function RavdessVoiceEmotion(): JSX.Element {
@@ -93,7 +92,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     const loadModel = async () => {
       setModelLoading(true);
       onnxSession.current = await InferenceSession.create(
-        "/onnx/voice_emotion_cnn.onnx",
+        "/onnx/voice_emotion_cnn_resnet.onnx",
         { executionProviders: ["wasm"] }
       );
       setModelLoading(false);
@@ -104,29 +103,24 @@ export default function RavdessVoiceEmotion(): JSX.Element {
   useAudioAnalyzer(
     audioRef,
     (features) => {
-      if (features.rms! > THRESHOLD_RMS) {
-        data.push(...features.buffer!);
-      } else {
-        // Push zeros if silent
-        data.push(...new Array(512).fill(0));
-      }
+      data.push(...features.buffer!);
     },
     async () => {
       if (onnxSession.current) {
-        const offset = Math.floor((data.length - 22050 * 2 * 2.4) / 2);
+        const offset = Math.floor((data.length - 22050 * 2.4) / 2);
         if (offset < 0) {
           // Pad with zeros
           data.unshift(...new Array<number>(Math.abs(offset)).fill(0.0));
           data.push(...new Array<number>(Math.abs(offset)).fill(0.0));
         } else {
           // Cut off the overhead equally at the beginning and the end
-          data = data.slice(offset, 22050 * 2 * 2.4 + offset);
+          data = data.slice(offset, 22050 * 2.4 + offset);
         }
-        data = peakNormalize(standardize(data));
+        data = peakNormalize(data);
 
         const input = new Tensor("float32", Float32Array.from(data), [
           1,
-          22050 * 2 * 2.4,
+          22050 * 2.4,
         ]);
         const results = await onnxSession.current.run({ input });
 

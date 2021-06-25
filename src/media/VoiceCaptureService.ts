@@ -6,7 +6,7 @@ export default class VoiceCaptureService {
   private _source: MediaStreamAudioSourceNode | null = null;
   private _analyzer: MeydaAnalyzer | null = null;
 
-  public static readonly SAMPLE_RATE = 22050 * 2;
+  public static readonly SAMPLE_RATE = 22050;
 
   public async startCapturing(): Promise<void> {
     this._mediaStream = await (navigator.mediaDevices as any).getUserMedia({
