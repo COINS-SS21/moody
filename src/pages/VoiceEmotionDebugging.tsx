@@ -231,68 +231,10 @@ export default function VoiceEmotionDebugging(): JSX.Element {
                 Surprised
               </Button>
             </ButtonGroup>
-            <Typography variant="h6">SAVEE</Typography>
-            <ButtonGroup color="primary">
-              <Button
-                disabled={activeVoice === "/savee/n06.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/n06.wav");
-                }}
-              >
-                Neutral
-              </Button>
-              <Button
-                disabled={activeVoice === "/savee/h01.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/h01.wav");
-                }}
-              >
-                Happy
-              </Button>
-              <Button
-                disabled={activeVoice === "/savee/sa03.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/sa03.wav");
-                }}
-              >
-                Sad
-              </Button>
-              <Button
-                disabled={activeVoice === "/savee/a04.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/a04.wav");
-                }}
-              >
-                Angry
-              </Button>
-              <Button
-                disabled={activeVoice === "/savee/f01.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/f01.wav");
-                }}
-              >
-                Fearful
-              </Button>
-              <Button
-                disabled={activeVoice === "/savee/d01.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/d01.wav");
-                }}
-              >
-                Disgust
-              </Button>
-              <Button
-                disabled={activeVoice === "/savee/su08.wav"}
-                onClick={() => {
-                  setActiveVoice("/savee/su08.wav");
-                }}
-              >
-                Surprised
-              </Button>
-            </ButtonGroup>
             <Typography variant="h6">EMO-DB</Typography>
             <Typography variant="subtitle2">
-              Neutral and Boredom have been merged into Neutral.
+              Neutral and Boredom have been merged into Neutral. There is no
+              surprised emotion.
             </Typography>
             <ButtonGroup color="primary">
               <Button
