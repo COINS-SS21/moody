@@ -69,7 +69,7 @@ export default function VoiceVisualization({
           <Typography variant="h4">Predictions</Typography>
           <Typography variant="subtitle1" color="textSecondary" gutterBottom>
             <Box lineHeight={1.25}>
-              Voice emotions are captured every 2.4 seconds. Your voice is{" "}
+              Voice emotions are captured every 2.1 seconds. Your voice is{" "}
               <strong>not</strong> recorded. Only the aggregated emotions are
               saved.
             </Box>

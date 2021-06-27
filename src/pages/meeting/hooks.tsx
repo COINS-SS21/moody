@@ -274,7 +274,7 @@ export function useVoiceEmotionCapturing(): [
 
   const warmupModel = useCallback(async () => {
     onnxSession.current = await InferenceSession.create(
-      "/onnx/voice_emotion_cnn_resnet.onnx",
+      "/onnx/voice_emotion_cnn.onnx",
       { executionProviders: ["wasm"] }
     );
   }, []);
@@ -285,7 +285,7 @@ export function useVoiceEmotionCapturing(): [
   );
 
   // Create a buffer for the audio data.
-  // This gets flushed every 2.4 seconds by the callback.
+  // This gets flushed every 2.1 seconds by the callback.
   let dataRef = useRef<number[]>([]);
 
   // Audio data below this threshold will be considered as silence
@@ -305,13 +305,13 @@ export function useVoiceEmotionCapturing(): [
         dataRef.current.push(...new Array(512).fill(0));
       }
 
-      // Every 2.4 seconds: Save the voice emotions and flush the buffer.
-      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 2.4) {
+      // Every 2.1 seconds: Save the voice emotions and flush the buffer.
+      if (dataRef.current.length >= VoiceCaptureService.SAMPLE_RATE * 2.1) {
         // Copy the data to a local variable and reset the global dataRef.
         // This avoids an infinite loop if the callback is called faster than it executes.
         // This is necessary because this is an async function with a race condition on dataRef.
         const data: number[] = rmsNormalize(
-          dataRef.current.slice(0, VoiceCaptureService.SAMPLE_RATE * 2.4)
+          dataRef.current.slice(0, VoiceCaptureService.SAMPLE_RATE * 2.1)
         );
         dataRef.current = [];
 
@@ -336,7 +336,7 @@ export function useVoiceEmotionCapturing(): [
           // Otherwise report predicted tensor probabilities
           const input = new Tensor("float32", Float32Array.from(data), [
             1,
-            VoiceCaptureService.SAMPLE_RATE * 2.4,
+            VoiceCaptureService.SAMPLE_RATE * 2.1,
           ]);
           const results = await onnxSession.current.run({ input });
           const outputTensorProbabilities: number[] = softmax(

@@ -92,7 +92,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     const loadModel = async () => {
       setModelLoading(true);
       onnxSession.current = await InferenceSession.create(
-        "/onnx/voice_emotion_cnn_resnet.onnx",
+        "/onnx/voice_emotion_cnn.onnx",
         { executionProviders: ["wasm"] }
       );
       setModelLoading(false);
@@ -107,20 +107,20 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     },
     async () => {
       if (onnxSession.current) {
-        const offset = Math.floor((data.length - 22050 * 2.4) / 2);
+        const offset = Math.floor((data.length - 22050 * 2.1) / 2);
         if (offset < 0) {
           // Pad with zeros
           data.unshift(...new Array<number>(Math.abs(offset)).fill(0.0));
-          data.push(...new Array<number>(Math.abs(offset)).fill(0.0));
+          data.push(...new Array<number>(Math.abs(offset) - 1).fill(0.0));
         } else {
           // Cut off the overhead equally at the beginning and the end
-          data = data.slice(offset, 22050 * 2.4 + offset);
+          data = data.slice(offset, 22050 * 2.1 + offset);
         }
         data = rmsNormalize(data);
 
         const input = new Tensor("float32", Float32Array.from(data), [
           1,
-          22050 * 2.4,
+          22050 * 2.1,
         ]);
         const results = await onnxSession.current.run({ input });
 
