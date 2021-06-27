@@ -222,7 +222,8 @@ export function useMeetingInformation(
 }
 
 export function useVoiceCapturingIfMeetingIsRunning(
-  callback: (features: Partial<MeydaFeaturesObject>) => void
+  callback: (features: Partial<MeydaFeaturesObject>) => void,
+  audioDevice: string
 ): [() => Promise<MediaStream | undefined>, () => Promise<void>] {
   const voiceCaptureServiceRef = useRef<VoiceCaptureService | null>(null);
   const dispatch = useAppDispatch();
@@ -233,7 +234,7 @@ export function useVoiceCapturingIfMeetingIsRunning(
   > => {
     voiceCaptureServiceRef.current = new VoiceCaptureService();
     try {
-      await voiceCaptureServiceRef.current.startCapturing();
+      await voiceCaptureServiceRef.current.startCapturing(audioDevice);
       voiceCaptureServiceRef.current?.startAnalyzer(callback);
       return voiceCaptureServiceRef.current?.mediaStream;
     } catch (e) {
@@ -245,7 +246,7 @@ export function useVoiceCapturingIfMeetingIsRunning(
         )
       );
     }
-  }, [callback, dispatch]);
+  }, [audioDevice, callback, dispatch]);
 
   const stopVoiceCapturing = useCallback(async () => {
     try {
@@ -274,7 +275,7 @@ export function useVoiceEmotionCapturing(): [
 
   const warmupModel = useCallback(async () => {
     onnxSession.current = await InferenceSession.create(
-      "/onnx/voice_emotion_cnn.onnx",
+      "/onnx/voice_emotion_cnn_resnet.onnx",
       { executionProviders: ["wasm"] }
     );
   }, []);
