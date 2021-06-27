@@ -22,11 +22,15 @@ export function Welcome(): JSX.Element {
           </Typography>
         </Box>
         <Box mt={2} width={1}>
-          <Typography variant="body1">
-            Moody captures facial emotions of the participants in a meeting to
+          <Typography variant="body1" paragraph>
+            Moody captures facial emotions of participants in a meeting to
             perform real-time emotion detection and give a detailed analysis
             that in turn helps the presenter understand the scope for
             improvements.
+          </Typography>
+          <Typography variant="body1" paragraph>
+            Moody also analyzes the presenter's vocal emotions in real-time.
+            This can help the presenter to self-reflect his / her appearance.
           </Typography>
         </Box>
         <Box mt={4} width={1} display="flex" alignItems="center">
