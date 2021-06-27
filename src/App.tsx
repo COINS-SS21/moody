@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { syncUserWithRedux } from "./auth/utils";
 import Feedback from "./pages/feedback/Feedback";
 import Page from "./components/Page";
-import RavdessVoiceEmotion from "./pages/RavdessVoiceEmotion";
+import VoiceEmotionDebugging from "./pages/VoiceEmotionDebugging";
 
 function PrivateApp(): JSX.Element {
   return (
@@ -30,8 +30,8 @@ function PrivateApp(): JSX.Element {
         <Route exact path="/meetings/:id">
           <Meeting />
         </Route>
-        <Route exact path="/ravdess">
-          <RavdessVoiceEmotion />
+        <Route exact path="/voice-emotion-debugging">
+          <VoiceEmotionDebugging />
         </Route>
         <Route exact path="/debug">
           <Debug />

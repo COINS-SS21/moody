@@ -77,7 +77,7 @@ const useAudioAnalyzer = (
 
 let data: number[] = [];
 
-export default function RavdessVoiceEmotion(): JSX.Element {
+export default function VoiceEmotionDebugging(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [activeVoice, setActiveVoice] = useState<string>(
     "/ravdess/03-01-01-01-01-01-03.wav"
