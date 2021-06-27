@@ -222,31 +222,34 @@ export function useMeetingInformation(
 }
 
 export function useVoiceCapturingIfMeetingIsRunning(
-  callback: (features: Partial<MeydaFeaturesObject>) => void,
-  audioDevice: string
-): [() => Promise<MediaStream | undefined>, () => Promise<void>] {
+  callback: (features: Partial<MeydaFeaturesObject>) => void
+): [
+  (audioDevice?: string) => Promise<MediaStream | undefined>,
+  () => Promise<void>
+] {
   const voiceCaptureServiceRef = useRef<VoiceCaptureService | null>(null);
   const dispatch = useAppDispatch();
   const meetingRunning = useAppSelector(activeMeetingRunning);
 
-  const startVoiceCapturing = useCallback(async (): Promise<
-    MediaStream | undefined
-  > => {
-    voiceCaptureServiceRef.current = new VoiceCaptureService();
-    try {
-      await voiceCaptureServiceRef.current.startCapturing(audioDevice);
-      voiceCaptureServiceRef.current?.startAnalyzer(callback);
-      return voiceCaptureServiceRef.current?.mediaStream;
-    } catch (e) {
-      dispatch(
-        addError(
-          "Cannot start voice capturing: " +
-            e.message +
-            ". Try to reload the page."
-        )
-      );
-    }
-  }, [audioDevice, callback, dispatch]);
+  const startVoiceCapturing = useCallback(
+    async (audioDevice?: string): Promise<MediaStream | undefined> => {
+      voiceCaptureServiceRef.current = new VoiceCaptureService();
+      try {
+        await voiceCaptureServiceRef.current.startCapturing(audioDevice);
+        voiceCaptureServiceRef.current?.startAnalyzer(callback);
+        return voiceCaptureServiceRef.current?.mediaStream;
+      } catch (e) {
+        dispatch(
+          addError(
+            "Cannot start voice capturing: " +
+              e.message +
+              ". Try to reload the page."
+          )
+        );
+      }
+    },
+    [callback, dispatch]
+  );
 
   const stopVoiceCapturing = useCallback(async () => {
     try {
@@ -275,7 +278,7 @@ export function useVoiceEmotionCapturing(): [
 
   const warmupModel = useCallback(async () => {
     onnxSession.current = await InferenceSession.create(
-      "/onnx/voice_emotion_cnn_resnet.onnx",
+      "/onnx/voice_emotion_cnn.onnx",
       { executionProviders: ["wasm"] }
     );
   }, []);
@@ -291,7 +294,7 @@ export function useVoiceEmotionCapturing(): [
 
   // Audio data below this threshold will be considered as silence
   // This is useful to exclude disturbing background noises for example
-  const THRESHOLD_RMS = 0.003;
+  const THRESHOLD_RMS = 0.002;
 
   // Gets the features extracted by the audio analyzer (@see VoiceCaptureService).
   // This callback should be passed to the useVoiceCapturingIfMeetingIsRunning hook.

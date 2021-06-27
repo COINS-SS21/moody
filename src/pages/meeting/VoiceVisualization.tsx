@@ -63,7 +63,7 @@ export default function VoiceVisualization({
 
   return (
     <Paper>
-      <Box display="flex">
+      <Box display="flex" pr={2}>
         <canvas ref={canvasRef} width={700} height={375} />
         <Box ml={6} mt={2}>
           <Typography variant="h4">Predictions</Typography>

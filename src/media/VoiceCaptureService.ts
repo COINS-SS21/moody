@@ -8,15 +8,13 @@ export default class VoiceCaptureService {
 
   public static readonly SAMPLE_RATE = 22050;
 
-  public async startCapturing(audioDevice: string): Promise<void> {
+  public async startCapturing(audioDevice?: string): Promise<void> {
     this._mediaStream = await (navigator.mediaDevices as any).getUserMedia({
       audio: {
         noiseSuppression: true,
         sampleRate: VoiceCaptureService.SAMPLE_RATE,
         echoCancellation: true,
-        deviceId: {
-          exact: audioDevice,
-        },
+        deviceId: audioDevice,
       },
       video: false,
     });

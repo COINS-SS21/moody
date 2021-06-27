@@ -92,7 +92,7 @@ export default function RavdessVoiceEmotion(): JSX.Element {
     const loadModel = async () => {
       setModelLoading(true);
       onnxSession.current = await InferenceSession.create(
-        "/onnx/voice_emotion_cnn_resnet.onnx",
+        "/onnx/voice_emotion_cnn.onnx",
         { executionProviders: ["wasm"] }
       );
       setModelLoading(false);

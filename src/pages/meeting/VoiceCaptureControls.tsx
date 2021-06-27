@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { useAppSelector } from "../../reduxHooks";
 import { activeMeetingRunning } from "../../meetings/meetingsSelectors";
 import {
@@ -31,32 +31,27 @@ export default function VoiceCaptureControls({
     useVoiceEmotionCapturing();
   const [modelLoading, setModelLoading] = useState<boolean>(false);
   const [audioDevices, setAudioDevices] = useState<InputDeviceInfo[]>([]);
-  const [selectedAudioDevice, setSelectedAudioDevice] =
-    useState<string>("default");
+  const [selectedAudioDevice, setSelectedAudioDevice] = useState<string | null>(
+    null
+  );
   const [startVoiceCapturing, stopVoiceCapturing] =
-    useVoiceCapturingIfMeetingIsRunning(
-      extractAndPersistVoiceEmotionsCallback,
-      selectedAudioDevice
-    );
-
-  useEffect(() => {
-    const enumerateDevices = async () => {
-      const devices = await (navigator.mediaDevices as any).enumerateDevices();
-      setAudioDevices(
-        devices.filter((device: any) => device?.kind === "audioinput")
-      );
-    };
-    enumerateDevices();
-  }, []);
+    useVoiceCapturingIfMeetingIsRunning(extractAndPersistVoiceEmotionsCallback);
 
   const handeSelectAudioDevice = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setSelectedAudioDevice(e.target.value);
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      await setSelectedAudioDevice(e.target.value);
+
+      // Stop accessing microphone
+      await stopVoiceCapturing();
+      handleMediaStream(undefined);
+
+      // Acquire access to the microphone and start predicting the emotions
+      handleMediaStream(await startVoiceCapturing(e.target.value));
     },
-    []
+    [handleMediaStream, startVoiceCapturing, stopVoiceCapturing]
   );
 
-  const handleChange = useCallback(
+  const handleVoiceCaptureSwitch = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       setChecked(e.target.checked);
 
@@ -68,6 +63,16 @@ export default function VoiceCaptureControls({
 
           // Acquire access to the microphone and start predicting the emotions
           handleMediaStream(await startVoiceCapturing());
+
+          // Enumerate all audio input devices after acquiring permission to the microphone
+          const devices = await (
+            navigator.mediaDevices as any
+          ).enumerateDevices();
+          const audioDevices = devices.filter(
+            (device: any) => device?.kind === "audioinput"
+          );
+          setSelectedAudioDevice(audioDevices[0].deviceId);
+          setAudioDevices(audioDevices);
         } else {
           // Stop accessing microphone
           await stopVoiceCapturing();
@@ -110,30 +115,33 @@ export default function VoiceCaptureControls({
     <Box display="flex" alignItems="center">
       <FormControlLabel
         control={
-          <Switch checked={checked} onChange={handleChange} color="primary" />
+          <Switch
+            checked={checked}
+            onChange={handleVoiceCaptureSwitch}
+            color="primary"
+          />
         }
         label={`${checked ? "Disable" : "Enable"} voice emotion tracking`}
       />
+      {checked && audioDevices.length > 1 && (
+        <TextField
+          select
+          label="Audio device"
+          value={selectedAudioDevice}
+          onChange={handeSelectAudioDevice}
+          size="small"
+          variant="outlined"
+          style={{ width: 200 }}
+        >
+          {audioDevices.map((device: InputDeviceInfo) => (
+            <MenuItem key={device.deviceId} value={device.deviceId}>
+              {device.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      )}
       {!checked && (
         <>
-          {audioDevices.length > 1 && (
-            <TextField
-              select
-              label="Audio device"
-              value={selectedAudioDevice}
-              onChange={handeSelectAudioDevice}
-              size="small"
-              variant="outlined"
-              style={{ width: 200 }}
-            >
-              {audioDevices.map((device: InputDeviceInfo) => (
-                <MenuItem key={device.deviceId} value={device.deviceId}>
-                  {device.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
-
           <Box ml={2}>
             <IconButton
               color="secondary"
