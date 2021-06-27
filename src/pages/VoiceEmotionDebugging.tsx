@@ -390,7 +390,7 @@ export default function VoiceEmotionDebugging(): JSX.Element {
             }}
             data={[{ type: "scatter", mode: "lines", y: waveform }]}
             layout={{
-              title: "Peak-normalized waveform",
+              title: "RMS-normalized waveform",
               paper_bgcolor: "transparent",
               plot_bgcolor: "transparent",
               hovermode: false,
