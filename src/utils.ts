@@ -1,3 +1,20 @@
+export function movingAverage(arr: number[], n: number = 5): number[] {
+  if (arr.length - n < 0) {
+    return [];
+  }
+  const result = new Array<number>(arr.length - n);
+
+  for (let i = n; i < arr.length; i++) {
+    let meanLastN: number = 0.0;
+    for (let j = i - n; j < i; j++) {
+      meanLastN += arr[j];
+    }
+    result[i] = meanLastN / n;
+  }
+
+  return result;
+}
+
 export function softmax(arr: number[]): number[] {
   const C = Math.max(...arr);
   const d = arr.map((y) => Math.exp(y - C)).reduce((a, b) => a + b);

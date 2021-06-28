@@ -4,17 +4,114 @@ import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audie
 import Plot from "react-plotly.js";
 import {
   Box,
+  Button,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   IconButton,
   Paper,
   Popover,
+  TextField,
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { InfoOutlined } from "@material-ui/icons";
+import { InfoOutlined, MoreVert } from "@material-ui/icons";
 import React, { ChangeEvent, MouseEvent, useState } from "react";
 import { selectActiveMeetingSpeakerVoiceEmotions } from "../../meetings/speakerVoiceEmotionSlice";
+import { movingAverage } from "../../utils";
+
+type MovingAverageSelectProps = {
+  callback: (audienceMa: number, speakerMa: number) => void;
+};
+
+const MovingAverageSelect = ({ callback }: MovingAverageSelectProps) => {
+  const [open, setOpen] = useState(false);
+  const [audienceMa, setAudienceMa] = useState<number>(1);
+  const [speakerMa, setSpeakerMa] = useState<number>(1);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSave = () => {
+    callback(audienceMa, speakerMa);
+    handleClose();
+  };
+
+  return (
+    <>
+      <IconButton size="small" onClick={handleClickOpen}>
+        <MoreVert />
+      </IconButton>
+      <Dialog
+        disableBackdropClick
+        disableEscapeKeyDown
+        open={open}
+        onClose={handleClose}
+        maxWidth="xs"
+      >
+        <DialogTitle>Moving average smoothing</DialogTitle>
+        <DialogContent>
+          <Box display="flex">
+            <Box mr={2}>
+              <TextField
+                id="audience-ma-input"
+                type="number"
+                inputProps={{
+                  min: 1,
+                }}
+                label="Audience"
+                value={audienceMa}
+                color="primary"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  setAudienceMa(parseInt(e.target.value, 10) || 1);
+                }}
+                required
+              />
+            </Box>
+            <Box>
+              <TextField
+                id="speaker-ma-input"
+                type="number"
+                inputProps={{
+                  min: 1,
+                }}
+                label="Speaker"
+                value={speakerMa}
+                color="secondary"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  setSpeakerMa(parseInt(e.target.value, 10) || 1);
+                }}
+                required
+              />
+            </Box>
+          </Box>
+          <Box mt={2}>
+            <Typography variant="body2">
+              Higher values make the curves smoother. A value of 1 is equal to
+              the original curve.
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
 
 export default function AudienceEmotionRollercoaster(): JSX.Element {
   const theme = useTheme();
@@ -38,6 +135,15 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
 
   const open = Boolean(anchorEl);
 
+  // Moving average state
+  const [audienceMa, setAudienceMa] = useState<number>(1);
+  const [speakerMa, setSpeakerMa] = useState<number>(1);
+
+  const updateFromDialog = (audienceMa: number, speakerMa: number) => {
+    setAudienceMa(audienceMa);
+    setSpeakerMa(speakerMa);
+  };
+
   // Checkbox
   const [checkboxes, setCheckboxes] = useState({
     audience: true,
@@ -51,7 +157,10 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
     data.push({
       name: "Audience face expressions",
       x: audienceFaceExpressions.map((e) => new Date(e.timestamp)),
-      y: audienceFaceExpressions.map((e) => e.score),
+      y: movingAverage(
+        audienceFaceExpressions.map((e) => e.score),
+        audienceMa
+      ),
       type: "scatter",
       mode: "lines",
       line: { color: theme.palette.primary.main },
@@ -61,7 +170,10 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
     data.push({
       name: "Speaker voice emotions",
       x: speakerVoiceEmotions.map((e) => new Date(e.timestamp)),
-      y: speakerVoiceEmotions.map((e) => e.score),
+      y: movingAverage(
+        speakerVoiceEmotions.map((e) => e.score),
+        speakerMa
+      ),
       type: "scatter",
       mode: "lines",
       line: { color: theme.palette.secondary.main },
@@ -132,6 +244,7 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
           }
           label="Speaker"
         />
+        <MovingAverageSelect callback={updateFromDialog} />
       </Box>
       <Plot
         config={{
