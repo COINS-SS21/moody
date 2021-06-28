@@ -54,13 +54,13 @@ export default function EmotionRadar() {
       r: Object.values(
         calculatePaulEkmanEmotionScore(
           audienceFaceExpressions.map((e) => ({
-            happy: e.happy ? Math.log(e.happy) : 0.0,
-            surprised: e.surprised ? Math.log(e.surprised) : 0.0,
-            neutral: e.neutral ? Math.log(e.neutral) : 0.0,
-            sad: e.sad ? Math.log(e.sad) : 0.0,
-            angry: e.angry ? Math.log(e.angry) : 0.0,
-            disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
-            fearful: e.fearful ? Math.log(e.fearful) : 0.0,
+            happy: e.happy ? Math.log(1 + e.happy) : 0.0,
+            surprised: e.surprised ? Math.log(1 + e.surprised) : 0.0,
+            neutral: e.neutral ? Math.log(1 + e.neutral) : 0.0,
+            sad: e.sad ? Math.log(1 + e.sad) : 0.0,
+            angry: e.angry ? Math.log(1 + e.angry) : 0.0,
+            disgusted: e.disgusted ? Math.log(1 + e.disgusted) : 0.0,
+            fearful: e.fearful ? Math.log(1 + e.fearful) : 0.0,
           }))
         )
       ),
@@ -86,13 +86,13 @@ export default function EmotionRadar() {
       r: Object.values(
         calculatePaulEkmanEmotionScore(
           speakerVoiceEmotions.map((e) => ({
-            happy: e.happy ? Math.log(e.happy) : 0.0,
-            surprised: e.surprised ? Math.log(e.surprised) : 0.0,
-            neutral: e.neutral ? Math.log(e.neutral) : 0.0,
-            sad: e.sad ? Math.log(e.sad) : 0.0,
-            angry: e.angry ? Math.log(e.angry) : 0.0,
-            disgusted: e.disgusted ? Math.log(e.disgusted) : 0.0,
-            fearful: e.fearful ? Math.log(e.fearful) : 0.0,
+            happy: e.happy ? Math.log(1 + e.happy) : 0.0,
+            surprised: e.surprised ? Math.log(1 + e.surprised) : 0.0,
+            neutral: e.neutral ? Math.log(1 + e.neutral) : 0.0,
+            sad: e.sad ? Math.log(1 + e.sad) : 0.0,
+            angry: e.angry ? Math.log(1 + e.angry) : 0.0,
+            disgusted: e.disgusted ? Math.log(1 + e.disgusted) : 0.0,
+            fearful: e.fearful ? Math.log(1 + e.fearful) : 0.0,
           }))
         )
       ),
