@@ -22,3 +22,6 @@ frontend:
     paths:
       - node_modules/**/*
       - public/*.model
+      - public/onnx/*.onnx
+      - public/emodb/*.wav
+      - public/ravdess/*.wav
