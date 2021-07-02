@@ -2,6 +2,12 @@
   "name": "moody",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Philipp Page",
+    "email": "mail@philipp-page.de",
+    "url": "https://philipp-page.de"
+  },
+  "repository": "https://github.com/COINS-SS21/moody",
   "dependencies": {
     "@aws-amplify/ui-react": "^1.2.1",
     "@material-ui/core": "^4.11.4",
