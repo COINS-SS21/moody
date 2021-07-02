@@ -193,7 +193,6 @@ export default function EmotionRadar() {
               showline: false,
             },
           },
-          hovermode: false,
           width: 465,
           margin: {
             l: 50,
