@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
-import Amplify, { Hub } from "aws-amplify";
+import Amplify, { Hub, DataStore } from "aws-amplify";
 import awsExports from "./aws-exports";
 import { Provider } from "react-redux";
 import { store } from "./reduxStore";
@@ -18,6 +18,11 @@ import { syncUserWithRedux } from "./auth/utils";
 
 Amplify.configure(awsExports);
 Hub.listen("auth", syncUserWithRedux);
+Hub.listen("auth", async (data) => {
+  if (data.payload.event === "signOut") {
+    await DataStore.clear();
+  }
+});
 
 let theme: Theme = createMuiTheme({
   palette: {
