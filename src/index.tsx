@@ -20,7 +20,9 @@ Amplify.configure(awsExports);
 Hub.listen("auth", syncUserWithRedux);
 Hub.listen("auth", async (data) => {
   if (data.payload.event === "signOut") {
+    console.info("Clearing local data store ...");
     await DataStore.clear();
+    console.info("Local data store cleared.");
   }
 });
 
