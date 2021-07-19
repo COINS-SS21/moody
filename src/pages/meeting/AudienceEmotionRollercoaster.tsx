@@ -19,20 +19,36 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { InfoOutlined, MoreVert } from "@material-ui/icons";
-import React, { ChangeEvent, MouseEvent, useState } from "react";
+import React, {
+  ChangeEvent,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { selectActiveMeetingSpeakerVoiceEmotions } from "../../meetings/speakerVoiceEmotionSlice";
-import { movingAverage } from "../../utils";
+import { guessGoodMovingAverage, movingAverage } from "../../utils";
+import { activeMeetingRunning } from "../../meetings/meetingsSelectors";
 
 type MovingAverageSelectProps = {
   callback: (audienceMa: number, speakerMa: number) => void;
+  defaultAudienceMa: number;
+  defaultSpeakerMa: number;
 };
 
-const MovingAverageSelect = ({ callback }: MovingAverageSelectProps) => {
+const MovingAverageSelect = ({
+  defaultAudienceMa,
+  defaultSpeakerMa,
+  callback,
+}: MovingAverageSelectProps) => {
+  const meetingRunning = useAppSelector(activeMeetingRunning);
   const [open, setOpen] = useState(false);
   const [audienceMa, setAudienceMa] = useState<number>(1);
   const [speakerMa, setSpeakerMa] = useState<number>(1);
 
   const handleClickOpen = () => {
+    setAudienceMa(defaultAudienceMa);
+    setSpeakerMa(defaultSpeakerMa);
     setOpen(true);
   };
 
@@ -70,6 +86,7 @@ const MovingAverageSelect = ({ callback }: MovingAverageSelectProps) => {
                 label="Audience"
                 value={audienceMa}
                 color="primary"
+                disabled={meetingRunning}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setAudienceMa(parseInt(e.target.value, 10) || 1);
                 }}
@@ -86,6 +103,7 @@ const MovingAverageSelect = ({ callback }: MovingAverageSelectProps) => {
                 label="Speaker"
                 value={speakerMa}
                 color="secondary"
+                disabled={meetingRunning}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setSpeakerMa(parseInt(e.target.value, 10) || 1);
                 }}
@@ -94,10 +112,18 @@ const MovingAverageSelect = ({ callback }: MovingAverageSelectProps) => {
             </Box>
           </Box>
           <Box mt={2}>
-            <Typography variant="body2">
-              Higher values make the curves smoother. A value of 1 is equal to
-              the original curve.
-            </Typography>
+            {meetingRunning ? (
+              <Typography variant="body2">
+                The above values are guessed based on the curve variance and
+                meeting duration. You can adjust the values after the meeting
+                has finished.
+              </Typography>
+            ) : (
+              <Typography variant="body2">
+                Higher values make the curves smoother. A value of 1 is equal to
+                the original curve.
+              </Typography>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>
@@ -139,10 +165,23 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
   const [audienceMa, setAudienceMa] = useState<number>(1);
   const [speakerMa, setSpeakerMa] = useState<number>(1);
 
-  const updateFromDialog = (audienceMa: number, speakerMa: number) => {
-    setAudienceMa(audienceMa);
-    setSpeakerMa(speakerMa);
-  };
+  const updateFromDialog = useCallback(
+    (audienceMa: number, speakerMa: number) => {
+      setAudienceMa(audienceMa);
+      setSpeakerMa(speakerMa);
+    },
+    []
+  );
+
+  // Guess good initial values for the moving average smoothing
+  useEffect(() => {
+    setAudienceMa(
+      guessGoodMovingAverage(audienceFaceExpressions.map((e) => e.score))
+    );
+    setSpeakerMa(
+      guessGoodMovingAverage(speakerVoiceEmotions.map((e) => e.score))
+    );
+  }, [audienceFaceExpressions, speakerVoiceEmotions]);
 
   // Checkbox
   const [checkboxes, setCheckboxes] = useState({
@@ -244,7 +283,11 @@ export default function AudienceEmotionRollercoaster(): JSX.Element {
           }
           label="Speaker"
         />
-        <MovingAverageSelect callback={updateFromDialog} />
+        <MovingAverageSelect
+          callback={updateFromDialog}
+          defaultAudienceMa={audienceMa}
+          defaultSpeakerMa={speakerMa}
+        />
       </Box>
       <Plot
         config={{

@@ -15,6 +15,14 @@ export function movingAverage(arr: number[], n: number = 5): number[] {
   return result;
 }
 
+export function guessGoodMovingAverage(arr: number[]) {
+  if (arr.length === 0) {
+    return 1;
+  }
+
+  return Math.floor(10 * arrStd(arr) + Math.log(arr.length));
+}
+
 export function softmax(arr: number[]): number[] {
   const C = Math.max(...arr);
   const d = arr.map((y) => Math.exp(y - C)).reduce((a, b) => a + b);
