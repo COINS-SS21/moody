@@ -500,5 +500,6 @@ export const schema = {
   },
   enums: {},
   nonModels: {},
+  codegenVersion: "3.4.4",
   version: "6e56eed3706d2eeb8d3d7aec31919920",
 };

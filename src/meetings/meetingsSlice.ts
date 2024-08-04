@@ -41,14 +41,14 @@ export const fetchMeeting = createAsyncThunk(
         AudienceFaceExpression,
         (predicate) => predicate.meetingID("eq", meeting.id)
       );
-      await dispatch(fetchAudienceFaceExpressions(audienceFaceExpressions));
+      dispatch(fetchAudienceFaceExpressions(audienceFaceExpressions));
 
       // Fetch corresponding SpeakerVoiceEmotions
       const speakerVoiceEmotions = await DataStore.query(
         SpeakerVoiceEmotion,
         (predicate) => predicate.meetingID("eq", meeting.id)
       );
-      await dispatch(fetchSpeakerVoiceEmotions(speakerVoiceEmotions));
+      dispatch(fetchSpeakerVoiceEmotions(speakerVoiceEmotions));
 
       return meeting;
     }

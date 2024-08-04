@@ -8,12 +8,6 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { ArrowBackIos, PlayArrow, Stop } from "@material-ui/icons";
-import { useCallback, useRef, useState } from "react";
-import Page from "../../components/Page";
-import { Link as RouterLink, useParams } from "react-router-dom";
-import { useAppDispatch } from "../../reduxHooks";
-import { startMeeting, stopMeeting } from "../../meetings/meetingsSlice";
-import Loader from "../../components/Loader";
 import {
   Alert,
   AlertTitle,
@@ -21,18 +15,25 @@ import {
   TabList,
   TabPanel,
 } from "@material-ui/lab";
-import AudienceEmotionRollercoaster from "./AudienceEmotionRollercoaster";
+import { useCallback, useRef, useState } from "react";
+import { Link as RouterLink, useParams } from "react-router-dom";
+import Loader from "../../components/Loader";
+import Page from "../../components/Page";
+import { startMeeting, stopMeeting } from "../../meetings/meetingsSlice";
+import { useAppDispatch } from "../../reduxHooks";
 import AudienceEmotionBarometer from "./AudienceEmotionBarometer";
+import AudienceEmotionRollercoaster from "./AudienceEmotionRollercoaster";
+import EmotionRadar from "./EmotionRadar";
+import ExportButton from "./ExportButton";
+import FeedbackLinkButton from "./FeedbackLinkButton";
 import {
   useEmotionDetection,
   useFetchMeeting,
   useMeetingInformation,
   useScreenCapturingIfMeetingIsRunning,
 } from "./hooks";
-import FeedbackLinkButton from "./FeedbackLinkButton";
-import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
 import Ratings from "./Ratings";
-import EmotionRadar from "./EmotionRadar";
+import StartScreenCapturingDialog from "./StartScreenCapturingDialog";
 import VoiceCaptureControls from "./VoiceCaptureControls";
 import VoiceVisualization from "./VoiceVisualization";
 
@@ -112,6 +113,7 @@ export default function Meeting(): JSX.Element {
                   This meeting has ended and cannot be started again. 👏
                 </Typography>
                 <FeedbackLinkButton />
+                <ExportButton />
               </>
             ) : (
               <Box display="flex" alignItems="center">
