@@ -43,8 +43,8 @@ export default function ExportButton() {
   ]);
 
   const handleDownload = useCallback(() => {
-    Object.keys(dataFiles).forEach((filename) => {
-      const jsonData = JSON.stringify(dataFiles[filename]);
+    const downloadFile = (filename: string, data: object) => {
+      const jsonData = JSON.stringify(data);
       const blob = new Blob([jsonData], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -52,7 +52,26 @@ export default function ExportButton() {
       link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
-    });
+    };
+
+    let index = 0;
+    const downloadFiles = () => {
+      if (index < Object.entries(dataFiles).length) {
+        const [filename, data] = Object.entries(dataFiles)[index];
+        const downloadButton = document.createElement("a");
+        downloadButton.style.display = "none";
+        downloadButton.addEventListener("click", () =>
+          downloadFile(filename, data)
+        );
+        document.body.appendChild(downloadButton);
+        downloadButton.click();
+        document.body.removeChild(downloadButton);
+        index++;
+        setTimeout(downloadFiles, 100); // Add a small delay of 100ms
+      }
+    };
+
+    downloadFiles();
   }, [dataFiles]);
 
   return (
