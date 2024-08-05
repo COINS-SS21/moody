@@ -7,7 +7,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { RefObject, useEffect, useRef, useState } from "react";
-import Meyda, { MeydaAnalyzer } from "meyda";
+import Meyda from "meyda";
 import Plot from "react-plotly.js";
 import { rmsNormalize, softmax } from "../utils";
 import Loader from "../components/Loader";
@@ -33,7 +33,7 @@ const useAudioAnalyzer = (
   analyzerCallback: (features: Partial<Meyda.MeydaFeaturesObject>) => void,
   endedCallback: () => void
 ) => {
-  const analyzer = useRef<MeydaAnalyzer | null>(null);
+  const analyzer = useRef<Meyda.MeydaAnalyzer | null>(null);
 
   return useEffect(() => {
     const createAnalyzer = async (): Promise<void> => {

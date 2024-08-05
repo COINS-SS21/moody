@@ -1,4 +1,10 @@
-import { configureStore, isPlain } from "@reduxjs/toolkit";
+import {
+  AnyAction,
+  configureStore,
+  Dispatch,
+  isPlain,
+  Middleware,
+} from "@reduxjs/toolkit";
 import counterReducer from "./counter/counterSlice";
 import errorReducer from "./error/errorSlice";
 import authReducer from "./auth/authSlice";
@@ -32,7 +38,7 @@ export const store = configureStore({
               // Allow all plain values
               isPlain(value),
           },
-        }).concat(logger)
+        }).concat(logger as Middleware<{}, any, Dispatch<AnyAction>>)
       : getDefaultMiddleware(),
 });
 

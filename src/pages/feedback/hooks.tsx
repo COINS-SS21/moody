@@ -54,8 +54,8 @@ export const useFetchPublicMeeting = (
 };
 
 export const useSubmitAnswer = (
-  publicmeetinginfoID?: string,
-  owner?: string
+  publicmeetinginfoID?: string | null,
+  owner?: string | null
 ): [
   boolean,
   boolean,
