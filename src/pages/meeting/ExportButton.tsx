@@ -1,6 +1,6 @@
 import { Button } from "@material-ui/core";
 import { CloudDownload } from "@material-ui/icons";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { selectActiveMeetingAudienceFaceExpressions } from "../../meetings/audienceFaceExpressionSlice";
 import { selectActiveMeeting } from "../../meetings/meetingsSelectors";
 import {
@@ -27,13 +27,40 @@ export default function ExportButton() {
   const meetingInformation = useAppSelector(selectActiveMeeting);
   const ratings = useAppSelector(selectActiveMeetingRatings);
 
-  console.log("face", audienceFaceExpressions);
-  console.log("voice", speakerVoiceEmotions);
-  console.log("meetingInfo", meetingInformation);
-  console.log("ratings", ratings);
+  const dataFiles: Record<string, object> = useMemo(() => {
+    const id = meetingInformation?.id ?? "unknown-meeting-id";
+    return {
+      [`face-expressions-${id}.json`]: audienceFaceExpressions,
+      [`voice-emotions-${id}.json`]: speakerVoiceEmotions,
+      [`meeting-info-${id}.json`]: meetingInformation || {},
+      [`ratings-${id}.json`]: ratings,
+    };
+  }, [
+    audienceFaceExpressions,
+    meetingInformation,
+    ratings,
+    speakerVoiceEmotions,
+  ]);
+
+  const handleDownload = useCallback(() => {
+    Object.keys(dataFiles).forEach((filename) => {
+      const jsonData = JSON.stringify(dataFiles[filename]);
+      const blob = new Blob([jsonData], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }, [dataFiles]);
 
   return (
-    <Button startIcon={<CloudDownload />} color="primary">
+    <Button
+      startIcon={<CloudDownload />}
+      color="primary"
+      onClick={handleDownload}
+    >
       Export meeting data
     </Button>
   );
