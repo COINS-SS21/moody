@@ -94,7 +94,7 @@ export const { selectAll: selectAllRatings } = ratingsAdapter.getSelectors(
 
 export const selectActiveMeetingRatings = createSelector(
   [
-    (state) =>
+    (state: RootState) =>
       !!state.meetings.activeMeeting
         ? state.meetings.entities[state.meetings.activeMeeting]
         : undefined,

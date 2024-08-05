@@ -14,8 +14,9 @@ export const useFetchPublicMeeting = (
   id: string
 ): [boolean, boolean, PublicMeetingInfo | null] => {
   const dispatch = useAppDispatch();
-  const [publicMeeting, setPublicMeeting] =
-    useState<PublicMeetingInfo | null>(null);
+  const [publicMeeting, setPublicMeeting] = useState<PublicMeetingInfo | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [expired, setExpired] = useState<boolean>(false);
 
@@ -53,8 +54,8 @@ export const useFetchPublicMeeting = (
 };
 
 export const useSubmitAnswer = (
-  publicmeetinginfoID?: string,
-  owner?: string
+  publicmeetinginfoID?: string | null,
+  owner?: string | null
 ): [
   boolean,
   boolean,
