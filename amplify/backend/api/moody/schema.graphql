@@ -1,0 +1,59 @@
+type SpeakerVoiceEmotion @model @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
+  id: ID!
+  timestamp: AWSTimestamp!
+  score: Float!
+  neutral: Float!
+  happy: Float!
+  sad: Float!
+  angry: Float!
+  fearful: Float!
+  disgusted: Float!
+  surprised: Float!
+  meetingID: ID
+}
+
+type PublicMeetingInfo @model @auth(rules: [{allow: owner, operations: [read, create, update, delete]}, {allow: public, operations: [read], provider: iam}]) {
+  id: ID!
+  name: String!
+  startedAt: AWSDateTime!
+  stoppedAt: AWSDateTime!
+  owner: String
+}
+
+type Rating @model @auth(rules: [{allow: owner, operations: [read]}, {allow: public, operations: [create], provider: iam}]) {
+  id: ID!
+  overallStars: Int!
+  contentStars: Int
+  paceStars: Int
+  owner: String
+  publicmeetinginfoID: ID!
+}
+
+type Meeting @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
+  id: ID!
+  name: String!
+  AudienceFaceExpressions: [AudienceFaceExpression] @connection(keyName: "byMeeting", fields: ["id"])
+  startedAt: AWSDateTime
+  stoppedAt: AWSDateTime
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  PublicMeetingInfo: PublicMeetingInfo @connection
+  SpeakerVoiceEmotions: [SpeakerVoiceEmotion] @connection(keyName: "byMeeting", fields: ["id"])
+}
+
+type AudienceFaceExpression @model(timestamps: {createdAt: "createdAt", updatedAt: "updatedAt"}) @key(name: "byMeeting", fields: ["meetingID"]) @auth(rules: [{allow: owner, operations: [read, create, update, delete]}]) {
+  id: ID!
+  timestamp: AWSTimestamp!
+  score: Float!
+  surprised: Float
+  happy: Float
+  neutral: Float
+  sad: Float
+  disgusted: Float
+  fearful: Float
+  angry: Float
+  meetingID: ID!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+ 
