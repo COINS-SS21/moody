@@ -1,10 +1,10 @@
-import Meyda, { MeydaAnalyzer, MeydaFeaturesObject } from "meyda";
+import Meyda, { MeydaFeaturesObject } from "meyda";
 
 export default class VoiceCaptureService {
   private _mediaStream: MediaStream | null = null;
   private _context: AudioContext | null = null;
   private _source: MediaStreamAudioSourceNode | null = null;
-  private _analyzer: MeydaAnalyzer | null = null;
+  private _analyzer: Meyda.MeydaAnalyzer | null = null;
 
   public static readonly SAMPLE_RATE = 22050;
 
